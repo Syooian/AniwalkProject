@@ -1,0 +1,3 @@
+[submodule "AniwalkClient_Android"]
+	path = AniwalkClient_Android
+	url = https://github.com/Syooian/AniwalkClient_Android.git
