@@ -18,6 +18,15 @@ namespace AniwalkServer.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult ShowMap()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
