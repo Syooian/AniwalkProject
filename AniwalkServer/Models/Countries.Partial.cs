@@ -10,10 +10,12 @@ namespace AniwalkServer.Models
         /// </summary>
         [Key]
         [HiddenInput]
+        [StringLength(3, MinimumLength = 3)]
         public string CountryCode { get; set; } = null!;
         /// <summary>
         /// 國名
         /// </summary>
+        [StringLength(30)]
         public string CountryName { get; set; } = null!;
         /// <summary>
         /// 
