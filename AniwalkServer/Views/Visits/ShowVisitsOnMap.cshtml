@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewData["Title"] = "ShowVisitsOnMap";
+}
+
+<link rel="stylesheet" type="text/css" href="./style.css" />
+<script type="module" src="./index.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&libraries=maps&v=beta" defer></script>
+<script>
+    const Markers=@Html.Raw(Json.Serialize(ViewBag.Markers));
+
+    function InitMap(){
+        Markers.forEach(MarkerData=>{
+            new google.mapsMakers({
+                position:{lat:MarkerData.Lat, Ing:MarkerData.Lng},
+                title:MarkerData.Title
+            });
+        });
+    }
+
+    InitMap();
+</script>
+
+<gmp-map center="22.593469753520136, 120.3088710110155"
+         zoom="10"
+         map-id="DEMO_MAP_ID"
+         style="width:100vw; height:100vh"></gmp-map>
+
+<!--
+  The `defer` attribute causes the script to execute after the full HTML
+  document has been parsed. For non-blocking uses, avoiding race conditions,
+  and consistent behavior across browsers, consider loading using Promises. See
+  https://developers.google.com/maps/documentation/javascript/load-maps-js-api
+  for more information.
+  -->

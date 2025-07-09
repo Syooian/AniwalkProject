@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,17 +17,6 @@ namespace AniwalkServer.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.GoogleMapsApiKey = _configuration["GoogleMapAPIKey"];
-
-
-            var Markers = new List<object>
-            {
-                new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
-                new{Lat=22.59165699959131,Lng= 120.31737356655549,Title="Marker 2" }
-            };
-
-            ViewBag.Markers = Markers;
-
             return View();
         }
 
