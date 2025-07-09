@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AniwalkServer.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AniwalkServer.Controllers
 {
@@ -6,11 +7,13 @@ namespace AniwalkServer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly AniwalkDBContext Context;
 
-        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration)
+        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context)
         {
             _logger = logger;
             _configuration = configuration;
+            this.Context = Context;
         }
 
         /// <summary>
