@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "地圖檢視";
+}
+
+@using System.Text.Json
+@{
+    //防止Json序列化時屬性被轉成小寫
+    var MarkerJsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
+}
+
+<link rel="stylesheet" type="text/css" href="./style.css" />
+<script type="module" src="./index.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=maps&v=beta" defer></script>
+<script>
+    // 將 C# 傳來的 Markers 轉成 JS 物件
+    const Markers=@Html.Raw(JsonSerializer.Serialize(ViewBag.Markers, MarkerJsonOptions));
+
+    function InitMap(){
+        console.log("Initing GoogleMap");
+
+        // 設定地圖中心點
+        const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
+
+         // 建立地圖
+        const map = new google.maps.Map(document.getElementById("Gmap"), {
+            center: center,
+            zoom: 10,
+            mapId: "DEMO_MAP_ID"
+        });
+
+        // 加入自訂 Marker
+        Markers.forEach(MarkerData=>{
+            new google.maps.Marker({
+                position: {
+                    lat: Number(MarkerData.Lat),
+                    lng: Number(MarkerData.Lng)
+                },
+                map: map,
+                title:MarkerData.Title
+            });
+
+            //console.log(MarkerData);
+            //console.log(`Marker added: ${MarkerData.Title} at (${MarkerData.Lat}, ${MarkerData.Lng})`);
+        });
+    }
+
+    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+</script>
+
+@* <gmp-map center="22.593469753520136, 120.3088710110155"
+         zoom="10"
+         map-id="DEMO_MAP_ID"
+         style="width:100vw; height:100vh"></gmp-map> *@
+<div id="Gmap"
+     style="width:100vw; height:100vh"></div>
+
+<!--
+  The `defer` attribute causes the script to execute after the full HTML
+  document has been parsed. For non-blocking uses, avoiding race conditions,
+  and consistent behavior across browsers, consider loading using Promises. See
+  https://developers.google.com/maps/documentation/javascript/load-maps-js-api
+  for more information.
+  -->

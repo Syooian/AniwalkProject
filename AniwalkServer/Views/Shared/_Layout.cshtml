@@ -23,6 +23,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Visits" asp-action="ShowVisitsOnMap">地圖檢視</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Visits" asp-action="ShowVisitsOnList">清單檢視</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
@@ -30,10 +36,11 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <!--<div class="container">-->
+    <div>
+        <!--<main role="main" class="pb-3">-->
+        @RenderBody()
+        <!--</main>-->
     </div>
 
     <footer class="border-top footer text-muted">
