@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var CurrentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var CurrentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -36,12 +41,18 @@
             </div>
         </nav>
     </header>
-    <!--<div class="container">-->
-    <div>
-        <!--<main role="main" class="pb-3">-->
+    @if (CurrentController == "Visits" && CurrentAction == "ShowVisitsOnMap")
+    {
         @RenderBody()
-        <!--</main>-->
-    </div>
+    }
+    else
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
 
     <footer class="border-top footer text-muted">
         <div class="container">
