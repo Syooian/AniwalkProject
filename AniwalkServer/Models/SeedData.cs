@@ -63,33 +63,8 @@ namespace AniwalkServer.Models
 
                 context.SaveChanges();
 
-                #region 動畫與國家的關聯
-                /*
-                 *聖誕之吻
-                 *0001 : JPN
-                 */
-                context.Database.ExecuteSqlRaw(@"insert into AnimesCountries values
-                    ('0001', 'JPN')
-                ");
+                #region
 
-                /*
-                 *K-ON
-                 *0002 : JPN
-                 *0002 : GBR
-                 */
-                context.Database.ExecuteSqlRaw(@"insert into AnimesCountries values
-                    ('0002', 'JPN'),
-                    ('0002', 'GBR')
-                ");
-
-                /*信長之槍
-                *0003 : JPN
-                *0003 : TWN
-                */
-                context.Database.ExecuteSqlRaw(@"insert into AnimesCountries values
-                    ('0003', 'JPN'),
-                    ('0003', 'TWN')
-                ");
                 #endregion
 
                 context.SaveChanges();
