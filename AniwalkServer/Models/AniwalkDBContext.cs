@@ -22,6 +22,10 @@ namespace AniwalkServer.Models
         /// 會員
         /// </summary>
         public virtual DbSet<Members> Members { get; set; }
+        /// <summary>
+        /// 到訪紀錄
+        /// </summary>
+        public virtual DbSet<Visits> Visits { get; set; }
         #endregion
 
         /// <summary>
@@ -50,8 +54,33 @@ namespace AniwalkServer.Models
                 Entity.Property(E => E.MemberID)
                     .HasColumnType("char");
 
-                Entity.Property(E=>E.Email)
+                Entity.Property(E => E.Email)
                     .IsUnicode(false); // Email通常不需要Unicode，使用ASCII即可.
+            });
+
+            ModelBuilder.Entity<Visits>(Entity =>
+            {
+                /**
+                   在 Visits 資料表上建立 MemberID 的外鍵時，因為與其他外鍵（如 CountryCode）之間的關聯
+                   導致 SQL Server 偵測到「循環」或「多重串聯路徑」的情況。這通常發生在多個表之間有重複的外鍵路徑，且這些外鍵都設定了 ON DELETE CASCADE 或 ON UPDATE CASCADE。
+                   解決方式：
+                   需要在 Fluent API 或 Migration 中，明確指定 ON DELETE NO ACTION 或 ON UPDATE NO ACTION，避免自動連鎖刪除或更新。
+                */
+                Entity.
+                    HasOne(E => E.Member)
+                    .WithMany(E => E.Visits)
+                    .HasForeignKey(E => E.MemberID)
+                    .OnDelete(DeleteBehavior.NoAction);
+                Entity
+                    .HasOne(E => E.Country)
+                    .WithMany(E => E.Visits)
+                    .HasForeignKey(E => E.CountryCode)
+                    .OnDelete(DeleteBehavior.NoAction);
+                Entity
+                    .HasOne(E => E.Anime)
+                    .WithMany(E => E.Visits)
+                    .HasForeignKey(E => E.AnimeID)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

@@ -84,6 +84,40 @@ namespace AniwalkServer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Visits",
+                columns: table => new
+                {
+                    SN = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MainText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MemberID = table.Column<string>(type: "char(10)", nullable: false),
+                    CountryCode = table.Column<string>(type: "char(3)", nullable: false),
+                    AnimeID = table.Column<string>(type: "char(4)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Visits", x => x.SN);
+                    table.ForeignKey(
+                        name: "FK_Visits_Animes_AnimeID",
+                        column: x => x.AnimeID,
+                        principalTable: "Animes",
+                        principalColumn: "AnimeID");
+                    table.ForeignKey(
+                        name: "FK_Visits_Countries_CountryCode",
+                        column: x => x.CountryCode,
+                        principalTable: "Countries",
+                        principalColumn: "CountryCode");
+                    table.ForeignKey(
+                        name: "FK_Visits_Members_MemberID",
+                        column: x => x.MemberID,
+                        principalTable: "Members",
+                        principalColumn: "MemberID");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AnimesCountries_CountriesCountryCode",
                 table: "AnimesCountries",
@@ -93,6 +127,21 @@ namespace AniwalkServer.Migrations
                 name: "IX_Members_CountryCode",
                 table: "Members",
                 column: "CountryCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Visits_AnimeID",
+                table: "Visits",
+                column: "AnimeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Visits_CountryCode",
+                table: "Visits",
+                column: "CountryCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Visits_MemberID",
+                table: "Visits",
+                column: "MemberID");
         }
 
         /// <inheritdoc />
@@ -102,10 +151,13 @@ namespace AniwalkServer.Migrations
                 name: "AnimesCountries");
 
             migrationBuilder.DropTable(
-                name: "Members");
+                name: "Visits");
 
             migrationBuilder.DropTable(
                 name: "Animes");
+
+            migrationBuilder.DropTable(
+                name: "Members");
 
             migrationBuilder.DropTable(
                 name: "Countries");

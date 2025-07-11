@@ -116,6 +116,51 @@ namespace AniwalkServer.Migrations
                     b.ToTable("Members");
                 });
 
+            modelBuilder.Entity("AniwalkServer.Models.Visits", b =>
+                {
+                    b.Property<int>("SN")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SN"));
+
+                    b.Property<string>("AnimeID")
+                        .IsRequired()
+                        .HasColumnType("char(4)");
+
+                    b.Property<string>("CountryCode")
+                        .IsRequired()
+                        .HasColumnType("char(3)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("MainText")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("MemberID")
+                        .IsRequired()
+                        .HasColumnType("char(10)");
+
+                    b.HasKey("SN");
+
+                    b.HasIndex("AnimeID");
+
+                    b.HasIndex("CountryCode");
+
+                    b.HasIndex("MemberID");
+
+                    b.ToTable("Visits");
+                });
+
             modelBuilder.Entity("AnimesCountries", b =>
                 {
                     b.HasOne("AniwalkServer.Models.Animes", null)
@@ -140,6 +185,48 @@ namespace AniwalkServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("AniwalkServer.Models.Visits", b =>
+                {
+                    b.HasOne("AniwalkServer.Models.Animes", "Anime")
+                        .WithMany("Visits")
+                        .HasForeignKey("AnimeID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AniwalkServer.Models.Countries", "Country")
+                        .WithMany("Visits")
+                        .HasForeignKey("CountryCode")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AniwalkServer.Models.Members", "Member")
+                        .WithMany("Visits")
+                        .HasForeignKey("MemberID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Anime");
+
+                    b.Navigation("Country");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("AniwalkServer.Models.Animes", b =>
+                {
+                    b.Navigation("Visits");
+                });
+
+            modelBuilder.Entity("AniwalkServer.Models.Countries", b =>
+                {
+                    b.Navigation("Visits");
+                });
+
+            modelBuilder.Entity("AniwalkServer.Models.Members", b =>
+                {
+                    b.Navigation("Visits");
                 });
 #pragma warning restore 612, 618
         }

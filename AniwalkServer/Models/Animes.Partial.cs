@@ -38,6 +38,10 @@ namespace AniwalkServer.Models
         /// 國家
         /// </summary>
         public virtual List<Countries>? Countries { get; set; }
+        /// <summary>
+        /// 到訪紀錄
+        /// </summary>
+        public virtual List<Visits>? Visits { get; set; }
         #endregion
     }
 }
