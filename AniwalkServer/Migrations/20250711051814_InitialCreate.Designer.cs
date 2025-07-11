@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    [Migration("20250711034014_InitialCreate")]
+    [Migration("20250711051814_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -88,6 +88,37 @@ namespace AniwalkServer.Migrations
                     b.ToTable("Countries");
                 });
 
+            modelBuilder.Entity("AniwalkServer.Models.Members", b =>
+                {
+                    b.Property<string>("MemberID")
+                        .HasMaxLength(10)
+                        .HasColumnType("char");
+
+                    b.Property<string>("CountryCode")
+                        .IsRequired()
+                        .HasColumnType("char(3)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("MemberID");
+
+                    b.HasIndex("CountryCode");
+
+                    b.ToTable("Members");
+                });
+
             modelBuilder.Entity("AnimesCountries", b =>
                 {
                     b.HasOne("AniwalkServer.Models.Animes", null)
@@ -101,6 +132,17 @@ namespace AniwalkServer.Migrations
                         .HasForeignKey("CountriesCountryCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AniwalkServer.Models.Members", b =>
+                {
+                    b.HasOne("AniwalkServer.Models.Countries", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Country");
                 });
 #pragma warning restore 612, 618
         }

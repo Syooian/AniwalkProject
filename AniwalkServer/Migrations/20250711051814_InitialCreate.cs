@@ -63,10 +63,36 @@ namespace AniwalkServer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Members",
+                columns: table => new
+                {
+                    MemberID = table.Column<string>(type: "char(10)", maxLength: 10, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    Email = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CountryCode = table.Column<string>(type: "char(3)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Members", x => x.MemberID);
+                    table.ForeignKey(
+                        name: "FK_Members_Countries_CountryCode",
+                        column: x => x.CountryCode,
+                        principalTable: "Countries",
+                        principalColumn: "CountryCode",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AnimesCountries_CountriesCountryCode",
                 table: "AnimesCountries",
                 column: "CountriesCountryCode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Members_CountryCode",
+                table: "Members",
+                column: "CountryCode");
         }
 
         /// <inheritdoc />
@@ -74,6 +100,9 @@ namespace AniwalkServer.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AnimesCountries");
+
+            migrationBuilder.DropTable(
+                name: "Members");
 
             migrationBuilder.DropTable(
                 name: "Animes");

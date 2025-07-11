@@ -18,6 +18,10 @@ namespace AniwalkServer.Models
         /// 動畫
         /// </summary>
         public virtual DbSet<Animes> Animes { get; set; }
+        /// <summary>
+        /// 會員
+        /// </summary>
+        public virtual DbSet<Members> Members { get; set; }
         #endregion
 
         /// <summary>
@@ -39,6 +43,15 @@ namespace AniwalkServer.Models
                     .HasColumnType("char");
                 Entity.Property(E => E.HeaderPhoto)
                     .HasColumnType("char");
+            });
+
+            ModelBuilder.Entity<Members>(Entity =>
+            {
+                Entity.Property(E => E.MemberID)
+                    .HasColumnType("char");
+
+                Entity.Property(E=>E.Email)
+                    .IsUnicode(false); // Email通常不需要Unicode，使用ASCII即可.
             });
         }
     }

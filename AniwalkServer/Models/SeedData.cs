@@ -19,21 +19,14 @@ namespace AniwalkServer.Models
                     return;   // DB has been seeded
                 }
 
-                context.Countries.Add(new Countries()
+                var Countries = new Countries[]
                 {
-                    CountryCode = "JPN",
-                    CountryName = "日本",
-                });
-                context.Countries.Add(new Countries()
-                {
-                    CountryCode = "GBR",
-                    CountryName = "英國",
-                });
-                context.Countries.Add(new Countries()
-                {
-                    CountryCode = "TWN",
-                    CountryName = "台灣",
-                });
+                    new Countries() { CountryCode = "JPN", CountryName = "日本" },
+                    new Countries() { CountryCode = "GBR", CountryName = "英國" },
+                    new Countries() { CountryCode = "TWN", CountryName = "台灣" }
+                };
+
+                context.Countries.AddRange(Countries);
                 #endregion
 
                 #region 動畫資料
@@ -42,27 +35,30 @@ namespace AniwalkServer.Models
                     return;   // DB has been seeded
                 }
 
-                context.Animes.Add(new Animes()
+                var Animes = new Animes[]
                 {
-                    AnimeID = "0001",
-                    Title = "聖誕之吻SS",
-                    HeaderPhoto = "0001.jpg",
-                    Description = "アマガミSS"
-                });
-                context.Animes.Add(new Animes()
+                    new Animes() { AnimeID = "0001", Title = "聖誕之吻SS", HeaderPhoto = "0001.jpg", Description = "アマガミSS" },
+                    new Animes() { AnimeID = "0002", Title = "K-ON！輕音部", HeaderPhoto = "0002.jpg", Description = "けいおん!" },
+                    new Animes() { AnimeID = "0003", Title = "信長之槍", HeaderPhoto = "0003.jpg", Description = "ノブナガン" }
+                };
+
+                context.Animes.AddRange(Animes);
+                #endregion
+
+                #region 會員資料
+                var MemberIDs = new string[2];
+                for (int a = 0; a < MemberIDs.Length; a++)
                 {
-                    AnimeID = "0002",
-                    Title = "K-ON！輕音部",
-                    HeaderPhoto = "0002.jpg",
-                    Description = "けいおん!"
-                });
-                context.Animes.Add(new Animes()
-                {
-                    AnimeID = "0003",
-                    Title = "信長之槍",
-                    HeaderPhoto = "0003.jpg",
-                    Description = "ノブナガン"
-                });
+                    MemberIDs[a] = new Random().Next(0, 999999999).ToString("D10");
+
+                    context.Members.Add(new Members()
+                    {
+                        MemberID = MemberIDs[a],
+                        Name = "TestMember" + MemberIDs[a],
+                        Email = MemberIDs[a] + "@example.com",
+                        CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode
+                    });
+                }
                 #endregion
 
                 context.SaveChanges();
