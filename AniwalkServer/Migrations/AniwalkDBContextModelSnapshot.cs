@@ -179,7 +179,7 @@ namespace AniwalkServer.Migrations
             modelBuilder.Entity("AniwalkServer.Models.Members", b =>
                 {
                     b.HasOne("AniwalkServer.Models.Countries", "Country")
-                        .WithMany()
+                        .WithMany("Members")
                         .HasForeignKey("CountryCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -221,6 +221,8 @@ namespace AniwalkServer.Migrations
 
             modelBuilder.Entity("AniwalkServer.Models.Countries", b =>
                 {
+                    b.Navigation("Members");
+
                     b.Navigation("Visits");
                 });
 

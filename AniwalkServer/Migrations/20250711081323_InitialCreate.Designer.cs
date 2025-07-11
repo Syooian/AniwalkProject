@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    [Migration("20250711080542_InitialCreate")]
+    [Migration("20250711081323_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -182,7 +182,7 @@ namespace AniwalkServer.Migrations
             modelBuilder.Entity("AniwalkServer.Models.Members", b =>
                 {
                     b.HasOne("AniwalkServer.Models.Countries", "Country")
-                        .WithMany()
+                        .WithMany("Members")
                         .HasForeignKey("CountryCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -224,6 +224,8 @@ namespace AniwalkServer.Migrations
 
             modelBuilder.Entity("AniwalkServer.Models.Countries", b =>
                 {
+                    b.Navigation("Members");
+
                     b.Navigation("Visits");
                 });
 

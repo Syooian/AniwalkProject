@@ -29,6 +29,10 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual List<Animes>? Animes { get; set; }
         /// <summary>
+        /// 會員
+        /// </summary>
+        public virtual List<Members>? Members { get; set; } = null!;
+        /// <summary>
         /// 到訪紀錄
         /// </summary>
         public virtual List<Visits>? Visits { get; set; } = null!;
