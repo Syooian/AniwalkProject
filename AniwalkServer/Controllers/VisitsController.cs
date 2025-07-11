@@ -22,8 +22,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public IActionResult ShowVisitsOnMap()
         {
-            ViewBag.GoogleMapsApiKey = _configuration["GoogleMapAPIKey"];
-
+            SetGoogleMapsApiKey();
 
             var Markers = new List<object>
             {
@@ -42,7 +41,17 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public IActionResult ShowVisitsOnList()
         {
+            SetGoogleMapsApiKey();
+
             return View();
+        }
+
+        /// <summary>
+        /// 設定Google Maps API金鑰
+        /// </summary>
+        public void SetGoogleMapsApiKey()
+        {
+            ViewBag.GoogleMapsApiKey = _configuration["GoogleMapAPIKey"];
         }
     }
 }
