@@ -30,13 +30,17 @@
 
         // 加入自訂 Marker
         Markers.forEach(MarkerData=>{
-            new google.maps.Marker({
+            const Marker=new google.maps.Marker({
                 position: {
                     lat: Number(MarkerData.Lat),
                     lng: Number(MarkerData.Lng)
                 },
                 map: map,
                 title:MarkerData.Title
+            });
+
+            Marker.addListener('click',()=>{
+                alert(`Marker clicked: ${MarkerData.Title}`);
             });
 
             //console.log(MarkerData);
