@@ -10,7 +10,7 @@
 
 <link rel="stylesheet" type="text/css" href="./style.css" />
 <script type="module" src="./index.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=maps&v=beta" defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>
     // 將 C# 傳來的 Markers 轉成 JS 物件
     const Markers=@Html.Raw(JsonSerializer.Serialize(ViewBag.Markers, MarkerJsonOptions));
@@ -30,7 +30,7 @@
 
         // 加入自訂 Marker
         Markers.forEach(MarkerData=>{
-            const Marker=new google.maps.Marker({
+            const Marker=new google.maps.marker.AdvancedMarkerElement({
                 position: {
                     lat: Number(MarkerData.Lat),
                     lng: Number(MarkerData.Lng)
