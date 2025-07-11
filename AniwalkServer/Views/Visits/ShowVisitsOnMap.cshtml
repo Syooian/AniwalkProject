@@ -1,20 +1,19 @@
-﻿@{
+﻿@model IEnumerable<Visits>
+
+@{
     ViewData["Title"] = "地圖檢視";
 }
 
-@using System.Text.Json
+@* @using System.Text.Json
 @{
     //防止Json序列化時屬性被轉成小寫
     var MarkerJsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
-}
+}  *@
 
 <link rel="stylesheet" type="text/css" href="./style.css" />
 <script type="module" src="./index.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>
-    // 將 C# 傳來的 Markers 轉成 JS 物件
-    const Markers=@Html.Raw(JsonSerializer.Serialize(ViewBag.Markers, MarkerJsonOptions));
-
     function InitMap(){
         console.log("Initing GoogleMap");
 
@@ -28,24 +27,53 @@
             mapId: "DEMO_MAP_ID"
         });
 
-        // 加入自訂 Marker
-        Markers.forEach(MarkerData=>{
-            const Marker=new google.maps.marker.AdvancedMarkerElement({
+        //先將Model的東西轉到JS (C#和JS物件無法互相放置)
+        var Markers=[];
+
+        @foreach(var Visit in Model)
+        {
+            <text>Markers.push({
+                lat:@Visit.Latitude,
+                lng:@Visit.Longitude,
+                Title:"@Visit.MainText"
+            });</text>
+        }
+
+        //再將轉出來的東西帶給地圖物件
+        for(let i = 0; i < Markers.length; i++) 
+        {
+              const Marker=new google.maps.marker.AdvancedMarkerElement({
                 position: {
-                    lat: Number(MarkerData.Lat),
-                    lng: Number(MarkerData.Lng)
+                    lat: Number(Markers[i].lat),
+                    lng: Number(Markers[i].lng)
                 },
                 map: map,
-                title:MarkerData.Title
+                //title:MarkerData.Title
             });
 
             Marker.addListener('click',()=>{
-                alert(`Marker clicked: ${MarkerData.Title}`);
+                alert(`Marker clicked: ${Markers[i].Title}`);
             });
+        }
 
-            //console.log(MarkerData);
-            //console.log(`Marker added: ${MarkerData.Title} at (${MarkerData.Lat}, ${MarkerData.Lng})`);
-        });
+        // 加入自訂 Marker
+        // Markers.forEach(MarkerData=>{
+        //     const Marker=new google.maps.marker.AdvancedMarkerElement({
+        //         position: {
+        //             lat: Number(MarkerData.Lat),
+        //             lng: Number(MarkerData.Lng)
+        //         },
+        //         map: map,
+        //         title:MarkerData.Title
+        //     });
+
+        //     Marker.addListener('click',()=>{
+        //         alert(`Marker clicked: ${MarkerData.Title}`);
+        //     });
+
+        //     //console.log(MarkerData);
+        //     //console.log(`Marker added: ${MarkerData.Title} at (${MarkerData.Lat}, ${MarkerData.Lng})`);
+        // });
     }
 
     window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它

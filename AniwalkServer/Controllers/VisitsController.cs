@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Controllers
 {
@@ -20,19 +21,29 @@ namespace AniwalkServer.Controllers
         /// 從地圖瀏覽到訪紀錄
         /// </summary>
         /// <returns></returns>
-        public IActionResult ShowVisitsOnMap()
+        public async Task<IActionResult> ShowVisitsOnMap()
         {
             SetGoogleMapsApiKey();
 
-            var Markers = new List<object>
-            {
-                new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
-                new{Lat=22.59165699959131,Lng= 120.31737356655549,Title="Marker 2" }
-            };
+            #region 在資料庫執行排序
+            //var Result = await _context.Book.OrderByDescending(R => R.CreatedDate).ToListAsync();
+            #endregion
+            #region 在本機記憶體執行排序
+            //var Result = await _context.Book.ToListAsync();
+            //Result.OrderByDescending(R => R.CreatedDate);
+            #endregion
 
-            ViewBag.Markers = Markers;
+            //var Markers = new List<object>
+            //{
+            //    new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
+            //    new{Lat=22.59165699959131,Lng= 120.31737356655549,Title="Marker 2" }
+            //};
 
-            return View();
+            //var Markers = await Context.Visits.ToListAsync();
+
+            //ViewBag.Markers = Markers;
+
+            return View(await Context.Visits.ToArrayAsync());
         }
 
         /// <summary>
