@@ -69,6 +69,11 @@ namespace AniwalkServer.Models
         /// 
         /// </summary>
         public virtual Animes? Anime { get; set; } = null!;
+
+        /// <summary>
+        /// 標籤
+        /// </summary>
+        public virtual List<VisitsTags>? VisitsTag { get; set; }
         #endregion
     }
 }

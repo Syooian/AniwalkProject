@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    [Migration("20250711115423_InitialCreate")]
+    [Migration("20250711131116_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -149,6 +149,39 @@ namespace AniwalkServer.Migrations
                     b.ToTable("Visits");
                 });
 
+            modelBuilder.Entity("AniwalkServer.Models.VisitsTags", b =>
+                {
+                    b.Property<int>("SN")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SN"));
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("SN");
+
+                    b.ToTable("VisitsTags");
+                });
+
+            modelBuilder.Entity("VisitsVisitsTags", b =>
+                {
+                    b.Property<int>("VisitsSN")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VisitsTagSN")
+                        .HasColumnType("int");
+
+                    b.HasKey("VisitsSN", "VisitsTagSN");
+
+                    b.HasIndex("VisitsTagSN");
+
+                    b.ToTable("VisitsVisitsTags");
+                });
+
             modelBuilder.Entity("AniwalkServer.Models.Members", b =>
                 {
                     b.HasOne("AniwalkServer.Models.Countries", "Country")
@@ -185,6 +218,21 @@ namespace AniwalkServer.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("VisitsVisitsTags", b =>
+                {
+                    b.HasOne("AniwalkServer.Models.Visits", null)
+                        .WithMany()
+                        .HasForeignKey("VisitsSN")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AniwalkServer.Models.VisitsTags", null)
+                        .WithMany()
+                        .HasForeignKey("VisitsTagSN")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AniwalkServer.Models.Animes", b =>

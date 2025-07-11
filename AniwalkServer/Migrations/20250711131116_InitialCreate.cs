@@ -40,6 +40,19 @@ namespace AniwalkServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "VisitsTags",
+                columns: table => new
+                {
+                    SN = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tag = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VisitsTags", x => x.SN);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Members",
                 columns: table => new
                 {
@@ -94,6 +107,30 @@ namespace AniwalkServer.Migrations
                         principalColumn: "MemberID");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "VisitsVisitsTags",
+                columns: table => new
+                {
+                    VisitsSN = table.Column<int>(type: "int", nullable: false),
+                    VisitsTagSN = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VisitsVisitsTags", x => new { x.VisitsSN, x.VisitsTagSN });
+                    table.ForeignKey(
+                        name: "FK_VisitsVisitsTags_VisitsTags_VisitsTagSN",
+                        column: x => x.VisitsTagSN,
+                        principalTable: "VisitsTags",
+                        principalColumn: "SN",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_VisitsVisitsTags_Visits_VisitsSN",
+                        column: x => x.VisitsSN,
+                        principalTable: "Visits",
+                        principalColumn: "SN",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Members_CountryCode",
                 table: "Members",
@@ -113,11 +150,22 @@ namespace AniwalkServer.Migrations
                 name: "IX_Visits_MemberID",
                 table: "Visits",
                 column: "MemberID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VisitsVisitsTags_VisitsTagSN",
+                table: "VisitsVisitsTags",
+                column: "VisitsTagSN");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "VisitsVisitsTags");
+
+            migrationBuilder.DropTable(
+                name: "VisitsTags");
+
             migrationBuilder.DropTable(
                 name: "Visits");
 
