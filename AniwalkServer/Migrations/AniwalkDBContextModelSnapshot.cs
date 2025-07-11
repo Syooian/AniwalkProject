@@ -22,21 +22,6 @@ namespace AniwalkServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AnimesCountries", b =>
-                {
-                    b.Property<string>("AnimesAnimeID")
-                        .HasColumnType("char(4)");
-
-                    b.Property<string>("CountriesCountryCode")
-                        .HasColumnType("char(3)");
-
-                    b.HasKey("AnimesAnimeID", "CountriesCountryCode");
-
-                    b.HasIndex("CountriesCountryCode");
-
-                    b.ToTable("AnimesCountries");
-                });
-
             modelBuilder.Entity("AniwalkServer.Models.Animes", b =>
                 {
                     b.Property<string>("AnimeID")
@@ -159,21 +144,6 @@ namespace AniwalkServer.Migrations
                     b.HasIndex("MemberID");
 
                     b.ToTable("Visits");
-                });
-
-            modelBuilder.Entity("AnimesCountries", b =>
-                {
-                    b.HasOne("AniwalkServer.Models.Animes", null)
-                        .WithMany()
-                        .HasForeignKey("AnimesAnimeID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AniwalkServer.Models.Countries", null)
-                        .WithMany()
-                        .HasForeignKey("CountriesCountryCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AniwalkServer.Models.Members", b =>

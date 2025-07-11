@@ -40,30 +40,6 @@ namespace AniwalkServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AnimesCountries",
-                columns: table => new
-                {
-                    AnimesAnimeID = table.Column<string>(type: "char(4)", nullable: false),
-                    CountriesCountryCode = table.Column<string>(type: "char(3)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AnimesCountries", x => new { x.AnimesAnimeID, x.CountriesCountryCode });
-                    table.ForeignKey(
-                        name: "FK_AnimesCountries_Animes_AnimesAnimeID",
-                        column: x => x.AnimesAnimeID,
-                        principalTable: "Animes",
-                        principalColumn: "AnimeID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AnimesCountries_Countries_CountriesCountryCode",
-                        column: x => x.CountriesCountryCode,
-                        principalTable: "Countries",
-                        principalColumn: "CountryCode",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Members",
                 columns: table => new
                 {
@@ -119,11 +95,6 @@ namespace AniwalkServer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AnimesCountries_CountriesCountryCode",
-                table: "AnimesCountries",
-                column: "CountriesCountryCode");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Members_CountryCode",
                 table: "Members",
                 column: "CountryCode");
@@ -147,9 +118,6 @@ namespace AniwalkServer.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AnimesCountries");
-
             migrationBuilder.DropTable(
                 name: "Visits");
 

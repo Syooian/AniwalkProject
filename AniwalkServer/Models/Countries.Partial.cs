@@ -25,10 +25,6 @@ namespace AniwalkServer.Models
 
         #region 外鍵關聯
         /// <summary>
-        /// 動畫
-        /// </summary>
-        public virtual List<Animes>? Animes { get; set; }
-        /// <summary>
         /// 會員
         /// </summary>
         public virtual List<Members>? Members { get; set; } = null!;
