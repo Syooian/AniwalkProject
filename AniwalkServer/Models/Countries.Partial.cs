@@ -22,5 +22,12 @@ namespace AniwalkServer.Models
         /// </summary>
         [HiddenInput]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        #region 外鍵關聯
+        /// <summary>
+        /// 動畫
+        /// </summary>
+        public virtual List<Animes>? Animes { get; set; }
+        #endregion
     }
 }

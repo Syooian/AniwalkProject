@@ -14,6 +14,10 @@ namespace AniwalkServer.Models
         /// 國家
         /// </summary>
         public virtual DbSet<Countries> Countries { get; set; }
+        /// <summary>
+        /// 動畫
+        /// </summary>
+        public virtual DbSet<Animes> Animes { get; set; }
         #endregion
 
         /// <summary>
@@ -26,6 +30,14 @@ namespace AniwalkServer.Models
             {
                 Entity.Property(E => E.CountryCode)
                     //.IsUnicode(false);//True時資料庫值為nvarchar，False時為varchar
+                    .HasColumnType("char");
+            });
+
+            ModelBuilder.Entity<Animes>(Entity =>
+            {
+                Entity.Property(E => E.AnimeID)
+                    .HasColumnType("char");
+                Entity.Property(E => E.HeaderPhoto)
                     .HasColumnType("char");
             });
         }
