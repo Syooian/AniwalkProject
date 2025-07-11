@@ -61,13 +61,50 @@ namespace AniwalkServer.Models
                 }
                 #endregion
 
+                #region 到訪紀錄資料
+                if (context.Visits.Any())
+                {
+                    return;   // DB has been seeded
+                }
+
+                context.Visits.Add(new Visits()
+                {
+                    MainText = "七咲鞦韆",
+                    Latitude = 35.725771,
+                    Longitude = 140.819210,
+                    MemberID = MemberIDs[0],
+                    CountryCode = Countries[0].CountryCode,
+                    AnimeID = Animes[0].AnimeID,
+                });
+
+                context.Visits.Add(new Visits()
+                {
+                    MainText = "七咲海岸",
+                    Latitude = 35.706208,
+                    Longitude = 140.837881,
+                    MemberID = MemberIDs[0],
+                    CountryCode = Countries[0].CountryCode,
+                    AnimeID = Animes[1].AnimeID,
+                });
+
+                context.Visits.Add(new Visits()
+                {
+                    MainText = "怪獸襲來",
+                    Latitude = 22.684911,
+                    Longitude = 120.295731,
+                    MemberID = MemberIDs[1],
+                    CountryCode = Countries[2].CountryCode,
+                    AnimeID = Animes[2].AnimeID
+                });
+                #endregion
+
                 context.SaveChanges();
 
                 #region
 
                 #endregion
 
-                context.SaveChanges();
+                //context.SaveChanges();
             }
         }
     }
