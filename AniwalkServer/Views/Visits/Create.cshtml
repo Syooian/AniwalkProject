@@ -49,6 +49,8 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>
+    var Marker;
+
     function InitMap(){
         console.log("Initing GoogleMap");
 
@@ -70,6 +72,18 @@
             // 將座標填入表單欄位
             document.querySelector("input[name='Latitude']").value = Lat;
             document.querySelector("input[name='Longitude']").value = Lng;
+
+            //移除地圖上舊有Marker
+            if (Marker) {
+                Marker.setMap(null);
+            }
+
+            //在地圖上建立新Marker
+            Marker = new google.maps.marker.AdvancedMarkerElement({
+                position: { lat: Lat, lng: Lng },
+                map: map,
+                title: "新增到訪紀錄"
+            });
         });
     }
 
