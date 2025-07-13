@@ -8,7 +8,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="MainText" class="control-label"></label>
-                <input asp-for="MainText" class="form-control" />
+                <textarea asp-for="MainText" class="form-control"></textarea>
                 <span asp-validation-for="MainText" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -43,7 +43,28 @@
             </div>
         </form>
     </div>
+    <div id="Gmap"
+         style="width:500px; height:500px"></div>
 </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
+<script>
+    function InitMap(){
+        console.log("Initing GoogleMap");
+
+        // 設定地圖中心點
+        const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
+
+         // 建立地圖
+        const map = new google.maps.Map(document.getElementById("Gmap"), {
+            center: center,
+            zoom: 10,
+            mapId: "DEMO_MAP_ID"
+        });
+    }
+
+    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+</script>
 
 <div>
     <a asp-action="ShowVisitsOnList">返回清單</a>

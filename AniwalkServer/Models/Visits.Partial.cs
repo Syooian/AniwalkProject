@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -26,10 +27,12 @@ namespace AniwalkServer.Models
         /// <summary>
         /// 經度
         /// </summary>
+        [ReadOnly(true)]
         public double Latitude { get; set; } = 0.0;
         /// <summary>
         /// 緯度
         /// </summary>
+        [ReadOnly(true)]
         public double Longitude { get; set; } = 0.0;
 
         /// <summary>

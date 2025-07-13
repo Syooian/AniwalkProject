@@ -78,6 +78,8 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public IActionResult Create()
         {
+            SetGoogleMapsApiKey();
+
             return View();
         }
 
