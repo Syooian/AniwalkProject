@@ -20,6 +20,8 @@ namespace AniwalkServer.Models
         /// 內文
         /// </summary>
         [StringLength(1000)]
+        [Display(Name = "內文")]
+        [DataType(DataType.MultilineText)]//標註多行文字
         public string MainText { get; set; } = null!;
         /// <summary>
         /// 經度
