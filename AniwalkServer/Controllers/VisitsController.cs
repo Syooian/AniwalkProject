@@ -63,7 +63,7 @@ namespace AniwalkServer.Controllers
                 Countries = await Context.Countries.ToListAsync(),
                 Animes = await Context.Animes.ToListAsync(),
                 Members = await Context.Members.ToListAsync(),
-                Visits = await Context.Visits.ToListAsync()
+                Visits = await Context.Visits.OrderByDescending(V => V.CreatedDate).ToListAsync()
                 //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
             };
 
