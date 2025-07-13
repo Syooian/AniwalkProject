@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Controllers
@@ -79,6 +80,9 @@ namespace AniwalkServer.Controllers
         public IActionResult Create()
         {
             SetGoogleMapsApiKey();
+
+            ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
+            ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
 
             return View();
         }
