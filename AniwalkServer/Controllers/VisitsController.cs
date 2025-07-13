@@ -81,10 +81,41 @@ namespace AniwalkServer.Controllers
         {
             SetGoogleMapsApiKey();
 
-            ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
-            ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
+            SetViewData();
 
             return View();
+        }
+        /// <summary>
+        /// 送出新建到訪記錄表單
+        /// </summary>
+        /// <param name="Visit"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID")] Visits Visit)
+        {
+            if (ModelState.IsValid)
+            {
+                Visit.CreatedDate = DateTime.Now;
+
+                Context.Add(Visit);
+                await Context.SaveChangesAsync();
+                return RedirectToAction(nameof(ShowVisitsOnList));
+            }
+
+            SetViewData();
+
+            return View(Visit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SetViewData()
+        {
+            ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
+            ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
+            ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "Name");//臨時
         }
 
         /// <summary>
