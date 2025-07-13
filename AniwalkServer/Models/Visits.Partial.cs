@@ -56,6 +56,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [HiddenInput]
         [ForeignKey(nameof(Country))]
+        [Display(Name = "到訪國家")]
         public string CountryCode { get; set; } = null!;
         /// <summary>
         /// 國家
@@ -67,6 +68,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [HiddenInput]
         [ForeignKey(nameof(Anime))]
+        [Display(Name = "動畫")]
         public string AnimeID { get; set; } = null!;
         /// <summary>
         /// 
