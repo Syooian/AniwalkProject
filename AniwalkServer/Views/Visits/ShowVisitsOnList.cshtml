@@ -6,6 +6,9 @@
 <table class="table">
     <thead>
         <tr>
+            @*             <th>
+                SN
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Countries.FirstOrDefault().CountryName)
             </th>
@@ -28,6 +31,9 @@
         @foreach (var item in Model.Visits)
         {
             <tr>
+                @*        <td>
+                    @Html.DisplayFor(modelItem => item.SN)
+                </td> *@
                 <td>
                     @Html.DisplayFor(modelItem => item.Country.CountryName)
                 </td>
@@ -44,9 +50,9 @@
                     @Html.DisplayFor(modelItem => item.CreatedDate)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.AnimeID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.AnimeID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.AnimeID">Delete</a>
+                    <a asp-action="Edit" asp-route-VisitSN="@item.SN">編輯</a> |
+                    <a asp-action="Details" asp-route-VisitSN="@item.SN">Details</a> |
+                    <a asp-action="Delete" asp-route-VisitSN="@item.SN">Delete</a>
                 </td>
             </tr>
         }

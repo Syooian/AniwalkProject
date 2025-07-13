@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -111,6 +112,76 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Edit(int VisitSN)
+        {
+            //Console.WriteLine($"Edit VisitSN : {VisitSN}");
+
+            //if (VisitSN == null)
+            //{
+            //    Console.WriteLine("VisitSN is null");
+
+            //    return NotFound();
+            //}
+
+            var Visit = await Context.Visits.FindAsync(VisitSN);
+            if (Visit == null)
+            {
+                Console.WriteLine($"VisitSN {VisitSN} not found");
+
+                return NotFound();
+            }
+
+            SetViewData();
+
+            return View(Visit);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Visit"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID")] Visits Visit)
+        {
+            //if (id != tStudent.fStuId)
+            //{
+            //    return NotFound();
+            //}
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Context.Update(Visit);
+
+                    await Context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!IsStudentExists(Visit.SN))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return RedirectToAction(nameof(ShowVisitsOnList));
+            }
+
+            SetViewData();
+
+            return View(Visit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void SetViewData()
         {
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
@@ -124,6 +195,16 @@ namespace AniwalkServer.Controllers
         public void SetGoogleMapsApiKey()
         {
             ViewBag.GoogleMapsApiKey = _configuration["GoogleMapAPIKey"];
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        private bool IsStudentExists(int VisitSN)
+        {
+            return Context.Visits.Any(V => V.SN == VisitSN);
         }
     }
 }
