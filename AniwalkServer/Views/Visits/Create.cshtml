@@ -61,6 +61,16 @@
             zoom: 10,
             mapId: "DEMO_MAP_ID"
         });
+
+        // 監聽地圖的點擊事件
+        map.addListener("click", (Event) => {
+            const Lat = Event.latLng.lat();
+            const Lng = Event.latLng.lng();
+
+            // 將座標填入表單欄位
+            document.querySelector("input[name='Latitude']").value = Lat;
+            document.querySelector("input[name='Longitude']").value = Lng;
+        });
     }
 
     window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
