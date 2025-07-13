@@ -144,7 +144,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID")] Visits Visit)
+        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate")] Visits Visit)
         {
             //if (id != tStudent.fStuId)
             //{
