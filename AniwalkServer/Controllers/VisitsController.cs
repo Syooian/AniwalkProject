@@ -73,6 +73,15 @@ namespace AniwalkServer.Controllers
         }
 
         /// <summary>
+        /// 創建新的到訪記錄
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        /// <summary>
         /// 設定Google Maps API金鑰
         /// </summary>
         public void SetGoogleMapsApiKey()
