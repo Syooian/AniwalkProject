@@ -50,11 +50,26 @@ namespace AniwalkServer.Controllers
         /// 從清單瀏覽到訪紀錄
         /// </summary>
         /// <returns></returns>
-        public IActionResult ShowVisitsOnList()
+        public async Task<IActionResult> ShowVisitsOnList()
         {
             SetGoogleMapsApiKey();
 
-            return View();
+            var VM = new VM_Visits
+            {
+                //Where : 帶入條件
+
+                Countries = await Context.Countries.ToListAsync(),
+                Animes = await Context.Animes.ToListAsync(),
+                Members = await Context.Members.ToListAsync(),
+                Visits = await Context.Visits.ToListAsync()
+                //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
+            };
+
+            //if (!string.IsNullOrEmpty(id))
+            //    ViewData["DeptName"] = Context.Department.Find(id).DeptName;
+            //ViewData["DeptID"] = id;
+
+            return View(VM);
         }
 
         /// <summary>
