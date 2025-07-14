@@ -80,6 +80,9 @@ namespace AniwalkServer.Controllers
 
             SetViewData(members.CountryCode);
 
+            //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
+            ViewData["CreatedDate"] = members.CreatedDate;
+
             return View(members);
         }
 
