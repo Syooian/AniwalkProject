@@ -3,55 +3,86 @@
 <div>
     <h4>Visits</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MainText)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MainText)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Latitude)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Latitude)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Longitude)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Longitude)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Member)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Member.MemberID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Country.CountryCode)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Anime)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Anime.AnimeID)
-        </dd>
-        @{
+    <div class="d-flex justify-content-between align-items-start">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.MainText)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.MainText)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Latitude)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Latitude)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Longitude)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Longitude)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.CreatedDate)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Member)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Member.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Country)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Country.CountryName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Anime)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Anime.Title)
+            </dd>
+        </dl>
+        @*   @{
             await Component.InvokeAsync("VC_Map");
-        }
-    </dl>
+        } *@
+        <div id="Gmap"
+             style="width:500px; height:500px"></div>
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-VisitSN="@Model?.SN">Edit</a> |
     <a asp-action="ShowVisitsOnList">Back to List</a>
 </div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
+<script>
+    var Marker;
+
+    function InitMap(){
+        console.log("Initing GoogleMap");
+
+        // 設定地圖中心點
+        const center = { lat: @Model.Latitude, lng: @Model.Longitude };
+
+         // 建立地圖
+        const map = new google.maps.Map(document.getElementById("Gmap"), {
+            center: center,
+            zoom: 10,
+            mapId: "DEMO_MAP_ID"
+        });
+
+        Marker = new google.maps.marker.AdvancedMarkerElement({
+            position: center,
+            map: map,
+            title: "新增到訪紀錄"
+        });
+    }
+
+    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+</script>
