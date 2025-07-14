@@ -182,6 +182,26 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Details(int VisitSN)
+        {
+            var Visit = await Context.Visits.FindAsync(VisitSN);
+            if (Visit == null)
+            {
+                Console.WriteLine($"VisitSN {VisitSN} not found");
+
+                return NotFound();
+            }
+
+            SetViewData();
+
+            return View(Visit);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void SetViewData()
         {
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
