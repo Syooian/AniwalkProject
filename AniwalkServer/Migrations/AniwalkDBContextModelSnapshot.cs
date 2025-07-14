@@ -135,6 +135,9 @@ namespace AniwalkServer.Migrations
                         .IsRequired()
                         .HasColumnType("char(10)");
 
+                    b.Property<DateTime>("VisitedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("SN");
 
                     b.HasIndex("AnimeID");

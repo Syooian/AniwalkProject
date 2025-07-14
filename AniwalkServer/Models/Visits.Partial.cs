@@ -32,7 +32,12 @@ namespace AniwalkServer.Models
         /// 緯度
         /// </summary>
         public double Longitude { get; set; } = 0.0;
-
+        /// <summary>
+        /// 到訪日期
+        /// </summary>
+        [Required]
+        [Display(Name = "到訪日期")]
+        public DateTime VisitedDate { get; set; }
         /// <summary>
         /// 創建日期
         /// </summary>

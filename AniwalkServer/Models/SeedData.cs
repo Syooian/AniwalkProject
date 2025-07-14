@@ -75,6 +75,7 @@ namespace AniwalkServer.Models
                     MemberID = MemberIDs[0],
                     CountryCode = Countries[0].CountryCode,
                     AnimeID = Animes[0].AnimeID,
+                    VisitedDate=DateTime.Now.AddDays(-5)
                 });
 
                 context.Visits.Add(new Visits()
@@ -85,6 +86,7 @@ namespace AniwalkServer.Models
                     MemberID = MemberIDs[0],
                     CountryCode = Countries[0].CountryCode,
                     AnimeID = Animes[1].AnimeID,
+                    VisitedDate = DateTime.Now.AddDays(-10)
                 });
 
                 context.Visits.Add(new Visits()
@@ -94,7 +96,8 @@ namespace AniwalkServer.Models
                     Longitude = 120.295731,
                     MemberID = MemberIDs[1],
                     CountryCode = Countries[2].CountryCode,
-                    AnimeID = Animes[2].AnimeID
+                    AnimeID = Animes[2].AnimeID,
+                    VisitedDate = DateTime.Now.AddDays(-15)
                 });
                 #endregion
 

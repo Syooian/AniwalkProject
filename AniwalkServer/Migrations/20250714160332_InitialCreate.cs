@@ -82,6 +82,7 @@ namespace AniwalkServer.Migrations
                     MainText = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Latitude = table.Column<double>(type: "float", nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: false),
+                    VisitedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MemberID = table.Column<string>(type: "char(10)", nullable: false),
                     CountryCode = table.Column<string>(type: "char(3)", nullable: false),

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    [Migration("20250711131116_InitialCreate")]
+    [Migration("20250714160332_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -137,6 +137,9 @@ namespace AniwalkServer.Migrations
                     b.Property<string>("MemberID")
                         .IsRequired()
                         .HasColumnType("char(10)");
+
+                    b.Property<DateTime>("VisitedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("SN");
 

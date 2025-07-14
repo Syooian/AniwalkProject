@@ -22,7 +22,7 @@
                 @Html.DisplayNameFor(model => model.Members.FirstOrDefault().Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Visits.FirstOrDefault().CreatedDate)
+                @Html.DisplayNameFor(model => model.Visits.FirstOrDefault().VisitedDate)
             </th>
             <th></th>
         </tr>
@@ -47,7 +47,7 @@
                     @Html.DisplayFor(modelItem => item.Member.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                    @Html.DisplayFor(modelItem => item.VisitedDate)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-VisitSN="@item.SN">編輯</a> |
