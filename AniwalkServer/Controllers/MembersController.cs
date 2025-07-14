@@ -18,10 +18,15 @@ namespace AniwalkServer.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// 註冊會員
+        /// </summary>
+        /// <returns></returns>
         // GET: Members/Create
         public IActionResult Create()
         {
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryCode");
+            SetViewData();
+
             return View();
         }
 
@@ -98,6 +103,14 @@ namespace AniwalkServer.Controllers
         private bool MembersExists(string id)
         {
             return _context.Members.Any(e => e.MemberID == id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SetViewData()
+        {
+            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName");
         }
     }
 }

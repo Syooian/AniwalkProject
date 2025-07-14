@@ -18,6 +18,7 @@ namespace AniwalkServer.Models
         /// 會員名稱
         /// </summary>
         [StringLength(40)]
+        [Display(Name = "會員名稱")]
         public string Name { get; set; } = null!;
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [EmailAddress]
         [StringLength(50)]
+        [Display(Name = "電子郵件")]
         public string Email { get; set; } = null!;
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [HiddenInput]
         [ForeignKey(nameof(Country))]
+        [Display(Name = "所在國家")]
         public string CountryCode { get; set; } = null!;
         /// <summary>
         /// 國家
