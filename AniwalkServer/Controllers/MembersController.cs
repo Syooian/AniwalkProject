@@ -35,15 +35,32 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CreatedDate,CountryCode")] Members members)
+        public async Task<IActionResult> Create([Bind("Name,Email,CountryCode")] Members members)
         {
             if (ModelState.IsValid)
             {
+                //生成MemberID並檢查是否重複
+                while (true)
+                {
+                    var NewMemberID = new Random().Next(0, 999999999).ToString("D10"); // 生成隨機的10位數會員ID
+                    if (!_context.Members.Any(m => m.MemberID == NewMemberID)) // 檢查是否已存在相同的會員ID
+                    {
+                        members.MemberID = NewMemberID; // 如果不存在，則使用這個ID
+                        break;
+                    }
+                }
+
+                members.CreatedDate = DateTime.Now; // 設定創建日期為當前時間
+
                 _context.Add(members);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), "Home");
             }
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryCode", members.CountryCode);
+
+            Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+
+            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", members.CountryCode);
+
             return View(members);
         }
 
