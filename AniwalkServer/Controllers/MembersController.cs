@@ -35,7 +35,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Email,CountryCode")] Members members)
+        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members)
         {
             if (ModelState.IsValid)
             {
@@ -59,7 +59,7 @@ namespace AniwalkServer.Controllers
 
             Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
 
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", members.CountryCode);
+            SetViewData(members.CountryCode);
 
             return View(members);
         }
@@ -77,7 +77,9 @@ namespace AniwalkServer.Controllers
             {
                 return NotFound();
             }
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryCode", members.CountryCode);
+
+            SetViewData(members.CountryCode);
+
             return View(members);
         }
 
@@ -113,7 +115,7 @@ namespace AniwalkServer.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryCode", members.CountryCode);
+            
             return View(members);
         }
 
@@ -125,9 +127,10 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public void SetViewData()
+        /// <param name="CountryCode"></param>
+        public void SetViewData(string? CountryCode = null)
         {
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName");
+            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
         }
     }
 }
