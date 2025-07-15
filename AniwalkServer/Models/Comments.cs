@@ -15,6 +15,12 @@ namespace AniwalkServer.Models
         public string CommentID { get; set; } = null!;
 
         /// <summary>
+        /// 留言內容
+        /// </summary>
+        [StringLength(500)]
+        public string CommentText { get; set; } = null!;
+
+        /// <summary>
         /// 回覆日期
         /// </summary>
         [Display(Name = "回覆日期")]
