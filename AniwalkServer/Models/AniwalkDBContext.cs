@@ -26,6 +26,10 @@ namespace AniwalkServer.Models
         /// 到訪紀錄
         /// </summary>
         public virtual DbSet<Visits> Visits { get; set; }
+        /// <summary>
+        /// 留言
+        /// </summary>
+        public virtual DbSet<Comments> Comments { get; set; }
         #endregion
 
         /// <summary>
