@@ -59,7 +59,7 @@
     <!--彈出回覆留言框的按鈕 -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
         留言
-    </button> | 
+    </button> |
     <a asp-action="Edit" asp-route-VisitSN="@Model?.SN">Edit</a> |
     <a asp-action="ShowVisitsOnList">Back to List</a>
 </div>
@@ -81,7 +81,12 @@
     </div>
 </div>
 <!--留言框Modal-->
-<hr/>
+<hr />
+
+<!--所有回覆留言-->
+<div id="CommentsList">
+    @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
+</div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>
