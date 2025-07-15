@@ -56,9 +56,32 @@
     </div>
 </div>
 <div>
+    <!--彈出回覆留言框的按鈕 -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
+        留言
+    </button> | 
     <a asp-action="Edit" asp-route-VisitSN="@Model?.SN">Edit</a> |
     <a asp-action="ShowVisitsOnList">Back to List</a>
 </div>
+
+<!--留言框Modal-->
+<div class="modal fade" id="CommentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">我要留言</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @* //嵌入回覆留言表單 *@
+                <div id="ReBookForm" class="bg-light p-2 rounded">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--留言框Modal-->
+<hr/>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>
