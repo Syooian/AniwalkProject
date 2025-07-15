@@ -13,8 +13,13 @@
         @foreach (var Item in Model)
         {
             <p>@Html.DisplayFor(ModelItem => Item.CommentText)</p>
-            <p>@Html.DisplayFor(ModelItem => Item.MemberID)</p>
-            <p>@Html.DisplayFor(ModelItem => Item.CommentDate)</p>
+            <p class="text-end">
+                @Html.DisplayFor(ModelItem => Item.MemberID)：@Html.DisplayFor(ModelItem => Item.CommentDate)
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
+                    回覆
+                </button>
+            </p>
+            
             <hr />
         }
     </div>
