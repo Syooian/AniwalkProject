@@ -27,11 +27,13 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public IActionResult Create(int VisitSN, string? ParentCommentID)
         {
+            //Console.WriteLine($"Create VisitSN: {VisitSN}, ParentCommentID: {ParentCommentID}");
+
             ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID");
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID");
             ViewData["ParentCommentID"] = ParentCommentID;
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN");
-            ViewData["VisitSN"] = VisitSN;
+            ViewData["SN"] = VisitSN;
 
             return View();
         }
