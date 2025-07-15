@@ -45,6 +45,17 @@ namespace AniwalkServer.Models
         /// 會員
         /// </summary>
         public virtual Members? Member { get; set; } = null!;
+
+        /// <summary>
+        /// 到訪紀錄
+        /// </summary>
+        [HiddenInput]
+        [ForeignKey(nameof(Visit))]
+        public int SN { get; set; }
+        /// <summary>
+        /// 到訪紀錄
+        /// </summary>
+        public virtual Visits Visit { get; set; } = null!;
         #endregion
     }
 }
