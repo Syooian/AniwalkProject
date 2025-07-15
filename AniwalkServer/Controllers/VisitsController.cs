@@ -186,7 +186,12 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Details(int VisitSN)
         {
-            var Visit = await Context.Visits.FindAsync(VisitSN);
+            var Visit = await Context.Visits
+                .Include(V => V.Member)
+                .Include(V => V.Anime)
+                .Include(V => V.Country)
+                .FirstOrDefaultAsync(V=>V.SN==VisitSN);
+
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
@@ -194,7 +199,7 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            SetViewData();
+            //SetViewData();
 
             return View(Visit);
         }
@@ -207,6 +212,10 @@ namespace AniwalkServer.Controllers
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
             ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
             ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "Name");//臨時
+
+            //Console.WriteLine(ViewData["CountryCode"]);
+            //Console.WriteLine(ViewData["AnimeID"]);
+            //Console.WriteLine(ViewData["MemberID"]);
         }
 
         /// <summary>
