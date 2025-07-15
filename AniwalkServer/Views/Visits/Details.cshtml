@@ -115,7 +115,7 @@
 
             $.ajax({
                 type:"POST",
-                url:"/Comment/Create",//Controller/Action
+                url:"/Comments/Create",//Controller/Action
                     data:$('#CommentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
@@ -130,8 +130,8 @@
                     //關閉彈出框
                     Modal.hide();
                 },
-                error:function(){
-                    console.log("新增回覆留言錯誤");
+                error:function(xhr, status, error){
+                    console.error("新增回覆留言錯誤", error);
                 }
             });
         }

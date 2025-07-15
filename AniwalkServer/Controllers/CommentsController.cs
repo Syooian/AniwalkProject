@@ -28,7 +28,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public IActionResult Create(int VisitSN, string? ParentCommentID)
         {
-            //Console.WriteLine($"Create VisitSN: {VisitSN}, ParentCommentID: {ParentCommentID}");
+            Console.WriteLine($"Create VisitSN : {VisitSN}, ParentCommentID : {ParentCommentID}");
 
             ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID");
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID");
@@ -46,16 +46,29 @@ namespace AniwalkServer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CommentID,CommentText,CommentDate,ParentCommentID,MemberID,SN")] Comments comments)
         {
+            Console.WriteLine($"Create CommentID : {comments.CommentID}, CommentText : {comments.CommentText}, CommentDate : {comments.CommentDate}, ParentCommentID: {comments.ParentCommentID}, MemberID : {comments.MemberID}, SN: {comments.SN}");
+
             if (ModelState.IsValid)
             {
+                //指定當前時間為留言日期
+                comments.CommentDate = DateTime.Now;
+
                 _context.Add(comments);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return Json(comments);
             }
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
-            ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
-            ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
-            return View(comments);
+            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
+            //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
+            //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
+
+            Console.WriteLine("ModelState is not valid.");
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                //印出模型驗證錯誤的訊息
+                Console.WriteLine($"Error: {error.ErrorMessage}");
+            }
+
+            return Json(comments);
         }
 
         /// <summary>
