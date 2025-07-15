@@ -93,7 +93,7 @@
         //$('#ReBookForm').load('/ReBooks/Create?ID=@Model.SN');
 
         //2.5.13 使用Callback function重新綁定 unobtrusive validation
-        $('#CommentForm').load('/ReBooks/Create?ID=@Model.SN',function(){
+        $('#CommentForm').load('/Comments/Create?VisitSN=@Model.SN',function(){
             //Load結束之後才會呼叫此function
             //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
                 $.validator.unobtrusive.parse($('#CommentForm'));
@@ -132,6 +132,7 @@
                     console.log("AddReBook Ajax Error");
                 }
             });
+        }
     </script>
 }
 <!--留言框Script-->
