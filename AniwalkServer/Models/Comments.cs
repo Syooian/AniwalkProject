@@ -64,7 +64,7 @@ namespace AniwalkServer.Models
         /// <summary>
         /// 到訪紀錄
         /// </summary>
-        public virtual Visits Visit { get; set; } = null!;
+        public virtual Visits? Visit { get; set; }
         #endregion
     }
 }
