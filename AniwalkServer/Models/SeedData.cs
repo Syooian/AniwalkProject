@@ -75,7 +75,7 @@ namespace AniwalkServer.Models
                     MemberID = MemberIDs[0],
                     CountryCode = Countries[0].CountryCode,
                     AnimeID = Animes[0].AnimeID,
-                    VisitedDate=DateTime.Now.AddDays(-5)
+                    VisitedDate = DateTime.Now.AddDays(-5)
                 });
 
                 context.Visits.Add(new Visits()
@@ -103,11 +103,27 @@ namespace AniwalkServer.Models
 
                 context.SaveChanges();
 
-                #region
+                #region 到訪紀錄留言
+                //因為SN是自動生成的，所以要先執行上方的資料新增後才能繼續執行
+                if (context.Comments.Any())
+                {
+                    return;   // DB has been seeded
+                }
 
+                for (int a = 0; a < 5; a++)
+                {
+                    context.Comments.Add(new Comments()
+                    {
+                        CommentID = Guid.NewGuid().ToString(),
+                        CommentDate = DateTime.Now.AddMinutes(-5 * (a + 1)),
+                        MemberID = MemberIDs[0],
+                        SN = 1,
+                        CommentText = "測試留言 for 七咲鞦韆 " + (a + 1)
+                    });
+                }
                 #endregion
 
-                //context.SaveChanges();
+                context.SaveChanges();
             }
         }
     }
