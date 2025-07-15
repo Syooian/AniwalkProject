@@ -89,22 +89,24 @@
     }
 
     <script>
-        //2.5.7 在PostBooks\Display View中將RePostBooks\Create View以Ajax方式讀入
-        //$('#ReBookForm').load('/ReBooks/Create?ID=@Model.SN');
+        function LoadCommentForm(){
+            console.log("LoadCommentForm");
 
-        //2.5.13 使用Callback function重新綁定 unobtrusive validation
-        $('#CommentForm').load('/Comments/Create?VisitSN=@Model.SN',function(){
-            //Load結束之後才會呼叫此function
-            //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
-                $.validator.unobtrusive.parse($('#CommentForm'));
-        });
+            //使用Callback function重新綁定 unobtrusive validation
+            $('#CommentForm').load('/Comments/Create?VisitSN=@Model.SN',function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                    $.validator.unobtrusive.parse($('#CommentForm'));
+            });
+        }
+
+        LoadCommentForm();
 
         //抓彈出框
         const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
 
-        //2.5.15 在PostBooks\Display View中撰寫相關的JavaScript程式，以Ajax方式執行新增回覆留言
-        //此動作只能使用Ajax達成
-        function AddReBook(){
+        //使用Ajax達成新增回覆留言
+        function AddComment(){
             //2.5.17判斷表單是否驗證通過
                 if(!$('#CommentForm form').valid()){
                 //驗證失敗，不送出表單
@@ -113,23 +115,23 @@
 
             $.ajax({
                 type:"POST",
-                url:"/ReBooks/Create",//Controller/Action
+                url:"/Comment/Create",//Controller/Action
                     data:$('#CommentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    //console.log('/ReBooks/GetReBookByViewComponent?ID=@(Model.SN)');
-                    $('#ReBookList').load('/ReBooks/GetReBookByViewComponent?ID=@(Model.SN)');
+                    $('#CommentsList').load('/Comments/GetCommentsByViewComponent?VisitSN=@(Model.SN)');
 
                     //將表單重新載入（也可在送出表單後重新產生GUID）
-                        $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
-                            $.validator.unobtrusive.parse($('#CommentForm'));
-                    });
+                    // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
+                    //     $.validator.unobtrusive.parse($('#CommentForm'));
+                    // });
+                    LoadCommentForm();
 
                     //關閉彈出框
                     Modal.hide();
                 },
                 error:function(){
-                    console.log("AddReBook Ajax Error");
+                    console.log("新增回覆留言錯誤");
                 }
             });
         }

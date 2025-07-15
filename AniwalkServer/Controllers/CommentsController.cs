@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
@@ -55,6 +56,18 @@ namespace AniwalkServer.Controllers
             ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
             ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
             return View(comments);
+        }
+
+        /// <summary>
+        /// 取得回覆留言資料
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public IActionResult GetCommentsByViewComponent(int VisitSN)
+        {
+            Console.WriteLine($"GetCommentsByViewComponent VisitSN: {VisitSN}");
+
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
 
         // GET: Comments/Edit/5

@@ -11,7 +11,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <!--<label asp-for="CommentID" class="control-label"></label>-->
-                <input asp-for="CommentID" class="form-control" />
+                <input asp-for="CommentID" class="form-control" value="@Guid.NewGuid()" />
                 <span asp-validation-for="CommentID" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -37,7 +37,7 @@
                 <input asp-for="SN" class="form-control">
             </div>
             <div class="form-group">
-                <input type="submit" value="回覆" class="btn btn-primary" />
+                <input type="button" onclick="AddComment()" value="確定回覆" class="btn btn-success" />
             </div>
         </form>
     </div>
