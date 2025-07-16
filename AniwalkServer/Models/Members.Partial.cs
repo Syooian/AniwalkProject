@@ -52,6 +52,11 @@ namespace AniwalkServer.Models
         /// 到訪紀錄
         /// </summary>
         public virtual List<Visits>? Visits { get; set; } = null!;
+
+        /// <summary>
+        /// 留言
+        /// </summary>
+        public virtual List<Comments>? Comments { get; set; } = null!;
         #endregion
     }
 }
