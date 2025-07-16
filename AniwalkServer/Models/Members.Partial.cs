@@ -52,6 +52,19 @@ namespace AniwalkServer.Models
         /// 到訪紀錄
         /// </summary>
         public virtual List<Visits>? Visits { get; set; } = null!;
+
+        /// <summary>
+        /// 角色ID
+        /// </summary>
+        [HiddenInput]
+        [ForeignKey(nameof(MemberRole))]
+        [Column(TypeName = "tinyint")]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // 禁用自動生成，避免EF Core自動設為Indentity
+        public int RoleID { get; set; } = 0;
+        /// <summary>
+        /// 角色ID
+        /// </summary>
+        public virtual MemberRoles? MemberRole { get; set; } = null!;
         #endregion
     }
 }

@@ -45,7 +45,29 @@ namespace AniwalkServer.Models
                 context.Animes.AddRange(Animes);
                 #endregion
 
+                #region 會員角色資料
+                if (!context.MemberRoles.Any())//資料表無資料時才執行
+                {
+                    var MemberRoles = new MemberRoles[]
+                    {
+                        new MemberRoles() { RoleID = 0, RoleName = "訪客" },
+                        new MemberRoles() { RoleID = 1, RoleName = "一般會員" },
+                        new MemberRoles() { RoleID = 9, RoleName = "管理員" }
+                    };
+
+                    context.MemberRoles.AddRange(MemberRoles);
+
+                    context.SaveChanges();
+                }
+                #endregion
+
                 #region 會員資料
+                if (context.Members.Any())
+                {
+                    return;   // DB has been seeded
+                }
+
+                //一般會員
                 var MemberIDs = new string[2];
                 for (int a = 0; a < MemberIDs.Length; a++)
                 {
@@ -56,9 +78,20 @@ namespace AniwalkServer.Models
                         MemberID = MemberIDs[a],
                         Name = "TestMember" + MemberIDs[a],
                         Email = MemberIDs[a] + "@example.com",
-                        CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode
+                        CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode,
+                        RoleID = 1
                     });
                 }
+
+                //管理員
+                context.Members.Add(new Members()
+                {
+                    MemberID = "0999999999",
+                    Name = "かんりいん",
+                    Email = "Admin@example.com",
+                    CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode,
+                    RoleID = 9
+                });
                 #endregion
 
                 #region 到訪紀錄資料

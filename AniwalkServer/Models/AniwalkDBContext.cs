@@ -23,6 +23,10 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual DbSet<Members> Members { get; set; }
         /// <summary>
+        /// 會員角色
+        /// </summary>
+        public virtual DbSet<MemberRoles> MemberRoles { get; set; }
+        /// <summary>
         /// 到訪紀錄
         /// </summary>
         public virtual DbSet<Visits> Visits { get; set; }
@@ -61,6 +65,12 @@ namespace AniwalkServer.Models
                 Entity.Property(E => E.Email)
                     .IsUnicode(false); // Email通常不需要Unicode，使用ASCII即可.
             });
+
+            //ModelBuilder.Entity<MemberRoles>(Entity =>
+            //{
+            //    Entity.Property(E => E.RoleID)
+            //        .HasColumnType("char");
+            //});
 
             ModelBuilder.Entity<Visits>(Entity =>
             {
