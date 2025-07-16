@@ -4,6 +4,7 @@ using AniwalkServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    partial class AniwalkDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250716155217_AddMembers_Comments")]
+    partial class AddMembers_Comments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,21 +108,6 @@ namespace AniwalkServer.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("AniwalkServer.Models.MemberRoles", b =>
-                {
-                    b.Property<byte>("RoleID")
-                        .HasColumnType("tinyint");
-
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("RoleID");
-
-                    b.ToTable("MemberRoles");
-                });
-
             modelBuilder.Entity("AniwalkServer.Models.Members", b =>
                 {
                     b.Property<string>("MemberID")
@@ -144,14 +132,9 @@ namespace AniwalkServer.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<byte>("RoleID")
-                        .HasColumnType("tinyint");
-
                     b.HasKey("MemberID");
 
                     b.HasIndex("CountryCode");
-
-                    b.HasIndex("RoleID");
 
                     b.ToTable("Members");
                 });
@@ -270,15 +253,7 @@ namespace AniwalkServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AniwalkServer.Models.MemberRoles", "MemberRole")
-                        .WithMany("Members")
-                        .HasForeignKey("RoleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Country");
-
-                    b.Navigation("MemberRole");
                 });
 
             modelBuilder.Entity("AniwalkServer.Models.Visits", b =>
@@ -338,11 +313,6 @@ namespace AniwalkServer.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("Visits");
-                });
-
-            modelBuilder.Entity("AniwalkServer.Models.MemberRoles", b =>
-                {
-                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("AniwalkServer.Models.Members", b =>

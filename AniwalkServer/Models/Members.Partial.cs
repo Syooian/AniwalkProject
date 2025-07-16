@@ -54,6 +54,11 @@ namespace AniwalkServer.Models
         public virtual List<Visits>? Visits { get; set; } = null!;
 
         /// <summary>
+        /// 留言
+        /// </summary>
+        public virtual List<Comments>? Comments { get; set; } = null!;
+
+        /// <summary>
         /// 角色ID
         /// </summary>
         [HiddenInput]

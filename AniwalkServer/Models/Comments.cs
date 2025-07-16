@@ -18,12 +18,14 @@ namespace AniwalkServer.Models
         /// 留言內容
         /// </summary>
         [StringLength(500)]
+        [Display(Name = "留言內容")]
         public string CommentText { get; set; } = null!;
 
         /// <summary>
         /// 回覆日期
         /// </summary>
         [Display(Name = "回覆日期")]
+        [HiddenInput]
         public DateTime CommentDate { get; set; } = DateTime.Now;
 
         #region 外鍵關聯
@@ -35,6 +37,7 @@ namespace AniwalkServer.Models
         /// <summary>
         /// 回覆留言ID
         /// </summary>
+        [HiddenInput]
         public string? ParentCommentID { get; set; }
         /// <summary>
         /// 回覆留言
@@ -61,7 +64,7 @@ namespace AniwalkServer.Models
         /// <summary>
         /// 到訪紀錄
         /// </summary>
-        public virtual Visits Visit { get; set; } = null!;
+        public virtual Visits? Visit { get; set; }
         #endregion
     }
 }

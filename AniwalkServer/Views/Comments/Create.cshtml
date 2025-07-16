@@ -1,0 +1,51 @@
+﻿@model AniwalkServer.Models.Comments
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Create";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <!--<label asp-for="CommentID" class="control-label"></label>-->
+                <input asp-for="CommentID" class="form-control" value="@Guid.NewGuid()" />
+                <span asp-validation-for="CommentID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommentText" class="control-label"></label>
+                <input asp-for="CommentText" class="form-control" />
+                <span asp-validation-for="CommentText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <!--<label asp-for="CommentDate" class="control-label"></label>-->
+                <input asp-for="CommentDate" class="form-control" value="@DateTime.Now" />
+                <span asp-validation-for="CommentDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <!--<label asp-for="ParentCommentID" class="control-label"></label>-->
+                <input asp-for="ParentCommentID" class="form-control">
+            </div>
+            <div class="form-group">
+                <!--<label asp-for="MemberID" class="control-label"></label>-->
+                <select asp-for="MemberID" class="form-control" asp-items="ViewBag.MemberID"></select>
+                <!--<input asp-for="MemberID" class="form-control" value="@ViewBag.MemberID">-->
+            </div>
+            <div class="form-group">
+                <!--<label asp-for="SN" class="control-label"></label>-->
+                <input asp-for="SN" class="form-control" value="@ViewBag.SN">
+            </div>
+            <div class="form-group">
+                <input type="button" onclick="AddComment()" value="確定回覆" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
