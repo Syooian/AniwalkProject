@@ -84,6 +84,11 @@ namespace AniwalkServer.Models
         /// 標籤
         /// </summary>
         public virtual List<VisitsTags>? VisitsTag { get; set; }
+
+        /// <summary>
+        /// 到訪紀錄照片
+        /// </summary>
+        public virtual List<VisitsPhotos>? VisitsPhotos { get; set; } = null!;
         #endregion
     }
 }

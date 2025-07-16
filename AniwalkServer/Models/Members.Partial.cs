@@ -70,6 +70,11 @@ namespace AniwalkServer.Models
         /// 角色ID
         /// </summary>
         public virtual MemberRoles? MemberRole { get; set; } = null!;
+
+        /// <summary>
+        /// 到訪紀錄照片
+        /// </summary>
+        public virtual List<VisitsPhotos>? VisitsPhotos { get; set; } = null!;
         #endregion
     }
 }
