@@ -16,6 +16,7 @@ namespace AniwalkServer.Models
         [HiddenInput]
         [StringLength(36, MinimumLength = 36)]
         [Column(TypeName = "char(36)")]
+        [Key]
         public string PhotoID { get; set; } = null!;
         /// <summary>
         /// 說明
