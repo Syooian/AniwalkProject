@@ -1,8 +1,18 @@
 ﻿@model AniwalkServer.Models.Visits
 
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "詳細檢視";
+
+    var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<h1>
+    @ViewData["Title"]
+</h1>
+
+<hr />
 <div>
-    <h4>Visits</h4>
-    <hr />
     <div class="d-flex justify-content-between align-items-start">
         <dl class="row col-5">
             <dt class="col-sm-3">
@@ -56,12 +66,27 @@
     </div>
 </div>
 <div>
-    <!--彈出回覆留言框的按鈕 -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
-        留言
-    </button> |
-    <a asp-action="Edit" asp-route-VisitSN="@Model?.SN">Edit</a> |
-    <a asp-action="ShowVisitsOnList">Back to List</a>
+    @if (User.IsInRole(RoleEnum.Member.ToString()))
+    {
+        <!--彈出回覆留言框的按鈕 -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
+            留言
+        </button>
+        <a>|</a>
+    }
+    @if (MemberID == Model.MemberID)
+    {
+        <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary">編輯</a>
+        <a>|</a>
+        <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
+        <a>|</a>
+    }
+    else if(User.IsInRole(RoleEnum.Admin.ToString()))
+    {
+        <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
+        <a>|</a>
+    }
+    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
 </div>
 
 <!--留言框Modal-->
@@ -151,7 +176,7 @@
 
     function InitMap(){
         console.log("Initing GoogleMap");
-        
+
         // 設定地圖中心點
         const center = { lat: @Model.Latitude, lng: @Model.Longitude };
 
