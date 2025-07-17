@@ -49,12 +49,12 @@ namespace AniwalkServer.Controllers
             if (User != null)
             {
                 var Member = await Context.Members.FirstOrDefaultAsync(M => M.MemberID == User.MemberID);
-                var MemberRole = await Context.MemberRoles.FirstOrDefaultAsync(MR => MR.RoleID == Member.RoleID);
+                //var MemberRole = await Context.MemberRoles.FirstOrDefaultAsync(MR => MR.RoleID == Member.RoleID);
 
                 var Claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, Member.Name),
-                    new Claim(ClaimTypes.Role, MemberRole.RoleName)
+                    new Claim(ClaimTypes.Role, ((RoleEnum)Member.RoleID).ToString())
                 };
 
                 var ClaimsIdentity = new ClaimsIdentity(Claims, AuthenticationScheme);

@@ -31,7 +31,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Visits" asp-action="ShowVisitsOnList">清單檢視</a>
                         </li>
                     </ul>
-                    <a class="nav-link text-light text-end btn btn-primary" asp-area="" asp-controller="Login" asp-action="Login">登出</a>
+                    <ul class="navbar-nav text-end">
+                        <li class="nav-item">
+                            <p>歡迎管理員，@User.Identity.Name</p>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light btn btn-primary" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
