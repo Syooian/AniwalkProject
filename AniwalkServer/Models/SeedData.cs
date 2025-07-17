@@ -156,6 +156,9 @@ namespace AniwalkServer.Models
                 }
                 #endregion
 
+                // 開啟 IDENTITY_INSERT (自行填入ID)
+                //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT VisitsTags ON");
+
                 context.SaveChanges();
             }
         }

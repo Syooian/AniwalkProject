@@ -56,8 +56,6 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public async Task<IActionResult> ShowVisitsOnList()
         {
-            SetGoogleMapsApiKey();
-
             var VM = new VM_Visits
             {
                 //Where : 帶入條件
@@ -200,6 +198,8 @@ namespace AniwalkServer.Controllers
 
                 return NotFound();
             }
+
+            SetGoogleMapsApiKey();
 
             //SetViewData();
 
