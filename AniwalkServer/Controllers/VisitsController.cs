@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
-    [AllowAnonymous]
     public class VisitsController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -25,6 +24,7 @@ namespace AniwalkServer.Controllers
         /// 從地圖瀏覽到訪紀錄
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         public async Task<IActionResult> ShowVisitsOnMap()
         {
             SetGoogleMapsApiKey();
@@ -54,6 +54,7 @@ namespace AniwalkServer.Controllers
         /// 從清單瀏覽到訪紀錄
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]//允許所有人檢視
         public async Task<IActionResult> ShowVisitsOnList()
         {
             var VM = new VM_Visits
@@ -78,6 +79,7 @@ namespace AniwalkServer.Controllers
         /// 創建新的到訪記錄
         /// </summary>
         /// <returns></returns>
+        [Authorize(Roles = MembersController.Role_Member)]
         public IActionResult Create()
         {
             SetGoogleMapsApiKey();
@@ -93,6 +95,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = MembersController.Role_Member)]
         public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate")] Visits Visit)
         {
             if (ModelState.IsValid)
@@ -114,6 +117,7 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <returns></returns>
+        [Authorize(Roles = MembersController.Role_Member)]
         public async Task<IActionResult> Edit(int VisitSN)
         {
             //Console.WriteLine($"Edit VisitSN : {VisitSN}");
@@ -190,7 +194,7 @@ namespace AniwalkServer.Controllers
                 .Include(V => V.Member)
                 .Include(V => V.Anime)
                 .Include(V => V.Country)
-                .FirstOrDefaultAsync(V=>V.SN==VisitSN);
+                .FirstOrDefaultAsync(V => V.SN == VisitSN);
 
             if (Visit == null)
             {

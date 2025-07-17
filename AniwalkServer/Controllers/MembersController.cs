@@ -21,6 +21,15 @@ namespace AniwalkServer.Controllers
         }
 
         /// <summary>
+        /// 一般會員角色名稱
+        /// </summary>
+        public const string Role_Member = "Member";
+        /// <summary>
+        /// 管理員角色名稱
+        /// </summary>
+        public const string Role_Admin = "Admin";
+
+        /// <summary>
         /// 註冊會員
         /// </summary>
         /// <returns></returns>
