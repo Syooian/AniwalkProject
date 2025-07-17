@@ -175,6 +175,54 @@ namespace AniwalkServer.Models
                 }
                 #endregion
 
+                #region 到訪照片
+                if (!context.VisitsPhotos.Any())
+                {
+                    var VPs = new VisitsPhotos[8];
+
+                    for (int a = 1; a <= 4; a++)
+                    {
+                        VPs[a - 1] = new VisitsPhotos()
+                        {
+                            MemberID = MemberIDs[0],
+                            PhotoID = Guid.NewGuid().ToString(),
+                            Description = "七咲鞦韆 Photo " + a,
+                            SN = 1
+                        };
+
+                        VPs[a + 3] = new VisitsPhotos()
+                        {
+                            MemberID = MemberIDs[0],
+                            PhotoID = Guid.NewGuid().ToString(),
+                            Description = "怪獸襲來 Photo " + a,
+                            SN = 2
+                        };
+                    }
+
+                    context.VisitsPhotos.AddRange(VPs);
+
+                    context.SaveChanges();
+
+                    #region 照片轉存
+                    string SeedPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedPhotos", "Visits");//取得來源照片路徑
+                    string VisitsPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos");//目的路徑
+                    string[] Files = Directory.GetFiles(SeedPhotosPath);  //取得指定路徑中的所有檔案
+
+                    if (!Directory.Exists(VisitsPhotosPath))
+                    {
+                        Directory.CreateDirectory(VisitsPhotosPath); //如果目的路徑不存在，則建立
+                    }
+
+                    for (int a = 0; a < VPs.Length; a++)
+                    {
+                        string ToFile = Path.Combine(VisitsPhotosPath, VPs[a].PhotoID + ".jpg");
+
+                        File.Copy(Files[a], ToFile);
+                    }
+                    #endregion
+                }
+                #endregion
+
                 // 開啟 IDENTITY_INSERT (自行填入ID)
                 //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT VisitsTags ON");
 
