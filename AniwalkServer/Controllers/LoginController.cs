@@ -54,7 +54,8 @@ namespace AniwalkServer.Controllers
                 var Claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, Member.Name),
-                    new Claim(ClaimTypes.Role, ((RoleEnum)Member.RoleID).ToString())
+                    new Claim(ClaimTypes.Role, ((RoleEnum)Member.RoleID).ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, Member.MemberID)
                 };
 
                 var ClaimsIdentity = new ClaimsIdentity(Claims, AuthenticationScheme);
