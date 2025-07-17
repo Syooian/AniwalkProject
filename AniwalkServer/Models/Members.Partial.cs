@@ -75,6 +75,11 @@ namespace AniwalkServer.Models
         /// 到訪紀錄照片
         /// </summary>
         public virtual List<VisitsPhotos>? VisitsPhotos { get; set; } = null!;
+
+        /// <summary>
+        /// 帳密
+        /// </summary>
+        public virtual Login? Login { get; set; } = null!;
         #endregion
     }
 }

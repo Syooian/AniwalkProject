@@ -23,6 +23,10 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual DbSet<Members> Members { get; set; }
         /// <summary>
+        /// 登入
+        /// </summary>
+        public virtual DbSet<Login> Login { get; set; }
+        /// <summary>
         /// 會員角色
         /// </summary>
         public virtual DbSet<MemberRoles> MemberRoles { get; set; }
@@ -99,6 +103,12 @@ namespace AniwalkServer.Models
                     .WithMany(E => E.Visits)
                     .HasForeignKey(E => E.AnimeID)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            ModelBuilder.Entity<Login>(Entity =>
+            {
+                Entity.Property(E => E.Account).IsUnicode(false);
+                Entity.Property(E => E.Password).IsUnicode(false);
             });
         }
     }
