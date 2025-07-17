@@ -83,14 +83,33 @@ namespace AniwalkServer.Models
                     });
                 }
 
+                //一般會員帳密 (僅一個)
+                {
+                    context.Login.Add(new Login()
+                    {
+                        MemberID = MemberIDs[0],
+                        Account = "12345678",
+                        Password = "12345678"
+                    });
+                }
+
                 //管理員
+                var AdminMemberID = "0999999999";
                 context.Members.Add(new Members()
                 {
-                    MemberID = "0999999999",
+                    MemberID = AdminMemberID,
                     Name = "かんりいん",
                     Email = "Admin@example.com",
                     CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode,
                     RoleID = 9
+                });
+
+                //管理員帳密
+                context.Login.Add(new Login()
+                {
+                    MemberID = AdminMemberID,
+                    Account = "Admin",
+                    Password = "Admin"
                 });
                 #endregion
 
