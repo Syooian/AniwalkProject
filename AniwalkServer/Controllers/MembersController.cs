@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AniwalkServer.Controllers
 {
+    [Authorize]
     public class MembersController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -118,7 +120,7 @@ namespace AniwalkServer.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            
+
             return View(members);
         }
 
@@ -135,5 +137,24 @@ namespace AniwalkServer.Controllers
         {
             ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
         }
+    }
+}
+
+namespace AniwalkServer
+{
+    public enum RoleEnum
+    {
+        /// <summary>
+        /// 訪客
+        /// </summary>
+        Guest = 0,
+        /// <summary>
+        /// 一般會員
+        /// </summary>
+        Member = 1,
+        /// <summary>
+        /// 管理員
+        /// </summary>
+        Admin = 9
     }
 }
