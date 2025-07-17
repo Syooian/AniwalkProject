@@ -83,7 +83,7 @@ namespace AniwalkServer.Models
         /// <summary>
         /// 標籤
         /// </summary>
-        public virtual List<VisitsTags>? VisitsTag { get; set; }
+        public virtual List<VisitsDetails>? VisitDetail { get; set; }
 
         /// <summary>
         /// 到訪紀錄照片

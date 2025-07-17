@@ -22,9 +22,9 @@ namespace AniwalkServer.Models
 
         #region 外鍵關聯
         /// <summary>
-        /// 
+        /// 標籤
         /// </summary>
-        public virtual List<Visits>? Visits { get; set; } = null!;
+        public virtual List<VisitsDetails>? VisitDetail { get; set; } = null!;
         #endregion
     }
 }

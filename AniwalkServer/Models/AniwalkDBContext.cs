@@ -35,6 +35,10 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual DbSet<Visits> Visits { get; set; }
         /// <summary>
+        /// 到訪紀錄明細
+        /// </summary>
+        public virtual DbSet<VisitsDetails> VisitsDetails { get; set; }
+        /// <summary>
         /// 到訪紀錄照片
         /// </summary>
         public virtual DbSet<VisitsPhotos> VisitsPhotos { get; set; }
