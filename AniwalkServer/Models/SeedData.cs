@@ -193,9 +193,9 @@ namespace AniwalkServer.Models
                     }
                     #endregion
 
-                    var VPs = new VisitsPhotos[9];
+                    var VPs = new VisitsPhotos[16];
 
-                    for (int a = 1; a <= 5; a++)
+                    for (int a = 1; a <= 12; a++)
                     {
                         VPs[a - 1] = new VisitsPhotos()
                         {
