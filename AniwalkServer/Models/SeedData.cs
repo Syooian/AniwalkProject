@@ -178,9 +178,9 @@ namespace AniwalkServer.Models
                 #region 到訪照片
                 if (!context.VisitsPhotos.Any())
                 {
-                    var VPs = new VisitsPhotos[8];
+                    var VPs = new VisitsPhotos[9];
 
-                    for (int a = 1; a <= 4; a++)
+                    for (int a = 1; a <= 5; a++)
                     {
                         VPs[a - 1] = new VisitsPhotos()
                         {
