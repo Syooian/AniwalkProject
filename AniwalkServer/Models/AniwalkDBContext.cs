@@ -19,6 +19,10 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual DbSet<Animes> Animes { get; set; }
         /// <summary>
+        /// 新增動畫建議
+        /// </summary>
+        public virtual DbSet<AddNewAnime> AddNewAnimes { get; set; }
+        /// <summary>
         /// 會員
         /// </summary>
         public virtual DbSet<Members> Members { get; set; }
@@ -113,6 +117,15 @@ namespace AniwalkServer.Models
             {
                 Entity.Property(E => E.Account).IsUnicode(false);
                 Entity.Property(E => E.Password).IsUnicode(false);
+            });
+
+            ModelBuilder.Entity<AddNewAnime>(Entity =>
+            {
+                Entity.Property(E => E.AddDate)
+                .HasDefaultValueSql("getdate()"); // 設定預設值為當前時間
+
+                Entity.Property(E => E.Status)
+                .HasDefaultValue(AddNewAnimeStatusEnum.NotYetProcessed);
             });
         }
     }

@@ -13,6 +13,20 @@ namespace AniwalkServer.Models
             using (var context = new AniwalkDBContext(
                 ServiceProvider.GetRequiredService<DbContextOptions<AniwalkDBContext>>()))
             {
+                #region 新增動畫建議
+                if (!context.AddNewAnimes.Any())
+                {
+                    context.AddNewAnimes.AddRange(
+                        new AddNewAnime[]
+                        {
+                            new AddNewAnime() { AnimeTitle = "新動畫建議1", AddDate=DateTime.Now},
+                            new AddNewAnime() { AnimeTitle = "新動畫建議2", AddDate=DateTime.Now.AddMonths(-1),Status=AddNewAnimeStatusEnum.InProgress},
+                            new AddNewAnime() { AnimeTitle = "新動畫建議3", AddDate=DateTime.Now.AddMonths(-2),Status=AddNewAnimeStatusEnum.AgreeToAdd, CloseDate=DateTime.Now.AddDays(-1) },
+                            new AddNewAnime() { AnimeTitle = "新動畫建議4", AddDate=DateTime.Now.AddMonths(-3),Status=AddNewAnimeStatusEnum.Disagree, CloseDate=DateTime.Now.AddDays(-2), Note="已有該動畫" }
+                        });
+                }
+                #endregion
+
                 #region 國家資料
                 if (context.Countries.Any())
                 {
