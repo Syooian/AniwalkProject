@@ -8,6 +8,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AniwalkContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
+builder.Services.AddDbContext<AniwalkContext_Extend>(Options =>
+    Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
 
 var app = builder.Build();
 
