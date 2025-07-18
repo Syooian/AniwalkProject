@@ -98,15 +98,15 @@
 @if (Model.VisitsPhotos.Count > 0)
 {
     <hr />
-    <div class="card-group">
+    <div class="row justify-content-center">
         @foreach (var Photo in Model.VisitsPhotos)
         {
-            <div class="card" style="max-width: 18rem;">
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
                 <img class="card-img-top" src="/VisitsPhotos/@($"{Photo.PhotoID}.jpg")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <p class="card-text">@Photo.Description</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <a href="#" class="btn btn-primary">檢視大圖</a>
                 </div>
             </div>
         }
