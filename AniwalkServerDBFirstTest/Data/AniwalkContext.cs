@@ -24,6 +24,10 @@ public partial class AniwalkContext : DbContext
 
     public virtual DbSet<Members> Members { get; set; }
 
+    public virtual DbSet<VM_Visits> VM_Visits { get; set; }
+
+    public virtual DbSet<View_Visits> View_Visits { get; set; }
+
     public virtual DbSet<Visits> Visits { get; set; }
 
     public virtual DbSet<VisitsPhotos> VisitsPhotos { get; set; }
@@ -60,6 +64,32 @@ public partial class AniwalkContext : DbContext
         {
             entity.Property(e => e.MemberID).IsFixedLength();
             entity.Property(e => e.CountryCode).IsFixedLength();
+        });
+
+        modelBuilder.Entity<VM_Visits>(entity =>
+        {
+            entity.ToView("VM_Visits");
+
+            entity.Property(e => e.AnimeID).IsFixedLength();
+            entity.Property(e => e.CountryCode).IsFixedLength();
+            entity.Property(e => e.Expr1).IsFixedLength();
+            entity.Property(e => e.Expr2).IsFixedLength();
+            entity.Property(e => e.Expr3).IsFixedLength();
+            entity.Property(e => e.Expr4).IsFixedLength();
+            entity.Property(e => e.MemberID).IsFixedLength();
+        });
+
+        modelBuilder.Entity<View_Visits>(entity =>
+        {
+            entity.ToView("View_Visits");
+
+            entity.Property(e => e.AnimeID).IsFixedLength();
+            entity.Property(e => e.CountryCode).IsFixedLength();
+            entity.Property(e => e.Expr1).IsFixedLength();
+            entity.Property(e => e.Expr2).IsFixedLength();
+            entity.Property(e => e.Expr3).IsFixedLength();
+            entity.Property(e => e.Expr4).IsFixedLength();
+            entity.Property(e => e.MemberID).IsFixedLength();
         });
 
         modelBuilder.Entity<Visits>(entity =>
