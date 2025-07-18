@@ -194,6 +194,7 @@ namespace AniwalkServer.Controllers
                 .Include(V => V.Member)
                 .Include(V => V.Anime)
                 .Include(V => V.Country)
+                .Include(V => V.VisitsPhotos)
                 .FirstOrDefaultAsync(V => V.SN == VisitSN);
 
             if (Visit == null)

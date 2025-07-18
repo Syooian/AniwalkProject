@@ -81,13 +81,29 @@
         <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
         <a>|</a>
     }
-    else if(User.IsInRole(RoleEnum.Admin.ToString()))
+    else if (User.IsInRole(RoleEnum.Admin.ToString()))
     {
         <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
         <a>|</a>
     }
     <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
 </div>
+
+@if (Model.VisitsPhotos.Count > 0)
+{
+    <hr />
+    foreach (var Photo in Model.VisitsPhotos)
+    {
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="/VisitsPhotos/@($"{Photo.PhotoID}.jpg")" alt="Card image cap">
+            <div class="card-body">
+                <!--h5 class="card-title">Card title</h5>-->
+                <p class="card-text">@Photo.Description</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    }
+}
 
 <!--留言框Modal-->
 <div class="modal fade" id="CommentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
