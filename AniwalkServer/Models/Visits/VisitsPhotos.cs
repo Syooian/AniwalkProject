@@ -23,6 +23,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [Display(Name = "說明", Description = "照片的說明")]
         [StringLength(500)]
+        [DataType(DataType.MultilineText)]//標註多行文字
         public string Description { get; set; } = null!;
 
         #region 外鍵關聯
