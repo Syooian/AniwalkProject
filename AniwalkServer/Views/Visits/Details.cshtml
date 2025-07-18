@@ -69,24 +69,30 @@
     @if (User.IsInRole(RoleEnum.Member.ToString()))
     {
         <!--彈出回覆留言框的按鈕 -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
             留言
         </button>
         <a>|</a>
     }
     @if (MemberID == Model.MemberID)
     {
-        <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary">編輯</a>
+        <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
         <a>|</a>
-        <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
+        <form asp-action="Delete">
+            <input type="hidden" value="@Model?.SN" name="VisitSN" />
+            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+        </form>
         <a>|</a>
     }
     else if (User.IsInRole(RoleEnum.Admin.ToString()))
     {
-        <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
+        <form asp-action="Delete">
+            <input type="hidden" value="@Model?.SN" name="VisitSN" />
+            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+        </form>
         <a>|</a>
     }
-    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
+    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary btn-sm">返回列表</a>
 </div>
 
 @if (Model.VisitsPhotos.Count > 0)

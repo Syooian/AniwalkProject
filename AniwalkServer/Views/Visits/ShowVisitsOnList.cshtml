@@ -58,18 +58,24 @@
                     @Html.DisplayFor(modelItem => item.VisitedDate)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info">詳細檢視</a>
+                    <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
                     @if (MemberID == item.MemberID)
                     {
                         <a>|</a>
-                        <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary">編輯</a>
+                        <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
                         <a>|</a>
-                        <a asp-action="Delete" asp-route-VisitSN="@item.SN" class="btn btn-danger">Delete</a>
+                        <form asp-action="Delete">
+                            <input type="hidden" value="@item.SN" name="VisitSN" />
+                            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                        </form>
                     }
                     else if (User.IsInRole(RoleEnum.Admin.ToString()))
                     {
                         <a>|</a>
-                        <a asp-action="Delete" asp-route-VisitSN="@item.SN" class="btn btn-danger">Delete</a>
+                        <form asp-action="Delete">
+                            <input type="hidden" value="@item.SN" name="VisitSN" />
+                            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                        </form>
                     }
                 </td>
             </tr>
