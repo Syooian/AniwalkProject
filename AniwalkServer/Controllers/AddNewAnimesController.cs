@@ -110,7 +110,16 @@ namespace AniwalkServer.Controllers
             {
                 try
                 {
+                    switch (addNewAnime.Status)
+                    {
+                        case AddNewAnimeStatusEnum.AgreeToAdd:
+                        case AddNewAnimeStatusEnum.Disagree:
+                            addNewAnime.CloseDate = DateTime.Now;
+                            break;
+                    }
+
                     _context.Update(addNewAnime);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
