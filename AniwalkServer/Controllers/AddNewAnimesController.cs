@@ -31,30 +31,6 @@ namespace AniwalkServer.Controllers
             return View(await _context.AddNewAnimes.ToListAsync());
         }
 
-        // GET: AddNewAnimes/Details/5
-        /// <summary>
-        /// 檢視新增動畫建議
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [Authorize(Roles = Shared.Role_Admin)]
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var addNewAnime = await _context.AddNewAnimes
-                .FirstOrDefaultAsync(m => m.SN == id);
-            if (addNewAnime == null)
-            {
-                return NotFound();
-            }
-
-            return View(addNewAnime);
-        }
-
         // GET: AddNewAnimes/Create
         /// <summary>
         /// 建立新的新增動畫建議
@@ -102,6 +78,12 @@ namespace AniwalkServer.Controllers
             {
                 return NotFound();
             }
+
+            //// 將 Enum 轉換為 SelectList
+            //ViewData["Status"] = new SelectList(Enum.GetValues(typeof(AddNewAnimeStatusEnum))
+            //    .Cast<AddNewAnimeStatusEnum>()
+            //    .Select(e => new { Value = (int)e, Text =addNewAnime.GetStatusDisplayName( e.get .ToString() }), "Value", "Text");
+
             return View(addNewAnime);
         }
 

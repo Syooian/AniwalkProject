@@ -1,12 +1,11 @@
 ﻿@model AniwalkServer.Models.AddNewAnime
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "編輯新增動畫建議";
 }
 
-<h1>Edit</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>AddNewAnime</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -20,17 +19,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="AddDate" class="control-label"></label>
-                <input asp-for="AddDate" class="form-control" />
+                <input asp-for="AddDate" class="form-control" readonly />
                 <span asp-validation-for="AddDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
+                @*<select asp-for="Status" class="form-control" asp-items="@(ViewData["Status"] as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)"></select>*@
+                <select asp-for="Status" class="form-control" asp-items=@(Html.GetEnumSelectList<AddNewAnimeStatusEnum>())></select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CloseDate" class="control-label"></label>
-                <input asp-for="CloseDate" class="form-control" />
+                <input asp-for="CloseDate" class="form-control" readonly />
                 <span asp-validation-for="CloseDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -39,16 +39,18 @@
                 <span asp-validation-for="Note" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="確認修改" class="btn btn-warning" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-primary">返回清單</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
