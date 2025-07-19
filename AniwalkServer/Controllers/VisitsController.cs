@@ -79,7 +79,7 @@ namespace AniwalkServer.Controllers
         /// 創建新的到訪記錄
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = MembersController.Role_Member)]
+        [Authorize(Roles = Shared.Role_Member)]
         public IActionResult Create()
         {
             SetGoogleMapsApiKey();
@@ -95,7 +95,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = MembersController.Role_Member)]
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate")] Visits Visit)
         {
             if (ModelState.IsValid)
@@ -117,7 +117,7 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <returns></returns>
-        [Authorize(Roles = MembersController.Role_Member)]
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Edit(int VisitSN)
         {
             //Console.WriteLine($"Edit VisitSN : {VisitSN}");

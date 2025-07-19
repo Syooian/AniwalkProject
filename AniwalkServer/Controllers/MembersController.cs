@@ -21,15 +21,6 @@ namespace AniwalkServer.Controllers
         }
 
         /// <summary>
-        /// 一般會員角色名稱
-        /// </summary>
-        public const string Role_Member = "Member";
-        /// <summary>
-        /// 管理員角色名稱
-        /// </summary>
-        public const string Role_Admin = "Admin";
-
-        /// <summary>
         /// 註冊會員
         /// </summary>
         /// <returns></returns>
@@ -146,24 +137,5 @@ namespace AniwalkServer.Controllers
         {
             ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
         }
-    }
-}
-
-namespace AniwalkServer
-{
-    public enum RoleEnum
-    {
-        /// <summary>
-        /// 訪客
-        /// </summary>
-        Guest = 0,
-        /// <summary>
-        /// 一般會員
-        /// </summary>
-        Member = 1,
-        /// <summary>
-        /// 管理員
-        /// </summary>
-        Admin = 9
     }
 }
