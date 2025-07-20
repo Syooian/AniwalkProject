@@ -1,0 +1,27 @@
+﻿@*給地圖檢視中點下地圖標記後彈出的簡易版到訪紀錄*@
+
+@model IEnumerable<Visits>
+@{
+    Layout = null;
+
+    bool IsFirst = true;
+}
+
+@{
+    //Console.WriteLine($"Rendering Comments View Component {Model.Count()}");
+}
+
+@*使用Bootstrap的Carousel*@
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+
+        @foreach (var Item in Model.FirstOrDefault().VisitsPhotos)
+        {
+            <div class="carousel-item @(IsFirst ? "active" : "")">
+                <img class="d-block w-100" src="..." alt="@Item.Description">
+            </div>
+
+            IsFirst = false;
+        }
+    </div>
+</div>

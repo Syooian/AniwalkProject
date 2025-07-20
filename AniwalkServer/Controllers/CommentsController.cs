@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Shared.Role_Member)]
     public class CommentsController : Controller
     {
         private readonly AniwalkDBContext _context;
