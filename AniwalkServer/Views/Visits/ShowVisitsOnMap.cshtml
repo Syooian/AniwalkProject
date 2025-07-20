@@ -30,17 +30,18 @@
         //先將Model的東西轉到JS (C#和JS物件無法互相放置)
         var Markers=[];
 
-        @foreach(var Visit in Model)
+        //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
+        @foreach (var Visit in Model)
         {
-            <text>Markers.push({
-                lat:@Visit.Latitude,
-                lng:@Visit.Longitude,
-                Title:"@Visit.MainText"
-            });</text>
+                <text>Markers.push({
+                    lat:@Visit.Latitude,
+                    lng:@Visit.Longitude,
+                    Title:"@Visit.MainText"
+                });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
-        for(let i = 0; i < Markers.length; i++) 
+        for(let i = 0; i < Markers.length; i++)
         {
               const Marker=new google.maps.marker.AdvancedMarkerElement({
                 position: {
@@ -52,7 +53,15 @@
             });
 
             Marker.addListener('click',()=>{
-                alert(`Marker clicked: ${Markers[i].Title}`);
+                //alert(`Marker clicked: ${Markers[i].Title}`);
+
+                 // 設定模態框的內容
+                //document.querySelector('#SimpleDetailModalCenter').innerText = "Modal Test 1";
+                //document.querySelector('.modal-body').innerText = "Modal Test 2";
+
+                // 顯示模態框
+                const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
+                modal.show();
             });
         }
 
@@ -93,3 +102,24 @@
   https://developers.google.com/maps/documentation/javascript/load-maps-js-api
   for more information.
   -->
+<!--Modal (Vertically centered)-->
+<div class="modal fade" id="SimpleDetailModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="CommentForm" class="bg-light p-2 rounded">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal (Vertically centered)-->
