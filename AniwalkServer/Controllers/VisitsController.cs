@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -254,7 +253,8 @@ namespace AniwalkServer.Controllers
         {
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
             ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
-            ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "Name");//臨時
+            ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
+                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
             //Console.WriteLine(ViewData["CountryCode"]);
             //Console.WriteLine(ViewData["AnimeID"]);
