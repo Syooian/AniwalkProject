@@ -109,7 +109,7 @@
         function LoadSimpleDetail(VisitSN){
             console.log("LoadSimpleDetail");
 
-            $('#SimpleDetail').load('/Comments/Create?VisitSN=${VisitSN}',function(){
+            $('#SimpleDetail').load('/Comments/Create?VisitSN=$'{VisitSN}'',function(){
                 //Load結束之後才會呼叫此function
                 //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
                     $.validator.unobtrusive.parse($('#SimpleDetail'));
