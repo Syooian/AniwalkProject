@@ -61,11 +61,20 @@
                 //document.querySelector('#SimpleDetailModalCenter').innerText = "Modal Test 1";
                 //document.querySelector('.modal-body').innerText = "Modal Test 2";
 
-                LoadSimpleDetail(Marker.VisitSN);
+                 console.log(`Marker clicked: ${Markers[i].VisitSN}`);
+                // console.log(`Marker clicked: ${Markers.VisitSN}`);
+                // console.log(`Marker clicked: ${Marker.VisitSN}`);
+                //LoadSimpleDetail(Markers[i].VisitSN);
+
+                $('#SimpleDetail').load(`/Visits/Details?VisitSN=${Markers[i].VisitSN}`,function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                    $.validator.unobtrusive.parse($('#LoadSimpleDetail'));
+                });
 
                 // 顯示模態框
-                // const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
-                // modal.show();
+                const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
+                modal.show();
             });
         }
 
@@ -105,9 +114,13 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script>
-        function LoadSimpleDetail(VisitSN){
+@*     <script>
+        function LoadSimpleDetail(){
             console.log("LoadSimpleDetail");
+        }
+
+        function LoadSimpleDetail(VisitSN){
+            console.log("LoadSimpleDetail A VisitSN : "+ VisitSN);
 
             $('#SimpleDetail').load('/Comments/Create?VisitSN=$'{VisitSN}'',function(){
                 //Load結束之後才會呼叫此function
@@ -115,7 +128,7 @@
                     $.validator.unobtrusive.parse($('#SimpleDetail'));
             });
         }
-    </script>
+    </script> *@
 }
 
 <!--
@@ -137,7 +150,8 @@
             </div>
             <div class="modal-body">
                 @*顯示物件*@
-                <div id="SimpleDetail" class="bg-light p-2 rounded">
+                <div id="LoadSimpleDetail">
+                    @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 })
                 </div>
             </div>
             <div class="modal-footer">
@@ -149,5 +163,5 @@
 <!--Modal (Vertically centered)-->
 
 @* <div id="LoadSimpleDetail">
-    @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = Model.SN })
+    @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 })
 </div> *@

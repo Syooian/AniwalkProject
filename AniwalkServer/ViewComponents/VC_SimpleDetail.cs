@@ -26,7 +26,7 @@ namespace AniwalkServer.ViewComponents
         /// <returns></returns>
         public async Task<IViewComponentResult> InvokeAsync(int VisitSN)
         {
-            //Console.WriteLine($"Invoke VC_Comment with VisitSN: {VisitSN}, IsChange: {IsChange}");
+            Console.WriteLine($"Invoke VC_SimpleDetail with VisitSN : {VisitSN}");
 
             var Visit = await Context.Visits
                 .Include(V => V.Member)

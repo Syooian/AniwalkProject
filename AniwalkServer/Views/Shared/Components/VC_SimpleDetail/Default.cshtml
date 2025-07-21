@@ -1,6 +1,6 @@
 ﻿@*給地圖檢視中點下地圖標記後彈出的簡易版到訪紀錄*@
 
-@model IEnumerable<Visits>
+@model Visits
 @{
     Layout = null;
 
@@ -14,11 +14,11 @@
 @*使用Bootstrap的Carousel*@
 <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
     <div class="carousel-inner">
-
-        @foreach (var Item in Model.FirstOrDefault().VisitsPhotos)
+        
+        @foreach (var Item in Model.VisitsPhotos)
         {
             <div class="carousel-item @(IsFirst ? "active" : "")">
-                <img class="d-block w-100" src="..." alt="@Item.Description">
+                <img class="d-block w-100" src="/VisitsPhotos/@(Item.PhotoID).jpg" alt="@Item.Description">
             </div>
 
             IsFirst = false;
