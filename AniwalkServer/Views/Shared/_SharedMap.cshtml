@@ -1,0 +1,71 @@
+﻿@model dynamic
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+
+<div id="Gmap"
+     style="width:500px; height:500px"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
+<script>
+    var Marker;
+
+    function InitMap(){
+        console.log("Initing GoogleMap");
+
+        var Lat = @(Model.GetType().GetProperty("Latitude") != null ? Model.Latitude : "null");//直接寫null可能會生成不正確的 JavaScript，確保 Razor 語法生成的 JavaScript 是有效的。可以將 null 替換為字符串 "null"，以避免語法錯誤
+        var Lng = @(Model.GetType().GetProperty("Longitude") != null ? Model.Longitude : "null");
+
+        //在 JavaScript 中，True 被解釋為一個變量，而不是布爾值 true。這是因為 Razor 在渲染布爾值時，會將 C# 的 true 和 false 渲染為 True 和 False（首字母大寫），這在 JavaScript 中是無效的。
+        var EnableClick = @(Model.EnableClick.ToString().ToLower());//確保 EnableClick 被正確渲染為 JavaScript 的布爾值 true 或 false。
+        
+        // 如果有傳入座標，則使用它們，否則使用預設座標
+        if (Lat && Lng) {
+            console.log("Using provided coordinates:", Lat, Lng);
+        } else {
+            console.log("Using default coordinates");
+            Lat = 22.593469753520136; // 預設緯度
+            Lng = 120.3088710110155; // 預設經度
+        }
+
+        // 設定地圖中心點
+        //const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
+
+         // 建立地圖
+        const map = new google.maps.Map(document.getElementById("Gmap"), {
+            center: { lat: Lat, lng: Lng },
+            zoom: 10,
+            mapId: "DEMO_MAP_ID"
+        });
+
+        // 監聽地圖的點擊事件
+        if(EnableClick)
+        {
+            map.addListener("click", (Event) => {
+                const Lat = Event.latLng.lat();
+                const Lng = Event.latLng.lng();
+
+                // 將座標填入表單欄位
+                document.querySelector("input[name='Latitude']").value = Lat;
+                document.querySelector("input[name='Longitude']").value = Lng;
+
+                //移除地圖上舊有Marker
+                if (Marker) {
+                    Marker.setMap(null);
+                }
+
+                //在地圖上建立新Marker
+                Marker = new google.maps.marker.AdvancedMarkerElement({
+                    position: { lat: Lat, lng: Lng },
+                    map: map,
+                    title: "新增到訪紀錄"
+                });
+            });
+        }
+    }
+
+    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+</script>
