@@ -52,6 +52,7 @@
             </div>
         </form>
     </div>
+    @await Html.PartialAsync("_SharedMap", new { Latitude = Model.Latitude, Longitude = Model.Longitude, EnableClick = true })
 </div>
 
 <div>
