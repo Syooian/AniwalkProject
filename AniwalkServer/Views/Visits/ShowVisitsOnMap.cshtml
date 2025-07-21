@@ -100,6 +100,11 @@
      style="width:100vw; height:100vh"></div>
 
 @section Scripts {
+    @*前端驗證套件*@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
     <script>
         function LoadSimpleDetail(VisitSN){
             console.log("LoadSimpleDetail");
