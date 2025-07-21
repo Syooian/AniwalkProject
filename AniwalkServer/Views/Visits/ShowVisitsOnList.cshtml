@@ -6,10 +6,7 @@
 }
 
 <p>
-    @if (User.IsInRole(RoleEnum.Member.ToString()))
-    {
-        <a asp-action="Create" class="btn btn-primary">新增到訪紀錄</a>
-    }
+    <a asp-action="Create" class="btn btn-primary">新增到訪紀錄</a>
 </p>
 <table class="table">
     <thead>
