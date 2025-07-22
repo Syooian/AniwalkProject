@@ -21,7 +21,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="SimpleDetailTitle">Modal title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    @* <span aria-hidden="true">&times;</span> *@
                 </button>
             </div>
             <div class="modal-body">
@@ -61,13 +61,13 @@
         //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
         @foreach (var Visit in Model)
         {
-            //添加Marker的屬性
-            <text>Markers.push({
-                lat:@Visit.Latitude,
-                lng:@Visit.Longitude,
-                MemberName:'@Visit.Member.Name',
-                VisitSN:@Visit.SN
-            });</text>
+                //添加Marker的屬性
+                <text>Markers.push({
+                    lat:@Visit.Latitude,
+                    lng:@Visit.Longitude,
+                    MemberName:'@Visit.Member.Name',
+                    VisitSN:@Visit.SN
+                });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
@@ -182,7 +182,6 @@
   https://developers.google.com/maps/documentation/javascript/load-maps-js-api
   for more information.
   -->
-
 @* <div id="LoadSimpleDetail">
     @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 })
 </div> *@
