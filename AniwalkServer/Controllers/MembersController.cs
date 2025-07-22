@@ -36,8 +36,26 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members)
+        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode,Login")] Members members)
         {
+            //try
+            //{
+            //    Console.WriteLine($"{members.Name} {members.Email} {members.CountryCode}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Member Error : {ex.Message}");
+            //}
+
+            //try
+            //{
+            //    Console.WriteLine($"Login : {members.Login.Account} {members.Login.Password}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Login Error : {ex.Message}");
+            //}
+
             if (ModelState.IsValid)
             {
                 //生成MemberID並檢查是否重複
