@@ -210,6 +210,16 @@ namespace AniwalkServer.Controllers
 
             return View(Visit);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public ViewComponentResult SimpleDetails(int VisitSN) => ViewComponent("VC_SimpleDetail", new { VisitSN });
+        //public ViewComponentResult SimpleDetails(int VisitSN)
+        //{
+        //    return ViewComponent("VC_SimpleDetail", new { VisitSN }); ;
+        //}
 
         /// <summary>
         /// 刪除到訪紀錄

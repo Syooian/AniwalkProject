@@ -66,11 +66,19 @@
                 // console.log(`Marker clicked: ${Marker.VisitSN}`);
                 //LoadSimpleDetail(Markers[i].VisitSN);
 
-                $('#SimpleDetail').load(`/Visits/Details?VisitSN=${Markers[i].VisitSN}`,function(){
-                //Load結束之後才會呼叫此function
-                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                $('#LoadSimpleDetail').load(`/Visits/SimpleDetails?VisitSN=${Markers[i].VisitSN}`,function(){
+
+                    //console.log("ASDASDASD");
+                    //Load結束之後才會呼叫此function
+                    //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
                     $.validator.unobtrusive.parse($('#LoadSimpleDetail'));
+                    //$('#exampleModalLongTitle').innerText = "Modal Test 1";
+                    //document.querySelector('#exampleModalLongTitle').innerText = "Modal Test 1";
                 });
+
+                document.querySelector('#ModalVisitSN').innerText = Markers[i].VisitSN;
+
+                document.querySelector('#SimpleDetailTitle').innerText = "Modal Test 1";
 
                 // 顯示模態框
                 const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
@@ -143,7 +151,8 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <h5 class="modal-title" id="SimpleDetailTitle">Modal title</h5>
+                <a id="ModalVisitSN"></a>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -151,7 +160,7 @@
             <div class="modal-body">
                 @*顯示物件*@
                 <div id="LoadSimpleDetail">
-                    @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 })
+                    @* @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 }) *@
                 </div>
             </div>
             <div class="modal-footer">
