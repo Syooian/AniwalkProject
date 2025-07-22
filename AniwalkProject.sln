@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AniwalkServer", "AniwalkSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AniwalkServerDBFirstTest", "AniwalkServerDBFirstTest\AniwalkServerDBFirstTest.csproj", "{F1D79B54-71E2-4661-A79E-559D7D230964}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AniwalkServer.Models", "AniwalkServer.Models\AniwalkServer.Models.csproj", "{F9848675-68B2-437C-867F-08CEC94F8E93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F1D79B54-71E2-4661-A79E-559D7D230964}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1D79B54-71E2-4661-A79E-559D7D230964}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1D79B54-71E2-4661-A79E-559D7D230964}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9848675-68B2-437C-867F-08CEC94F8E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9848675-68B2-437C-867F-08CEC94F8E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9848675-68B2-437C-867F-08CEC94F8E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9848675-68B2-437C-867F-08CEC94F8E93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
