@@ -20,6 +20,18 @@
 @*data-bs-interval="1"：控制捲動速度*@
 <div id="PhotosCarousel" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
+        <div>
+            <a>
+                @if (Model.MainText.Length > 100)
+                {
+                    @Html.Raw(Model.MainText.Substring(0, 100) + "......")
+                }
+                else
+                {
+                    @Model.MainText
+                }
+            </a>
+        </div>
         @foreach (var Item in Model.VisitsPhotos)
         {
             <div class="carousel-item @(IsFirst ? "active" : "")">

@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="ToDetails" type="button" class="btn btn-primary" data-bs-dismiss="modal">前往詳細資訊</button>
+                <button id="ToDetails" type="button" class="btn btn-primary" data-bs-dismiss="modal">點我看更多</button>
             </div>
         </div>
     </div>
@@ -63,9 +63,9 @@
         {
             //添加Marker的屬性
             <text>Markers.push({
-                    lat:@Visit.Latitude,
-                    lng:@Visit.Longitude,
-                //Title:"@Visit.MainText"
+                lat:@Visit.Latitude,
+                lng:@Visit.Longitude,
+                MemberName:'@Visit.Member.Name',
                 VisitSN:@Visit.SN
             });</text>
         }
@@ -104,7 +104,8 @@
                     //document.querySelector('#exampleModalLongTitle').innerText = "Modal Test 1";
                 });
 
-                document.querySelector('#SimpleDetailTitle').innerText = "Modal Test 1";
+                //console.log(`Marker clicked: ${Markers[i].MemberName}`);
+                document.querySelector('#SimpleDetailTitle').innerText =Markers[i].MemberName;
 
                 // 顯示模態框
                 const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
