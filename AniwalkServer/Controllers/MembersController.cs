@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AniwalkServer.Controllers
 {
-    [Authorize]
     public class MembersController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -67,6 +66,7 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Members/Edit/5
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -93,6 +93,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Edit(string id, [Bind("MemberID,Name,Email,CreatedDate,CountryCode")] Members members)
         {
             if (id != members.MemberID)
