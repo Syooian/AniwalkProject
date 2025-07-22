@@ -29,7 +29,7 @@ namespace AniwalkServer.Controllers
             SetGoogleMapsApiKey();
 
             #region 在資料庫執行排序
-            //var Result = await _context.Book.OrderByDescending(R => R.CreatedDate).ToListAsync();
+            var Result = await Context.Visits.Include(V => V.Member).ToListAsync();
             #endregion
             #region 在本機記憶體執行排序
             //var Result = await _context.Book.ToListAsync();
@@ -46,7 +46,7 @@ namespace AniwalkServer.Controllers
 
             //ViewBag.Markers = Markers;
 
-            return View(await Context.Visits.ToArrayAsync());
+            return View(Result.ToArray());
         }
 
         /// <summary>
@@ -209,6 +209,16 @@ namespace AniwalkServer.Controllers
 
             return View(Visit);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public ViewComponentResult SimpleDetails(int VisitSN) => ViewComponent("VC_SimpleDetail", new { VisitSN });
+        //public ViewComponentResult SimpleDetails(int VisitSN)
+        //{
+        //    return ViewComponent("VC_SimpleDetail", new { VisitSN }); ;
+        //}
 
         /// <summary>
         /// 刪除到訪紀錄
