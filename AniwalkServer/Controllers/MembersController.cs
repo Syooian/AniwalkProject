@@ -69,6 +69,24 @@ namespace AniwalkServer.Controllers
 
             if (ModelState.IsValid)
             {
+                #region 檢查輸入的會員名稱是否已被使用
+                if (_context.Members.Any(m => m.Name == members.Name))
+                {
+                    ViewData["Error"] = "此會員名稱已被使用。";
+                    SetViewData();
+                    return View(members);
+                }
+                #endregion
+
+                #region 檢查輸入的電子郵件是否已被使用
+                if (_context.Members.Any(m => m.Email == members.Email))
+                {
+                    ViewData["Error"] = "此電子郵件已被使用。";
+                    SetViewData();
+                    return View(members);
+                }
+                #endregion
+
                 //生成MemberID並檢查是否重複
                 while (true)
                 {
