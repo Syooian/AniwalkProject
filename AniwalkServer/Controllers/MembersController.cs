@@ -36,8 +36,9 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members)
+        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members, /*[Bind("Account,Password")]*/ Login Login)
         {
+            #region Dev
             //try
             //{
             //    Console.WriteLine($"{members.Name} {members.Email} {members.CountryCode}");
@@ -49,12 +50,22 @@ namespace AniwalkServer.Controllers
 
             //try
             //{
-            //    Console.WriteLine($"Login : {members.Login.Account} {members.Login.Password}");
+            //    Console.WriteLine($"Login : {Login.Account}&{Login.Password}");
             //}
             //catch (Exception ex)
             //{
             //    Console.WriteLine($"Login Error : {ex.Message}");
             //}
+
+            //try
+            //{
+            //    Console.WriteLine($"Login : {members.Login.Account}&{members.Login.Password}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Login Error : {ex.Message}");
+            //}
+            #endregion
 
             if (ModelState.IsValid)
             {
@@ -76,7 +87,17 @@ namespace AniwalkServer.Controllers
                 return RedirectToAction(nameof(Index), "Home");
             }
 
-            Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            #region 檢查模型驗證
+            //foreach (var key in ModelState.Keys)
+            //{
+            //    var errors = ModelState[key].Errors;
+            //    if (errors.Any())
+            //    {
+            //        Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
+            //    }
+            //}
+            //Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            #endregion
 
             SetViewData(members.CountryCode);
 
