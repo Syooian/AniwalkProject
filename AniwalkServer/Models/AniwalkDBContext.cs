@@ -47,7 +47,7 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual DbSet<VisitsPhotos> VisitsPhotos { get; set; }
         /// <summary>
-        /// 留言
+        /// 評論
         /// </summary>
         public virtual DbSet<Comments> Comments { get; set; }
         #endregion

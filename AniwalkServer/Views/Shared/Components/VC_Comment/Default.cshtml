@@ -12,7 +12,7 @@
     <div class="border border-1 rounded p-3 bg-light">
         @foreach (var Item in Model)
         {
-            <p>@Html.DisplayFor(ModelItem => Item.CommentText)</p>
+            <p>@Html.DisplayFor(ModelItem => Item.CommentContent)</p>
             <p class="text-end">
                 @Html.DisplayFor(ModelItem => Item.MemberID)：@Html.DisplayFor(ModelItem => Item.CommentDate)
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">

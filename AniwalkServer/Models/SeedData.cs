@@ -184,7 +184,7 @@ namespace AniwalkServer.Models
                         CommentDate = DateTime.Now.AddMinutes(-5 * (a + 1)),
                         MemberID = MemberIDs[0],
                         SN = 1,
-                        CommentText = "測試留言 for 七咲鞦韆 " + (a + 1)
+                        CommentContent = "測試留言 for 七咲鞦韆 " + (a + 1)
                     });
                 }
                 #endregion

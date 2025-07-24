@@ -4,46 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 評論
+    /// </summary>
     public class Comments
     {
         /// <summary>
         /// 留言ID
+        /// <para>GUID</para>
         /// </summary>
         [StringLength(36, MinimumLength = 36)]
         [Key]
         [HiddenInput]
+        [Column(TypeName = "char(36)")]
         public string CommentID { get; set; } = null!;
 
         /// <summary>
-        /// 留言內容
+        /// 評論內容
         /// </summary>
         [StringLength(500)]
-        [Display(Name = "留言內容")]
-        public string CommentText { get; set; } = null!;
+        [Display(Name = "評論內容")]
+        public string CommentContent { get; set; } = null!;
 
         /// <summary>
-        /// 回覆日期
+        /// 評論日期
         /// </summary>
-        [Display(Name = "回覆日期")]
+        [Display(Name = "評論日期")]
         [HiddenInput]
         public DateTime CommentDate { get; set; } = DateTime.Now;
 
         #region 外鍵關聯
-        /// <summary>
-        /// 子留言集
-        /// </summary>
-        public virtual List<Comments>? ChildComments { get; set; }
-
-        /// <summary>
-        /// 回覆留言ID
-        /// </summary>
-        [HiddenInput]
-        public string? ParentCommentID { get; set; }
-        /// <summary>
-        /// 回覆留言
-        /// </summary>
-        public virtual Comments? ParentComment { get; set; }
-
         /// <summary>
         /// 會員
         /// </summary>
