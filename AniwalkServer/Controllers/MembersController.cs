@@ -82,7 +82,13 @@ namespace AniwalkServer.Controllers
 
                 members.CreatedDate = DateTime.Now; // 設定創建日期為當前時間
 
+                //將Login資料與Members關聯
+                Login.MemberID = members.MemberID; // 設定Login的MemberID為新生成的會員ID
+
+                members.RoleID = (int)RoleEnum.Member; // 設定會員角色為一般會員
+
                 _context.Add(members);
+                _context.Add(Login);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), "Home");
             }
