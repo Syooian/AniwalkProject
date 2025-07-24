@@ -80,6 +80,10 @@ namespace AniwalkServer.Models
 
                 Entity.Property(E => E.Email)
                     .IsUnicode(false); // Email通常不需要Unicode，使用ASCII即可.
+
+                Entity.HasIndex(E => E.Email).IsUnique(); // 確保電子郵件唯一性
+
+                Entity.HasIndex(E => E.Name).IsUnique(); // 確保會員名稱唯一性
             });
 
             //ModelBuilder.Entity<MemberRoles>(Entity =>
