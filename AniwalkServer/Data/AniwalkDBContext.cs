@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using AniwalkServer.Models;
 
-namespace AniwalkServer.Models
+namespace AniwalkServer.Data
 {
-    public class AniwalkDBContext : DbContext
+    public partial class AniwalkDBContext : DbContext
     {
         public AniwalkDBContext(DbContextOptions<AniwalkDBContext> Options) : base(Options)
         {
@@ -46,10 +47,6 @@ namespace AniwalkServer.Models
         /// 到訪紀錄照片
         /// </summary>
         public virtual DbSet<VisitsPhotos> VisitsPhotos { get; set; }
-        /// <summary>
-        /// 評論
-        /// </summary>
-        public virtual DbSet<Comments> Comments { get; set; }
         #endregion
 
         /// <summary>
@@ -132,5 +129,7 @@ namespace AniwalkServer.Models
                 .HasDefaultValue(AddNewAnimeStatusEnum.NotYetProcessed);
             });
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder ModelBuilder);
     }
 }

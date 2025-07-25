@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.Controllers
 {

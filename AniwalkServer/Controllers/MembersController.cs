@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.Controllers
 {

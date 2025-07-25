@@ -35,6 +35,11 @@ namespace AniwalkServer.Models
 
         #region 外鍵關聯
         /// <summary>
+        /// 回覆
+        /// </summary>
+        public virtual List<Replies>? Replies { get; set; }
+
+        /// <summary>
         /// 會員
         /// </summary>
         [HiddenInput]

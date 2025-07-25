@@ -1,6 +1,7 @@
 ﻿using AniwalkServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.ViewComponents
 {
