@@ -1,4 +1,4 @@
-﻿@model VM_Visits
+﻿@model IEnumerable<AniwalkServer.Models.Visits>
 
 @using System.Security.Claims
 @{
@@ -11,34 +11,28 @@
 <table class="table">
     <thead>
         <tr>
-            @*             <th>
-                SN
-            </th> *@
             <th>
-                @Html.DisplayNameFor(model => model.Countries.FirstOrDefault().CountryName)
+                @Html.DisplayNameFor(model => model.CountryCode)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Animes.FirstOrDefault().Title)
+                @Html.DisplayNameFor(model => model.Anime)
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.Visits.FirstOrDefault().MainText)*@
+                @*@Html.DisplayNameFor(model => model.Longitude)*@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Members.FirstOrDefault().Name)
+                @Html.DisplayNameFor(model => model.Member)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Visits.FirstOrDefault().VisitedDate)
+                @Html.DisplayNameFor(model => model.VisitedDate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Visits)
+        @foreach (var item in Model)
         {
             <tr>
-                @*        <td>
-                    @Html.DisplayFor(modelItem => item.SN)
-                </td> *@
                 <td>
                     @Html.DisplayFor(modelItem => item.Country.CountryName)
                 </td>

@@ -57,22 +57,15 @@ namespace AniwalkServer.Controllers
         [AllowAnonymous]//允許所有人檢視
         public async Task<IActionResult> ShowVisitsOnList()
         {
-            var VM = new VM_Visits
-            {
-                //Where : 帶入條件
+            var Result = await Context.Visits
+                .Include(V => V.Member)
+                .Include(V => V.Anime)
+                .Include(V => V.Country)
+                .Include(V => V.VisitsPhotos)
+                .OrderByDescending(V => V.CreatedDate)
+                .ToListAsync();
 
-                Countries = await Context.Countries.ToListAsync(),
-                Animes = await Context.Animes.ToListAsync(),
-                Members = await Context.Members.ToListAsync(),
-                Visits = await Context.Visits.OrderByDescending(V => V.CreatedDate).ToListAsync()
-                //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
-            };
-
-            //if (!string.IsNullOrEmpty(id))
-            //    ViewData["DeptName"] = Context.Department.Find(id).DeptName;
-            //ViewData["DeptID"] = id;
-
-            return View(VM);
+            return View(Result);
         }
 
         /// <summary>
