@@ -264,8 +264,7 @@ namespace AniwalkServer.Migrations
                         name: "FK_Replies_Members_MemberID",
                         column: x => x.MemberID,
                         principalTable: "Members",
-                        principalColumn: "MemberID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "MemberID");
                     table.ForeignKey(
                         name: "FK_Replies_Replies_ParentReplyID",
                         column: x => x.ParentReplyID,

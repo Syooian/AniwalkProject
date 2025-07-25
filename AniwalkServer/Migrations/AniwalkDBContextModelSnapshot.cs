@@ -421,7 +421,7 @@ namespace AniwalkServer.Migrations
                     b.HasOne("AniwalkServer.Models.Members", "Member")
                         .WithMany()
                         .HasForeignKey("MemberID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AniwalkServer.Models.Replies", "ParentReply")

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    [Migration("20250725102813_InitialCreate")]
+    [Migration("20250725104142_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -424,7 +424,7 @@ namespace AniwalkServer.Migrations
                     b.HasOne("AniwalkServer.Models.Members", "Member")
                         .WithMany()
                         .HasForeignKey("MemberID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("AniwalkServer.Models.Replies", "ParentReply")

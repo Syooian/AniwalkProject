@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Models;
+﻿using AniwalkServer.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Data
 {
@@ -128,8 +128,10 @@ namespace AniwalkServer.Data
                 Entity.Property(E => E.Status)
                 .HasDefaultValue(AddNewAnimeStatusEnum.NotYetProcessed);
             });
+
+            OnModelCreatingPartial(ModelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder ModelBuilder);
+        protected partial void OnModelCreatingPartial(ModelBuilder ModelBuilder);
     }
 }
