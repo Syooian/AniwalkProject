@@ -170,24 +170,73 @@ namespace AniwalkServer.Models
 
                 context.SaveChanges();
 
-                #region 到訪紀錄留言
+                #region 到訪紀錄評論
                 //因為SN是自動生成的，所以要先執行上方的資料新增後才能繼續執行
                 if (context.Comments.Any())
                 {
                     return;   // DB has been seeded
                 }
 
-                for (int a = 0; a < 5; a++)
+                var Comments = new Comments[5];
+                for (int a = 0; a < Comments.Length; a++)
                 {
-                    context.Comments.Add(new Comments()
+                    Comments[a] = new Comments()
                     {
                         CommentID = Guid.NewGuid().ToString(),
-                        CommentDate = DateTime.Now.AddMinutes(-5 * (a + 1)),
+                        CommentDate = DateTime.Now.AddMinutes(-10 * (a + 1)),
                         MemberID = MemberIDs[0],
                         SN = 1,
-                        CommentContent = "測試留言 for 七咲鞦韆 " + (a + 1)
-                    });
+                        CommentContent = "測試評論 for SN1 " + (a + 1)
+                    };
                 }
+
+                context.AddRange(Comments);
+                #endregion
+
+                #region 到訪記錄評論的回覆
+                var Replies = new List<Replies>();
+                for (int a = 0; a < 3; a++)
+                {
+                    var Reply = new Replies()
+                    {
+                        ReplyID = Guid.NewGuid().ToString(),
+                        CommentID = Comments[0].CommentID,
+                        ReplyDate = DateTime.Now.AddMinutes(-5 * (a + 1)),
+                        MemberID = MemberIDs[1],
+                        ReplyContent = $"Reply for Comment {Comments[0].CommentID} {a + 1}"
+                    };
+
+                    Replies.Add(Reply);
+                }
+
+                //子回覆
+                for (int a = 0; a < 2; a++)
+                {
+                    var Reply = new Replies()
+                    {
+                        ReplyID = Guid.NewGuid().ToString(),
+                        CommentID = Comments[0].CommentID,
+                        ReplyDate = DateTime.Now.AddMinutes(-4 * (a + 1)),
+                        MemberID = MemberIDs[0],
+                        ReplyContent = $"子回覆 for Reply {Replies[0].ReplyID} {a + 1}",
+                        ParentReplyID = Replies[0].ReplyID
+                    };
+
+                    Replies.Add(Reply);
+                }
+
+                //子回覆的回覆
+                Replies.Add(new Replies()
+                {
+                    ReplyID = Guid.NewGuid().ToString(),
+                    CommentID = Comments[0].CommentID,
+                    ReplyDate = DateTime.Now.AddMinutes(-3),
+                    MemberID = MemberIDs[1],
+                    ReplyContent = $"子回覆的回覆 for Reply {Replies[Replies.Count - 1].ReplyID}",
+                    ParentReplyID = Replies[0].ReplyID
+                });
+
+                context.Replies.AddRange(Replies);
                 #endregion
 
                 #region 到訪照片
