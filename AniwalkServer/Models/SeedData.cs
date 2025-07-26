@@ -233,7 +233,7 @@ namespace AniwalkServer.Models
                     ReplyDate = DateTime.Now.AddMinutes(-3),
                     MemberID = MemberIDs[1],
                     ReplyContent = $"子回覆的回覆 for Reply {Replies[Replies.Count - 1].ReplyID}",
-                    ParentReplyID = Replies[0].ReplyID
+                    ParentReplyID = Replies[Replies.Count - 1].ReplyID
                 });
 
                 context.Replies.AddRange(Replies);

@@ -32,7 +32,8 @@ namespace AniwalkServer.ViewComponents
 
             var Result = await Context.Comments
                 .Where(V => V.SN == VisitSN)
-                .Include(V => V.Replies)
+                .Include(V => V.Replies).ThenInclude(R => R.Member)
+                .Include(V => V.Replies).ThenInclude(R => R.ParentReply)
                 .OrderByDescending(C => C.CommentDate).ToListAsync();
 
             if (IsChange)

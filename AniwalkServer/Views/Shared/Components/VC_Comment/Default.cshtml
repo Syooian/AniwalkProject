@@ -28,7 +28,14 @@
                         @foreach (var Reply in Comment.Replies)
                         {
                             <p>@Html.DisplayFor(Item => Reply.ReplyID)</p>
-                            <p>回覆 @Html.DisplayFor(Item => Reply.Member.Name)</p>
+                            @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
+                            {
+                                <p>回覆 @Html.DisplayFor(Item => Reply.ParentReply.Member.Name)</p>
+                            }
+                            else//回覆給評論
+                            {
+                                <p>回覆 @Html.DisplayFor(Item => Reply.Comment.Member.Name)</p>
+                            }
                             <p>@Html.DisplayFor(Item => Reply.ReplyContent)</p>
                             <p class="text-end">
                                 @Html.DisplayFor(Item => Reply.Member.Name) 發表於 @Html.DisplayFor(Item => Reply.ReplyDate)
