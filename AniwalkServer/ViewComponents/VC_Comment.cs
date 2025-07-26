@@ -30,7 +30,10 @@ namespace AniwalkServer.ViewComponents
         {
             Console.WriteLine($"Invoke VC_Comment with VisitSN: {VisitSN}, IsChange: {IsChange}");
 
-            var Result = await Context.Comments.Where(V => V.SN == VisitSN).OrderByDescending(C => C.CommentDate).ToListAsync();
+            var Result = await Context.Comments
+                .Where(V => V.SN == VisitSN)
+                .Include(V => V.Replies)
+                .OrderByDescending(C => C.CommentDate).ToListAsync();
 
             if (IsChange)
                 return View("Change", Result);
