@@ -28,15 +28,11 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
-        /// <param name="ParentCommentID">要回覆哪個留言</param>
         /// <returns></returns>
-        public IActionResult Create(int VisitSN, string? ParentCommentID)
+        public IActionResult Create(int VisitSN)
         {
-            Console.WriteLine($"Create VisitSN : {VisitSN}, ParentCommentID : {ParentCommentID}");
+            Console.WriteLine($"Create VisitSN : {VisitSN}");
 
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID");
-            //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID");
-            ViewData["ParentCommentID"] = ParentCommentID;
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN");
             ViewData["SN"] = VisitSN;
 
@@ -48,7 +44,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments comments)
+        public async Task<IActionResult> Create([Bind("CommentID,CommentContent,MemberID,SN")] Comments comments)
         {
             Console.WriteLine($"Create CommentID : {comments.CommentID}, CommentText : {comments.CommentContent}, CommentDate : {comments.CommentDate}, MemberID : {comments.MemberID}, SN: {comments.SN}");
 
