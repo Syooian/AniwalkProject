@@ -66,14 +66,11 @@
     </div>
 </div>
 <div>
-    @if (User.IsInRole(RoleEnum.Member.ToString()))
-    {
-        <!--彈出回覆留言框的按鈕 -->
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
-            留言
-        </button>
-        <a>|</a>
-    }
+    <!--彈出回覆留言框的按鈕 -->
+    <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization()">
+        留言
+    </button>
+    <a>|</a>
     @if (MemberID == Model.MemberID)
     {
         <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
@@ -140,6 +137,35 @@
     }
 
     <script>
+        //抓彈出框
+        const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
+
+        //驗證是否登入
+        function CheckAuthorization(){
+            fetch('/Comments/Create', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(Response=>{
+                if(Response.redirected){
+                    //如果伺服器返回重定向，跳轉到登入頁面
+                    window.location.href = Response.url;
+                }
+                else
+                {
+                    //  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
+                    //     留言
+                    // </button>
+
+                    //已登入
+                    Modal.show();
+                }
+            }).catch(Error=>{
+                console.log('Error : ', Error);
+            });
+        }
+
         function LoadCommentForm(){
             console.log("LoadCommentForm");
 
@@ -152,9 +178,6 @@
         }
 
         LoadCommentForm();
-
-        //抓彈出框
-        const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
 
         //使用Ajax達成新增回覆留言
         function AddComment(){
