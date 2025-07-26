@@ -9,35 +9,37 @@
 
 @if (Model.Count() > 0)
 {
-    <div class="border border-1 rounded p-3 bg-light">
+    <div class="border border-1 rounded p-3 bg-secondary">
         @foreach (var Item in Model)
         {
-            <p>@Html.DisplayFor(ModelItem => Item.CommentID)</p>
-            <p>@Html.DisplayFor(ModelItem => Item.CommentContent)</p>
-            <p class="text-end">
-                @Html.DisplayFor(ModelItem => Item.MemberID)：@Html.DisplayFor(ModelItem => Item.CommentDate)
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
-                    回覆
-                </button>
-            </p>
-            @if (Item.Replies.Count > 0)
-            {
-                <div style="padding-left: 20px">
-                    @foreach (var Reply in Item.Replies)
-                    {
-                        <p>@Html.DisplayFor(Item => Reply.ReplyID)</p>
-                        <p>@Html.DisplayFor(Item => Reply.ReplyContent)</p>
-                        <p class="text-end">
-                            @Html.DisplayFor(Item => Reply.MemberID)：@Html.DisplayFor(Item => Reply.ReplyDate)
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
-                                回覆
-                            </button>
-                        </p>
-                    }
-                </div>
-            }
-
-            <hr />
+            <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
+                <p>@Html.DisplayFor(ModelItem => Item.CommentID)</p>
+                <p>@Html.DisplayFor(ModelItem => Item.CommentContent)</p>
+                <p class="text-end">
+                    @Html.DisplayFor(ModelItem => Item.MemberID)：@Html.DisplayFor(ModelItem => Item.CommentDate)
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
+                        回覆
+                    </button>
+                </p>
+                @if (Item.Replies.Count > 0)
+                {
+                    <hr />
+                    <div style="padding-left: 20px">
+                        @foreach (var Reply in Item.Replies)
+                        {
+                            <p>@Html.DisplayFor(Item => Reply.ReplyID)</p>
+                            <p>@Html.DisplayFor(Item => Reply.ReplyContent)</p>
+                            <p class="text-end">
+                                @Html.DisplayFor(Item => Reply.MemberID)：@Html.DisplayFor(Item => Reply.ReplyDate)
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
+                                    回覆
+                                </button>
+                            </p>
+                            <hr />
+                        }
+                    </div>
+                }
+            </div>
         }
     </div>
 }
