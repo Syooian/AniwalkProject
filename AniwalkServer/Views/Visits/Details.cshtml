@@ -66,9 +66,9 @@
     </div>
 </div>
 <div>
-    <!--彈出回覆留言框的按鈕 -->
-    <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization()">
-        留言
+    <!--彈出評論留言框的按鈕 -->
+    <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
+        評論
     </button>
     <a>|</a>
     @if (MemberID == Model.MemberID)
@@ -122,7 +122,7 @@
             </div>
             <div class="modal-body">
                 @* //嵌入回覆留言表單 *@
-                <div id="CommentForm" class="bg-light p-2 rounded">
+                <div id="AddContentForm" class="bg-light p-2 rounded">
                 </div>
             </div>
         </div>
@@ -141,8 +141,8 @@
         const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
 
         //驗證是否登入
-        function CheckAuthorization(){
-            fetch('/Comments/Create', {
+        function CheckAuthorization(Action){
+            fetch('/'+Action+'/Create', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
@@ -158,6 +158,8 @@
                     //     留言
                     // </button>
 
+                    LoadAddContentForm(Action);
+
                     //已登入
                     Modal.show();
                 }
@@ -166,46 +168,48 @@
             });
         }
 
-        function LoadCommentForm(){
-            console.log("LoadCommentForm");
+        function LoadAddContentForm(Action){
+            console.log("LoadAddContentForm : "+Action);
 
             //使用Callback function重新綁定 unobtrusive validation
-            $('#CommentForm').load('/Comments/Create?VisitSN=@Model.SN',function(){
+            $('#AddContentForm').load('/'+Action+'/Create?VisitSN=@Model.SN',function(){
                 //Load結束之後才會呼叫此function
                 //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
-                    $.validator.unobtrusive.parse($('#CommentForm'));
+                    $.validator.unobtrusive.parse($('#AddContentForm'));
             });
         }
 
-        LoadCommentForm();
+        //LoadAddContentForm();
 
         //使用Ajax達成新增回覆留言
-        function AddComment(){
+        function AddContent(Action){
+            console.log("AddContent : "+Action);
+
             //2.5.17判斷表單是否驗證通過
-                if(!$('#CommentForm form').valid()){
+                if(!$('#AddContentForm form').valid()){
                 //驗證失敗，不送出表單
                 return;
             }
 
             $.ajax({
                 type:"POST",
-                url:"/Comments/Create",//Controller/Action
-                    data:$('#CommentForm form').serialize(),
+                url:"/"+Action+"/Create",//Controller/Action
+                    data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    $('#CommentsList').load('/Comments/GetCommentsByViewComponent?VisitSN=@(Model.SN)');
+                    $('#ContentList').load('/'+Action+'/GetContentsByViewComponent?VisitSN=@(Model.SN)');
 
                     //將表單重新載入（也可在送出表單後重新產生GUID）
                     // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
                     //     $.validator.unobtrusive.parse($('#CommentForm'));
                     // });
-                    LoadCommentForm();
+                    LoadAddContentForm(Action);
 
                     //關閉彈出框
                     Modal.hide();
                 },
                 error:function(xhr, status, error){
-                    console.error("新增回覆留言錯誤", error);
+                    console.error("新增評論\回覆錯誤", error);
                 }
             });
         }
@@ -214,10 +218,14 @@
 <!--留言框Script-->
 <hr />
 
-<!--所有回覆留言-->
-<div id="CommentsList">
+<!--所有評論&回覆-->
+<div id="ContentList">
     @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
 </div>
+<!--所有回覆-->
+@* <div id="RepliesList">
+    @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
+</div> *@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>

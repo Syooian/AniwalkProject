@@ -76,9 +76,9 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <returns></returns>
-        public IActionResult GetCommentsByViewComponent(int VisitSN)
+        public IActionResult GetContentsByViewComponent(int VisitSN)
         {
-            Console.WriteLine($"GetCommentsByViewComponent VisitSN: {VisitSN}");
+            Console.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
 
             return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
