@@ -37,10 +37,13 @@
             </div>
             <div class="form-group">
                 @*<label asp-for="MemberID" class="control-label"></label>*@
-                <input asp-for="MemberID" class="form-control" asp-items="ViewBag.MemberID">
+                <input asp-for="MemberID" class="form-control" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)">
             </div>
             <div class="form-group">
-                <input type="button" onclick="AddContent('Replies')" value="送出回覆" class="btn btn-primary" />
+                <input asp-for="Comment.Visit.SN" class="form-control" value="@ViewBag.SN">
+            </div>
+            <div class="form-group">
+                <input type="button" onclick="AddContent('Replies')" value="送出回覆" class="btn btn-success" />
             </div>
         </form>
     </div>

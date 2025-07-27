@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Data;
+using AniwalkServer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
-using AniwalkServer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
+    [Authorize(Roles = Shared.Role_Member)]
     public class RepliesController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -53,10 +55,32 @@ namespace AniwalkServer.Controllers
                 await _context.SaveChangesAsync();
                 return Json(replies);
             }
+
+            foreach (var key in ModelState.Keys)
+            {
+                var errors = ModelState[key].Errors;
+                if (errors.Any())
+                {
+                    Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+
             //ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
             //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);
             //ViewData["ParentReplyID"] = new SelectList(_context.Replies, "ReplyID", "ReplyID", replies.ParentReplyID);
             return Json(replies);
+        }
+
+        /// <summary>
+        /// 取得回覆留言資料
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public IActionResult GetContentsByViewComponent(int VisitSN)
+        {
+            Console.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
+
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
 
         // GET: Replies/Edit/5
