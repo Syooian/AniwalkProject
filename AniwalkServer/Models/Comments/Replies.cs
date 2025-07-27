@@ -24,6 +24,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [StringLength(500)]
         [Display(Name = "回覆內容")]
+        [Required(ErrorMessage = "請輸入回覆內容")]
         public string ReplyContent { get; set; } = null!;
 
         /// <summary>

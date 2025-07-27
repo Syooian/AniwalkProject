@@ -21,6 +21,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [Display(Name = "動畫標題")]
         [StringLength(50)]
+        [Required(ErrorMessage = "請輸入動畫標題")]
         public string AnimeTitle { get; set; } = null!;
         /// <summary>
         /// 新增日期

@@ -23,19 +23,24 @@ namespace AniwalkServer.Models
         [StringLength(1000)]
         [Display(Name = "內文")]
         [DataType(DataType.MultilineText)]//標註多行文字
+        [Required(ErrorMessage = "請輸入內文")]
         public string MainText { get; set; } = null!;
         /// <summary>
         /// 經度
         /// </summary>
+        [Display(Name = "經度")]
+        [Required(ErrorMessage = "請於小地圖上點選座標")]
         public double Latitude { get; set; } = 0.0;
         /// <summary>
         /// 緯度
         /// </summary>
+        [Display(Name = "緯度")]
+        [Required(ErrorMessage = "請於小地圖上點選座標")]
         public double Longitude { get; set; } = 0.0;
         /// <summary>
         /// 到訪日期
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "請選擇到訪日期")]
         [Display(Name = "到訪日期")]
         public DateTime VisitedDate { get; set; }
         /// <summary>

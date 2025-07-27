@@ -16,6 +16,7 @@ namespace AniwalkServer.Models
         /// 國名
         /// </summary>
         [StringLength(30)]
+        [Display(Name = "國名")]
         public string CountryName { get; set; } = null!;
         /// <summary>
         /// 

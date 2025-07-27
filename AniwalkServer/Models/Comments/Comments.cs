@@ -24,6 +24,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [StringLength(500)]
         [Display(Name = "評論內容")]
+        [Required(ErrorMessage = "請輸入評論內容")]
         public string CommentContent { get; set; } = null!;
 
         /// <summary>
