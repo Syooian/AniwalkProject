@@ -1,8 +1,9 @@
-﻿@model AniwalkServer.Models.Comments
+﻿@using System.Security.Claims
+@model AniwalkServer.Models.Comments
 
 @{
     Layout = null;
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "新增評論";
 }
 
 <div class="row">
@@ -15,30 +16,26 @@
                 <span asp-validation-for="CommentID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CommentText" class="control-label"></label>
-                <input asp-for="CommentText" class="form-control" />
-                <span asp-validation-for="CommentText" class="text-danger"></span>
+                <label asp-for="CommentContent" class="control-label"></label>
+                <input asp-for="CommentContent" class="form-control" />
+                <span asp-validation-for="CommentContent" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @* <div class="form-group">
                 <!--<label asp-for="CommentDate" class="control-label"></label>-->
                 <input asp-for="CommentDate" class="form-control" value="@DateTime.Now" />
                 <span asp-validation-for="CommentDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <!--<label asp-for="ParentCommentID" class="control-label"></label>-->
-                <input asp-for="ParentCommentID" class="form-control">
-            </div>
+            </div> *@
             <div class="form-group">
                 <!--<label asp-for="MemberID" class="control-label"></label>-->
-                <select asp-for="MemberID" class="form-control" asp-items="ViewBag.MemberID"></select>
-                <!--<input asp-for="MemberID" class="form-control" value="@ViewBag.MemberID">-->
+                @*<select asp-for="MemberID" class="form-control" asp-items="ViewBag.MemberID"></select>*@
+                <input asp-for="MemberID" class="form-control" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)">
             </div>
             <div class="form-group">
                 <!--<label asp-for="SN" class="control-label"></label>-->
                 <input asp-for="SN" class="form-control" value="@ViewBag.SN">
             </div>
             <div class="form-group">
-                <input type="button" onclick="AddComment()" value="確定回覆" class="btn btn-success" />
+                <input type="button" onclick="AddContent('Comments')" value="送出評論" class="btn btn-success" />
             </div>
         </form>
     </div>

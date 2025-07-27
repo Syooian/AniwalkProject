@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.Controllers
 {
-    [Authorize]
     public class MembersController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -19,15 +19,6 @@ namespace AniwalkServer.Controllers
         {
             _context = context;
         }
-
-        /// <summary>
-        /// 一般會員角色名稱
-        /// </summary>
-        public const string Role_Member = "Member";
-        /// <summary>
-        /// 管理員角色名稱
-        /// </summary>
-        public const string Role_Admin = "Admin";
 
         /// <summary>
         /// 註冊會員
@@ -46,10 +37,57 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members)
+        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members, /*[Bind("Account,Password")]*/ Login Login)
         {
+            #region Dev
+            //try
+            //{
+            //    Console.WriteLine($"{members.Name} {members.Email} {members.CountryCode}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Member Error : {ex.Message}");
+            //}
+
+            //try
+            //{
+            //    Console.WriteLine($"Login : {Login.Account}&{Login.Password}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Login Error : {ex.Message}");
+            //}
+
+            //try
+            //{
+            //    Console.WriteLine($"Login : {members.Login.Account}&{members.Login.Password}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Login Error : {ex.Message}");
+            //}
+            #endregion
+
             if (ModelState.IsValid)
             {
+                #region 檢查輸入的會員名稱是否已被使用
+                if (_context.Members.Any(m => m.Name == members.Name))
+                {
+                    ViewData["Error"] = "此會員名稱已被使用。";
+                    SetViewData();
+                    return View(members);
+                }
+                #endregion
+
+                #region 檢查輸入的電子郵件是否已被使用
+                if (_context.Members.Any(m => m.Email == members.Email))
+                {
+                    ViewData["Error"] = "此電子郵件已被使用。";
+                    SetViewData();
+                    return View(members);
+                }
+                #endregion
+
                 //生成MemberID並檢查是否重複
                 while (true)
                 {
@@ -63,12 +101,28 @@ namespace AniwalkServer.Controllers
 
                 members.CreatedDate = DateTime.Now; // 設定創建日期為當前時間
 
+                //將Login資料與Members關聯
+                Login.MemberID = members.MemberID; // 設定Login的MemberID為新生成的會員ID
+
+                members.RoleID = (int)RoleEnum.Member; // 設定會員角色為一般會員
+
                 _context.Add(members);
+                _context.Add(Login);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), "Home");
             }
 
-            Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            #region 檢查模型驗證
+            //foreach (var key in ModelState.Keys)
+            //{
+            //    var errors = ModelState[key].Errors;
+            //    if (errors.Any())
+            //    {
+            //        Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
+            //    }
+            //}
+            //Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            #endregion
 
             SetViewData(members.CountryCode);
 
@@ -76,6 +130,7 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Members/Edit/5
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -102,6 +157,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Edit(string id, [Bind("MemberID,Name,Email,CreatedDate,CountryCode")] Members members)
         {
             if (id != members.MemberID)
@@ -146,24 +202,5 @@ namespace AniwalkServer.Controllers
         {
             ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
         }
-    }
-}
-
-namespace AniwalkServer
-{
-    public enum RoleEnum
-    {
-        /// <summary>
-        /// 訪客
-        /// </summary>
-        Guest = 0,
-        /// <summary>
-        /// 一般會員
-        /// </summary>
-        Member = 1,
-        /// <summary>
-        /// 管理員
-        /// </summary>
-        Admin = 9
     }
 }

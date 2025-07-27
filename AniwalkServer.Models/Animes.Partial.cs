@@ -13,9 +13,10 @@ namespace AniwalkServer.Models
         [StringLength(4, MinimumLength = 4)]
         public string AnimeID { get; set; } = null!;
         /// <summary>
-        /// 名稱
+        /// 動畫名稱
         /// </summary>
         [StringLength(30)]
+        [Display(Name = "動畫名稱")]
         public string Title { get; set; } = null!;
         /// <summary>
         /// 圖片(檔名)

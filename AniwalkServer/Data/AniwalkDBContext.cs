@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AniwalkServer.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace AniwalkServer.Models
+namespace AniwalkServer.Data
 {
-    public class AniwalkDBContext : DbContext
+    public partial class AniwalkDBContext : DbContext
     {
         public AniwalkDBContext(DbContextOptions<AniwalkDBContext> Options) : base(Options)
         {
@@ -18,6 +19,10 @@ namespace AniwalkServer.Models
         /// 動畫
         /// </summary>
         public virtual DbSet<Animes> Animes { get; set; }
+        /// <summary>
+        /// 新增動畫建議
+        /// </summary>
+        public virtual DbSet<AddNewAnime> AddNewAnimes { get; set; }
         /// <summary>
         /// 會員
         /// </summary>
@@ -42,10 +47,6 @@ namespace AniwalkServer.Models
         /// 到訪紀錄照片
         /// </summary>
         public virtual DbSet<VisitsPhotos> VisitsPhotos { get; set; }
-        /// <summary>
-        /// 留言
-        /// </summary>
-        public virtual DbSet<Comments> Comments { get; set; }
         #endregion
 
         /// <summary>
@@ -76,6 +77,10 @@ namespace AniwalkServer.Models
 
                 Entity.Property(E => E.Email)
                     .IsUnicode(false); // Email通常不需要Unicode，使用ASCII即可.
+
+                Entity.HasIndex(E => E.Email).IsUnique(); // 確保電子郵件唯一性
+
+                Entity.HasIndex(E => E.Name).IsUnique(); // 確保會員名稱唯一性
             });
 
             //ModelBuilder.Entity<MemberRoles>(Entity =>
@@ -114,6 +119,19 @@ namespace AniwalkServer.Models
                 Entity.Property(E => E.Account).IsUnicode(false);
                 Entity.Property(E => E.Password).IsUnicode(false);
             });
+
+            ModelBuilder.Entity<AddNewAnime>(Entity =>
+            {
+                Entity.Property(E => E.AddDate)
+                .HasDefaultValueSql("getdate()"); // 設定預設值為當前時間
+
+                Entity.Property(E => E.Status)
+                .HasDefaultValue(AddNewAnimeStatusEnum.NotYetProcessed);
+            });
+
+            OnModelCreatingPartial(ModelBuilder);
         }
+
+        protected partial void OnModelCreatingPartial(ModelBuilder ModelBuilder);
     }
 }

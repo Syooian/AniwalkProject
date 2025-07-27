@@ -1,0 +1,34 @@
+﻿@model AniwalkServer.Models.AddNewAnime
+
+@{
+    ViewData["Title"] = "新增動畫建議";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AnimeTitle" class="control-label"></label>
+                <input asp-for="AnimeTitle" class="form-control" />
+                <span asp-validation-for="AnimeTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="送出" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">返回</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

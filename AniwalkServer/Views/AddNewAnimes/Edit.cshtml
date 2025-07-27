@@ -1,0 +1,77 @@
+﻿@model AniwalkServer.Models.AddNewAnime
+
+@{
+    ViewData["Title"] = "編輯新增動畫建議";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SN" />
+            <div class="form-group">
+                <label asp-for="AnimeTitle" class="control-label"></label>
+                <input asp-for="AnimeTitle" class="form-control" readonly />
+                <span asp-validation-for="AnimeTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AddDate" class="control-label"></label>
+                <input asp-for="AddDate" class="form-control" readonly />
+                <span asp-validation-for="AddDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" class="form-control" asp-items=@(Html.GetEnumSelectList<AddNewAnimeStatusEnum>())
+                        disabled="@(Model.CloseDate != null ? "disabled" : null)"></select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CloseDate" class="control-label"></label>
+                <input asp-for="CloseDate" class="form-control" readonly />
+                <span asp-validation-for="CloseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Note" class="control-label"></label>
+                <input asp-for="Note" class="form-control" readonly="@(Model.CloseDate != null)" />
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+            @{
+                if (Model.CloseDate == null)
+                {
+                    <div class="form-group">
+                        <input type="submit" value="確認修改" class="btn btn-warning" onclick="return Confirm();" />
+                    </div>
+                }
+            }
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-primary">返回清單</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        //根據Status選取狀態決定是否彈出提示框
+        function Confirm(){
+            // 動態取得選擇的 Status 值
+            const Status = document.querySelector('[name="Status"]').value;
+
+            switch(Status){
+                case '@((int)AddNewAnimeStatusEnum.AgreeToAdd)':
+                case '@((int)AddNewAnimeStatusEnum.Disagree)':
+                    return confirm('送出後即不可修改');
+                default:
+                    return true;
+            }
+        }
+    </script>
+}

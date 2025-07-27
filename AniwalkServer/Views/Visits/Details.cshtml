@@ -40,19 +40,19 @@
                 @Html.DisplayFor(model => model.VisitedDate)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Member)
+                @Html.DisplayNameFor(model => model.Member.Name)
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Member.Name)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Country)
+                @Html.DisplayNameFor(model => model.Country.CountryName)
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Country.CountryName)
             </dd>
             <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Anime)
+                @Html.DisplayNameFor(model => model.Anime.Title)
             </dt>
             <dd class="col-sm-9">
                 @Html.DisplayFor(model => model.Anime.Title)
@@ -66,41 +66,46 @@
     </div>
 </div>
 <div>
-    @if (User.IsInRole(RoleEnum.Member.ToString()))
-    {
-        <!--彈出回覆留言框的按鈕 -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CommentModal">
-            留言
-        </button>
-        <a>|</a>
-    }
+    <!--彈出評論留言框的按鈕 -->
+    <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
+        評論
+    </button>
+    <a>|</a>
     @if (MemberID == Model.MemberID)
     {
-        <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary">編輯</a>
+        <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
         <a>|</a>
-        <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
+        <form asp-action="Delete">
+            <input type="hidden" value="@Model?.SN" name="VisitSN" />
+            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+        </form>
         <a>|</a>
     }
     else if (User.IsInRole(RoleEnum.Admin.ToString()))
     {
-        <a asp-action="Delete" asp-route-VisitSN="@Model?.SN" class="btn btn-danger">刪除</a>
+        <form asp-action="Delete">
+            <input type="hidden" value="@Model?.SN" name="VisitSN" />
+            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+        </form>
         <a>|</a>
     }
-    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
+    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary btn-sm">返回列表</a>
 </div>
 
 @if (Model.VisitsPhotos.Count > 0)
 {
     <hr />
-    <div class="card-group">
+    <div class="row justify-content-center">
         @foreach (var Photo in Model.VisitsPhotos)
         {
-            <div class="card" style="max-width: 18rem;">
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
                 <img class="card-img-top" src="/VisitsPhotos/@($"{Photo.PhotoID}.jpg")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
-                    <p class="card-text">@Photo.Description</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <p class="card-text">
+                        @Html.Raw(Photo.Description.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
+                    </p>
+                    <a href="#" class="btn btn-primary">檢視大圖</a>
                 </div>
             </div>
         }
@@ -112,12 +117,12 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">我要留言</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">想說些什麼？</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 @* //嵌入回覆留言表單 *@
-                <div id="CommentForm" class="bg-light p-2 rounded">
+                <div id="AddContentForm" class="bg-light p-2 rounded">
                 </div>
             </div>
         </div>
@@ -132,49 +137,93 @@
     }
 
     <script>
-        function LoadCommentForm(){
-            console.log("LoadCommentForm");
-
-            //使用Callback function重新綁定 unobtrusive validation
-            $('#CommentForm').load('/Comments/Create?VisitSN=@Model.SN',function(){
-                //Load結束之後才會呼叫此function
-                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
-                    $.validator.unobtrusive.parse($('#CommentForm'));
-            });
-        }
-
-        LoadCommentForm();
-
         //抓彈出框
         const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
 
+        //驗證是否登入
+        function CheckAuthorization(Action, CommentID="", ParentReplyID=""){
+            console.log("CheckAuthorization Action : "+Action+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+
+            fetch('/'+Action+'/Create', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(Response=>{
+                if(Response.redirected){
+                    //如果伺服器返回重定向，跳轉到登入頁面
+                    window.location.href = Response.url;
+                }
+                else
+                {
+                    //  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
+                    //     留言
+                    // </button>
+
+                    LoadAddContentForm(Action, CommentID, ParentReplyID);
+
+                    //已登入
+                    Modal.show();
+                }
+            }).catch(Error=>{
+                console.log('Error : ', Error);
+            });
+        }
+
+        function LoadAddContentForm(Action, CommentID="", ParentReplyID=""){
+            console.log("LoadAddContentForm Action : "+Action+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+
+            var URL='/'+Action+'/Create?VisitSN=@Model.SN';
+            if(CommentID != "")//回覆給評論
+                URL+='&CommentID='+CommentID;
+
+            if(ParentReplyID!="")//回覆給回覆
+                URL+='&ParentReplyID='+ParentReplyID;
+            
+            console.log(URL);
+            //評論：/Comments/Create?VisitSN=1
+            //回覆評論：/Replies/Create?VisitSN=1&CommentID=43fe5ee2-fee3-447e-8204-02ace0443665
+            //回覆回覆：/Replies/Create?VisitSN=1&CommentID=ec7e6d63-a129-4c3b-b524-f42eaa18f37d&ParentReplyID=037009b8-383b-4f79-bd6c-b4beb9f20ff4
+
+            //使用Callback function重新綁定 unobtrusive validation
+            $('#AddContentForm').load(URL, function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                    $.validator.unobtrusive.parse($('#AddContentForm'));
+            });
+        }
+
+        //LoadAddContentForm();
+
         //使用Ajax達成新增回覆留言
-        function AddComment(){
+        function AddContent(Action){
+            console.log("AddContent : "+Action);
+
             //2.5.17判斷表單是否驗證通過
-                if(!$('#CommentForm form').valid()){
+                if(!$('#AddContentForm form').valid()){
                 //驗證失敗，不送出表單
                 return;
             }
 
             $.ajax({
                 type:"POST",
-                url:"/Comments/Create",//Controller/Action
-                    data:$('#CommentForm form').serialize(),
+                url:"/"+Action+"/Create",//Controller/Action
+                    data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    $('#CommentsList').load('/Comments/GetCommentsByViewComponent?VisitSN=@(Model.SN)');
+                    $('#ContentList').load('/'+Action+'/GetContentsByViewComponent?VisitSN=@(Model.SN)');
 
                     //將表單重新載入（也可在送出表單後重新產生GUID）
                     // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
                     //     $.validator.unobtrusive.parse($('#CommentForm'));
                     // });
-                    LoadCommentForm();
+                    LoadAddContentForm(Action);
 
                     //關閉彈出框
                     Modal.hide();
                 },
                 error:function(xhr, status, error){
-                    console.error("新增回覆留言錯誤", error);
+                    console.error("新增評論\回覆錯誤", error);
                 }
             });
         }
@@ -183,10 +232,14 @@
 <!--留言框Script-->
 <hr />
 
-<!--所有回覆留言-->
-<div id="CommentsList">
+<!--所有評論&回覆-->
+<div id="ContentList">
     @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
 </div>
+<!--所有回覆-->
+@* <div id="RepliesList">
+    @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
+</div> *@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>

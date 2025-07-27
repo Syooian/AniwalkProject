@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = Shared.Role_Member)]
     public class CommentsController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -26,15 +28,11 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
-        /// <param name="ParentCommentID">要回覆哪個留言</param>
         /// <returns></returns>
-        public IActionResult Create(int VisitSN, string? ParentCommentID)
+        public IActionResult Create(int VisitSN)
         {
-            Console.WriteLine($"Create VisitSN : {VisitSN}, ParentCommentID : {ParentCommentID}");
+            Console.WriteLine($"Create VisitSN : {VisitSN}");
 
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID");
-            //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID");
-            ViewData["ParentCommentID"] = ParentCommentID;
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN");
             ViewData["SN"] = VisitSN;
 
@@ -46,9 +44,9 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CommentID,CommentText,CommentDate,ParentCommentID,MemberID,SN")] Comments comments)
+        public async Task<IActionResult> Create([Bind("CommentID,CommentContent,MemberID,SN")] Comments comments)
         {
-            Console.WriteLine($"Create CommentID : {comments.CommentID}, CommentText : {comments.CommentText}, CommentDate : {comments.CommentDate}, ParentCommentID: {comments.ParentCommentID}, MemberID : {comments.MemberID}, SN: {comments.SN}");
+            Console.WriteLine($"Create CommentID : {comments.CommentID}, CommentText : {comments.CommentContent}, CommentDate : {comments.CommentDate}, MemberID : {comments.MemberID}, SN: {comments.SN}");
 
             if (ModelState.IsValid)
             {
@@ -63,12 +61,7 @@ namespace AniwalkServer.Controllers
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
 
-            Console.WriteLine("ModelState is not valid.");
-            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-            {
-                //印出模型驗證錯誤的訊息
-                Console.WriteLine($"Error: {error.ErrorMessage}");
-            }
+            //Shared.ShowModelState(ModelState);
 
             return Json(comments);
         }
@@ -78,9 +71,9 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <returns></returns>
-        public IActionResult GetCommentsByViewComponent(int VisitSN)
+        public IActionResult GetContentsByViewComponent(int VisitSN)
         {
-            Console.WriteLine($"GetCommentsByViewComponent VisitSN: {VisitSN}");
+            Console.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
 
             return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
@@ -99,7 +92,7 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
             ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
-            ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
+            //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
             ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
             return View(comments);
         }
@@ -109,7 +102,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CommentID,CommentText,CommentDate,ParentCommentID,MemberID,SN")] Comments comments)
+        public async Task<IActionResult> Edit(string id, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments comments)
         {
             if (id != comments.CommentID)
             {
@@ -137,7 +130,7 @@ namespace AniwalkServer.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
-            ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
+            //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
             ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
             return View(comments);
         }
@@ -152,7 +145,7 @@ namespace AniwalkServer.Controllers
 
             var comments = await _context.Comments
                 .Include(c => c.Member)
-                .Include(c => c.ParentComment)
+                //.Include(c => c.ParentComment)
                 .Include(c => c.Visit)
                 .FirstOrDefaultAsync(m => m.CommentID == id);
             if (comments == null)

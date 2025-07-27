@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.Models
 {
@@ -13,6 +14,20 @@ namespace AniwalkServer.Models
             using (var context = new AniwalkDBContext(
                 ServiceProvider.GetRequiredService<DbContextOptions<AniwalkDBContext>>()))
             {
+                #region 新增動畫建議
+                if (!context.AddNewAnimes.Any())
+                {
+                    context.AddNewAnimes.AddRange(
+                        new AddNewAnime[]
+                        {
+                            new AddNewAnime() { AnimeTitle = "新動畫建議1", AddDate=DateTime.Now},
+                            new AddNewAnime() { AnimeTitle = "新動畫建議2", AddDate=DateTime.Now.AddMonths(-1),Status=AddNewAnimeStatusEnum.InProgress},
+                            new AddNewAnime() { AnimeTitle = "新動畫建議3", AddDate=DateTime.Now.AddMonths(-2),Status=AddNewAnimeStatusEnum.AgreeToAdd, CloseDate=DateTime.Now.AddDays(-1) },
+                            new AddNewAnime() { AnimeTitle = "新動畫建議4", AddDate=DateTime.Now.AddMonths(-3),Status=AddNewAnimeStatusEnum.Disagree, CloseDate=DateTime.Now.AddDays(-2), Note="已有該動畫" }
+                        });
+                }
+                #endregion
+
                 #region 國家資料
                 if (context.Countries.Any())
                 {
@@ -155,32 +170,96 @@ namespace AniwalkServer.Models
 
                 context.SaveChanges();
 
-                #region 到訪紀錄留言
+                #region 到訪紀錄評論
                 //因為SN是自動生成的，所以要先執行上方的資料新增後才能繼續執行
                 if (context.Comments.Any())
                 {
                     return;   // DB has been seeded
                 }
 
-                for (int a = 0; a < 5; a++)
+                var Comments = new Comments[5];
+                for (int a = 0; a < Comments.Length; a++)
                 {
-                    context.Comments.Add(new Comments()
+                    Comments[a] = new Comments()
                     {
                         CommentID = Guid.NewGuid().ToString(),
-                        CommentDate = DateTime.Now.AddMinutes(-5 * (a + 1)),
+                        CommentDate = DateTime.Now.AddMinutes(-10 * (a + 1)),
                         MemberID = MemberIDs[0],
                         SN = 1,
-                        CommentText = "測試留言 for 七咲鞦韆 " + (a + 1)
-                    });
+                        CommentContent = "測試評論 for SN1 " + (a + 1)
+                    };
                 }
+
+                context.AddRange(Comments);
+                #endregion
+
+                #region 到訪記錄評論的回覆
+                var Replies = new List<Replies>();
+                for (int a = 0; a < 3; a++)
+                {
+                    var Reply = new Replies()
+                    {
+                        ReplyID = Guid.NewGuid().ToString(),
+                        CommentID = Comments[0].CommentID,
+                        ReplyDate = DateTime.Now.AddMinutes(-5 * (a + 1)),
+                        MemberID = MemberIDs[1],
+                        ReplyContent = $"Reply for Comment {Comments[0].CommentID} {a + 1}"
+                    };
+
+                    Replies.Add(Reply);
+                }
+
+                //子回覆
+                for (int a = 0; a < 2; a++)
+                {
+                    var Reply = new Replies()
+                    {
+                        ReplyID = Guid.NewGuid().ToString(),
+                        CommentID = Comments[0].CommentID,
+                        ReplyDate = DateTime.Now.AddMinutes(-4 * (a + 1)),
+                        MemberID = MemberIDs[0],
+                        ReplyContent = $"子回覆 for Reply {Replies[0].ReplyID} {a + 1}",
+                        ParentReplyID = Replies[0].ReplyID
+                    };
+
+                    Replies.Add(Reply);
+                }
+
+                //子回覆的回覆
+                Replies.Add(new Replies()
+                {
+                    ReplyID = Guid.NewGuid().ToString(),
+                    CommentID = Comments[0].CommentID,
+                    ReplyDate = DateTime.Now.AddMinutes(-3),
+                    MemberID = MemberIDs[1],
+                    ReplyContent = $"子回覆的回覆 for Reply {Replies[Replies.Count - 1].ReplyID}",
+                    ParentReplyID = Replies[Replies.Count - 1].ReplyID
+                });
+
+                context.Replies.AddRange(Replies);
                 #endregion
 
                 #region 到訪照片
                 if (!context.VisitsPhotos.Any())
                 {
-                    var VPs = new VisitsPhotos[8];
+                    #region 刪除現有照片
+                    string[] Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos"));
+                    for (int a = 0; a < Files.Length; a++)
+                    {
+                        try
+                        {
+                            File.Delete(Files[a]);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error deleting file {Files[a]}: {ex.Message}");
+                        }
+                    }
+                    #endregion
 
-                    for (int a = 1; a <= 4; a++)
+                    var VPs = new VisitsPhotos[16];
+
+                    for (int a = 1; a <= 12; a++)
                     {
                         VPs[a - 1] = new VisitsPhotos()
                         {
@@ -206,7 +285,7 @@ namespace AniwalkServer.Models
                     #region 照片轉存
                     string SeedPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedPhotos", "Visits");//取得來源照片路徑
                     string VisitsPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos");//目的路徑
-                    string[] Files = Directory.GetFiles(SeedPhotosPath);  //取得指定路徑中的所有檔案
+                    Files = Directory.GetFiles(SeedPhotosPath);  //取得指定路徑中的所有檔案
 
                     if (!Directory.Exists(VisitsPhotosPath))
                     {

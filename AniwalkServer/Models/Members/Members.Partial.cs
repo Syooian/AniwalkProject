@@ -19,6 +19,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [StringLength(40)]
         [Display(Name = "會員名稱")]
+        [Required(ErrorMessage = "請輸入會員名稱")]
         public string Name { get; set; } = null!;
 
         /// <summary>
@@ -27,6 +28,7 @@ namespace AniwalkServer.Models
         [EmailAddress]
         [StringLength(50)]
         [Display(Name = "電子郵件")]
+        [Required(ErrorMessage = "請輸入電子郵件")]
         public string Email { get; set; } = null!;
 
         /// <summary>

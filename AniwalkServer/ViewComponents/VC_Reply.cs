@@ -5,7 +5,7 @@ using AniwalkServer.Data;
 
 namespace AniwalkServer.ViewComponents
 {
-    public class VC_Comment : ViewComponent
+    public class VC_Reply : ViewComponent
     {
         /// <summary>
         /// 
@@ -15,7 +15,7 @@ namespace AniwalkServer.ViewComponents
         /// 
         /// </summary>
         /// <param name="Context"></param>
-        public VC_Comment(AniwalkDBContext Context)
+        public VC_Reply(AniwalkDBContext Context)
         {
             this.Context = Context;
         }
@@ -24,11 +24,12 @@ namespace AniwalkServer.ViewComponents
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="ParentReplyID"></param>
         /// <param name="IsChange">編輯 or 刪除</param>
         /// <returns></returns>
-        public async Task<IViewComponentResult> InvokeAsync(int VisitSN, bool IsChange = false)
+        public async Task<IViewComponentResult> InvokeAsync(int VisitSN, string ParentReplyID, bool IsChange = false)
         {
-            Console.WriteLine($"Invoke VC_Comment with VisitSN: {VisitSN}, IsChange: {IsChange}");
+            Console.WriteLine($"Invoke VC_Reply with VisitSN : {VisitSN}, ParentReplyID : {ParentReplyID}, IsChange : {IsChange}");
 
             var Result = await Context.Comments
                 .Where(V => V.SN == VisitSN)

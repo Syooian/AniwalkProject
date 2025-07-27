@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using AniwalkServer.Data;
 
 namespace AniwalkServer.Controllers
 {
@@ -30,7 +30,7 @@ namespace AniwalkServer.Controllers
             SetGoogleMapsApiKey();
 
             #region 在資料庫執行排序
-            //var Result = await _context.Book.OrderByDescending(R => R.CreatedDate).ToListAsync();
+            var Result = await Context.Visits.Include(V => V.Member).ToListAsync();
             #endregion
             #region 在本機記憶體執行排序
             //var Result = await _context.Book.ToListAsync();
@@ -47,7 +47,7 @@ namespace AniwalkServer.Controllers
 
             //ViewBag.Markers = Markers;
 
-            return View(await Context.Visits.ToArrayAsync());
+            return View(Result.ToArray());
         }
 
         /// <summary>
@@ -57,29 +57,22 @@ namespace AniwalkServer.Controllers
         [AllowAnonymous]//允許所有人檢視
         public async Task<IActionResult> ShowVisitsOnList()
         {
-            var VM = new VM_Visits
-            {
-                //Where : 帶入條件
+            var Result = await Context.Visits
+                .Include(V => V.Member)
+                .Include(V => V.Anime)
+                .Include(V => V.Country)
+                .Include(V => V.VisitsPhotos)
+                .OrderByDescending(V => V.CreatedDate)
+                .ToListAsync();
 
-                Countries = await Context.Countries.ToListAsync(),
-                Animes = await Context.Animes.ToListAsync(),
-                Members = await Context.Members.ToListAsync(),
-                Visits = await Context.Visits.OrderByDescending(V => V.CreatedDate).ToListAsync()
-                //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
-            };
-
-            //if (!string.IsNullOrEmpty(id))
-            //    ViewData["DeptName"] = Context.Department.Find(id).DeptName;
-            //ViewData["DeptID"] = id;
-
-            return View(VM);
+            return View(Result);
         }
 
         /// <summary>
         /// 創建新的到訪記錄
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = MembersController.Role_Member)]
+        [Authorize(Roles = Shared.Role_Member)]
         public IActionResult Create()
         {
             SetGoogleMapsApiKey();
@@ -95,7 +88,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = MembersController.Role_Member)]
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate")] Visits Visit)
         {
             if (ModelState.IsValid)
@@ -117,7 +110,7 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <returns></returns>
-        [Authorize(Roles = MembersController.Role_Member)]
+        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Edit(int VisitSN)
         {
             //Console.WriteLine($"Edit VisitSN : {VisitSN}");
@@ -129,7 +122,10 @@ namespace AniwalkServer.Controllers
             //    return NotFound();
             //}
 
-            var Visit = await Context.Visits.FindAsync(VisitSN);
+            var Visit = await Context.Visits
+                .Include(V => V.VisitsPhotos)
+                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
@@ -210,6 +206,52 @@ namespace AniwalkServer.Controllers
 
             return View(Visit);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public ViewComponentResult SimpleDetails(int VisitSN) => ViewComponent("VC_SimpleDetail", new { VisitSN });
+        //public ViewComponentResult SimpleDetails(int VisitSN)
+        //{
+        //    return ViewComponent("VC_SimpleDetail", new { VisitSN }); ;
+        //}
+
+        /// <summary>
+        /// 刪除到訪紀錄
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Delete(int VisitSN)
+        {
+            //Console.WriteLine($"Delete VisitSN : {VisitSN}");
+
+            var Visit = await Context.Visits.FindAsync(VisitSN);
+            if (Visit == null)
+            {
+                Console.WriteLine($"VisitSN {VisitSN} not found");
+                return NotFound();
+            }
+
+            #region 刪除到訪紀錄照片
+            var VisitsPhotos = await Context.VisitsPhotos.Where(VP => Visit.SN == VP.SN).ToListAsync();
+            foreach (var Photo in VisitsPhotos)
+            {
+                var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos", Photo.PhotoID + ".jpg");
+
+                if (System.IO.File.Exists(FilePath))
+                {
+                    System.IO.File.Delete(FilePath); //刪除圖片檔案
+                }
+            }
+            #endregion
+
+            Context.Visits.Remove(Visit);
+            await Context.SaveChangesAsync();
+
+            //SetGoogleMapsApiKey();
+            return RedirectToAction(nameof(ShowVisitsOnList));
+        }
 
         /// <summary>
         /// 
@@ -218,7 +260,8 @@ namespace AniwalkServer.Controllers
         {
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
             ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
-            ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "Name");//臨時
+            ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
+                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
 
             //Console.WriteLine(ViewData["CountryCode"]);
             //Console.WriteLine(ViewData["AnimeID"]);

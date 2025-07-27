@@ -10,12 +10,44 @@
     var MarkerJsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
 }  *@
 
+<p>
+    <a asp-action="Create" class="btn btn-primary">新增到訪紀錄</a>
+</p>
+
 <link rel="stylesheet" type="text/css" href="./style.css" />
 <script type="module" src="./index.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
+
+<!--Modal (Vertically centered)-->
+<div class="modal fade" id="SimpleDetailModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="SimpleDetailTitle">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    @* <span aria-hidden="true">&times;</span> *@
+                </button>
+            </div>
+            <div class="modal-body">
+                @*顯示物件*@
+                <div id="LoadSimpleDetail">
+                    @* @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 }) *@
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="ToDetails" type="button" class="btn btn-primary" data-bs-dismiss="modal">點我看更多</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal (Vertically centered)-->
+
 <script>
+    //紀錄選取的到訪記錄的SN，用作跳轉至詳細檢視
+    let SelectedVisitSN;
+
     function InitMap(){
-        console.log("Initing GoogleMap");
+        //console.log("Initing GoogleMap");
 
         // 設定地圖中心點
         const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
@@ -30,17 +62,20 @@
         //先將Model的東西轉到JS (C#和JS物件無法互相放置)
         var Markers=[];
 
-        @foreach(var Visit in Model)
+        //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
+        @foreach (var Visit in Model)
         {
-            <text>Markers.push({
-                lat:@Visit.Latitude,
-                lng:@Visit.Longitude,
-                Title:"@Visit.MainText"
-            });</text>
+                //添加Marker的屬性
+                <text>Markers.push({
+                    lat:@Visit.Latitude,
+                    lng:@Visit.Longitude,
+                    MemberName:'@Visit.Member.Name',
+                    VisitSN:@Visit.SN
+                });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
-        for(let i = 0; i < Markers.length; i++) 
+        for(let i = 0; i < Markers.length; i++)
         {
               const Marker=new google.maps.marker.AdvancedMarkerElement({
                 position: {
@@ -52,7 +87,37 @@
             });
 
             Marker.addListener('click',()=>{
-                alert(`Marker clicked: ${Markers[i].Title}`);
+                //alert(`Marker clicked: ${Markers[i].Title}`);
+
+                 // 設定模態框的內容
+                //document.querySelector('#SimpleDetailModalCenter').innerText = "Modal Test 1";
+                //document.querySelector('.modal-body').innerText = "Modal Test 2";
+
+                 //console.log(`Marker clicked: ${Markers[i].VisitSN}`);
+                // console.log(`Marker clicked: ${Markers.VisitSN}`);
+                // console.log(`Marker clicked: ${Marker.VisitSN}`);
+                //LoadSimpleDetail(Markers[i].VisitSN);
+
+                $('#LoadSimpleDetail').load(`/Visits/SimpleDetails?VisitSN=${Markers[i].VisitSN}`,function(){
+
+                    //console.log("ASDASDASD");
+                    //Load結束之後才會呼叫此function
+                    //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                    $.validator.unobtrusive.parse($('#LoadSimpleDetail'));
+                    //$('#exampleModalLongTitle').innerText = "Modal Test 1";
+                    //document.querySelector('#exampleModalLongTitle').innerText = "Modal Test 1";
+                });
+
+                //console.log(`Marker clicked: ${Markers[i].MemberName}`);
+                document.querySelector('#SimpleDetailTitle').innerText =Markers[i].MemberName;
+
+                // 顯示模態框
+                const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
+                modal.show();
+
+                //在Modal的按鈕中加入點擊事件，點下後跳至到訪紀錄的詳細資訊
+                SelectedVisitSN=Markers[i].VisitSN;//記錄點選的VisitSN
+                //console.log("SVN : "+SelectedVisitSN);
             });
         }
 
@@ -77,6 +142,11 @@
     }
 
     window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+
+    //在Modal下的按鈕增加監聽，按下後前往到訪紀錄詳細檢視畫面
+    document.querySelector('#ToDetails').addEventListener('click',(E)=>{
+        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}`;
+    });
 </script>
 
 @* <gmp-map center="22.593469753520136, 120.3088710110155"
@@ -86,6 +156,29 @@
 <div id="Gmap"
      style="width:100vw; height:100vh"></div>
 
+@section Scripts {
+    @*前端驗證套件*@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @*     <script>
+        function LoadSimpleDetail(){
+            console.log("LoadSimpleDetail");
+        }
+
+        function LoadSimpleDetail(VisitSN){
+            console.log("LoadSimpleDetail A VisitSN : "+ VisitSN);
+
+            $('#SimpleDetail').load('/Comments/Create?VisitSN=$'{VisitSN}'',function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                    $.validator.unobtrusive.parse($('#SimpleDetail'));
+            });
+        }
+    </script> *@
+}
+
 <!--
   The `defer` attribute causes the script to execute after the full HTML
   document has been parsed. For non-blocking uses, avoiding race conditions,
@@ -93,3 +186,6 @@
   https://developers.google.com/maps/documentation/javascript/load-maps-js-api
   for more information.
   -->
+@* <div id="LoadSimpleDetail">
+    @await Component.InvokeAsync("VC_SimpleDetail", new { VisitSN = 1 })
+</div> *@
