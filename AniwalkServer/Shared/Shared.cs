@@ -10,6 +10,22 @@
         /// 管理員角色名稱
         /// </summary>
         public const string Role_Admin = "Admin";
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ModelState"></param>
+        public static void ShowModelState(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary ModelState)
+        {
+            foreach (var key in ModelState.Keys)
+            {
+                var errors = ModelState[key].Errors;
+                if (errors.Any())
+                {
+                    Console.WriteLine($"Key : {key}, Errors : {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
+                }
+            }
+        }
     }
 
     /// <summary>

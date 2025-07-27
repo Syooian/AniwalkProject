@@ -56,14 +56,7 @@ namespace AniwalkServer.Controllers
                 return Json(replies);
             }
 
-            foreach (var key in ModelState.Keys)
-            {
-                var errors = ModelState[key].Errors;
-                if (errors.Any())
-                {
-                    Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
-                }
-            }
+            //Shared.ShowModelState(ModelState);
 
             //ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
             //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);

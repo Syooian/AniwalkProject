@@ -61,12 +61,7 @@ namespace AniwalkServer.Controllers
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
 
-            //Console.WriteLine("ModelState is not valid.");
-            //foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-            //{
-            //    //印出模型驗證錯誤的訊息
-            //    Console.WriteLine($"Error: {error.ErrorMessage}");
-            //}
+            //Shared.ShowModelState(ModelState);
 
             return Json(comments);
         }
