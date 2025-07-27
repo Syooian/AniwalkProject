@@ -17,7 +17,7 @@
                 <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
                 <p class="text-end">
                     @Html.DisplayFor(ModelItem => Comment.Member.Name) 發表於 @Html.DisplayFor(ModelItem => Comment.CommentDate)
-                    <button type="button" class="btn btn-primary" onclick="CheckAuthorization()">
+                    <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
                         回覆
                     </button>
                 </p>
@@ -39,7 +39,7 @@
                             <p>@Html.DisplayFor(Item => Reply.ReplyContent)</p>
                             <p class="text-end">
                                 @Html.DisplayFor(Item => Reply.Member.Name) 發表於 @Html.DisplayFor(Item => Reply.ReplyDate)
-                                <button type="button" class="btn btn-primary" onclick="CheckAuthorization()">
+                                <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
                                     回覆
                                 </button>
                             </p>

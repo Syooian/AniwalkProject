@@ -1,0 +1,53 @@
+﻿@using System.Security.Claims
+@model AniwalkServer.Models.Replies
+
+@{
+    Layout = null;
+    ViewData["Title"] = "新增回覆";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @*<label asp-for="ReplyID" class="control-label"></label>*@
+                <input asp-for="ReplyID" class="form-control" value="@Guid.NewGuid()" />
+                <span asp-validation-for="ReplyID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReplyContent" class="control-label"></label>
+                <input asp-for="ReplyContent" class="form-control" />
+                <span asp-validation-for="ReplyContent" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <label asp-for="ReplyDate" class="control-label"></label>
+                <input asp-for="ReplyDate" class="form-control" />
+                <span asp-validation-for="ReplyDate" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                @*<label asp-for="CommentID" class="control-label"></label>*@
+                @*CommentID : @ViewBag.CommentID*@
+                <input asp-for="CommentID" class="form-control" asp-items="ViewBag.CommentID" />
+            </div>
+            <div class="form-group">
+                @*<label asp-for="ParentReplyID" class="control-label"></label>*@
+                @*ParentReplyID : @ViewBag.ParentReplyID*@
+                <input asp-for="ParentReplyID" class="form-control" asp-items="ViewBag.ParentReplyID" />
+            </div>
+            <div class="form-group">
+                @*<label asp-for="MemberID" class="control-label"></label>*@
+                <input asp-for="MemberID" class="form-control" asp-items="ViewBag.MemberID">
+            </div>
+            <div class="form-group">
+                <input type="button" onclick="AddContent('Replies')" value="送出回覆" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
