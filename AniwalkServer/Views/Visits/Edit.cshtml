@@ -51,8 +51,28 @@
 </div>
 
 <div>
-    <a asp-action="ShowVisitsOnList">返回清單</a>
+    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
 </div>
+
+@if (Model.VisitsPhotos.Count > 0)
+{
+    <hr />
+    <div class="row justify-content-center">
+        @foreach (var Photo in Model.VisitsPhotos)
+        {
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+                <img class="card-img-top" src="/VisitsPhotos/@($"{Photo.PhotoID}.jpg")" alt="Card image cap">
+                <div class="card-body">
+                    <!--h5 class="card-title">Card title</h5>-->
+                    <p class="card-text">
+                        @Html.Raw(Photo.Description.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
+                    </p>
+                    @*<a href="#" class="btn btn-primary">檢視大圖</a>*@
+                </div>
+            </div>
+        }
+    </div>
+}
 
 @section Scripts {
     @{

@@ -122,7 +122,10 @@ namespace AniwalkServer.Controllers
             //    return NotFound();
             //}
 
-            var Visit = await Context.Visits.FindAsync(VisitSN);
+            var Visit = await Context.Visits
+                .Include(V => V.VisitsPhotos)
+                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
