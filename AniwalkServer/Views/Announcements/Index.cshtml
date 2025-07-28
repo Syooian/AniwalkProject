@@ -1,4 +1,12 @@
 ﻿@model IEnumerable<AniwalkServer.Models.Announcements>
+@{
+    ViewData["Title"] = "公告列表";
+}
+
+<h1>
+    @ViewData["Title"]
+</h1>
+<hr />
 
 <p>
     <a asp-action="Create" class="btn btn-outline-primary">新增公告</a>
@@ -25,7 +33,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
                 </td>
-                <td>
+                <td class="col-6">
                     @Html.DisplayFor(modelItem => item.Content)
                 </td>
                 <td>
@@ -33,7 +41,7 @@
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.SN" class="btn btn-primary">編輯</a> |
-                    <a asp-action="Details" asp-route-id="@item.SN" class="btn btn-primary>檢視</a> |
+                    <a asp-action="Details" asp-route-id="@item.SN" class="btn btn-primary">檢視</a> |
                     <a asp-action="Delete" asp-route-id="@item.SN" class="btn btn-danger">刪除</a>
                 </td>
             </tr>
