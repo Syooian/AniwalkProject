@@ -86,7 +86,7 @@ namespace AniwalkServer.Migrations
                     b.ToTable("Animes");
                 });
 
-            modelBuilder.Entity("AniwalkServer.Models.Annoucements", b =>
+            modelBuilder.Entity("AniwalkServer.Models.Announcements", b =>
                 {
                     b.Property<int>("SN")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace AniwalkServer.Migrations
 
                     b.HasKey("SN");
 
-                    b.ToTable("Annoucements");
+                    b.ToTable("Announcements");
                 });
 
             modelBuilder.Entity("AniwalkServer.Models.Comments", b =>

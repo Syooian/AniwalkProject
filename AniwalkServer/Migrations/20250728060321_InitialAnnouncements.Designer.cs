@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AniwalkServer.Migrations
 {
     [DbContext(typeof(AniwalkDBContext))]
-    [Migration("20250728060321_InitialAccoucements")]
-    partial class InitialAccoucements
+    [Migration("20250728060321_InitialAnnouncements")]
+    partial class InitialAnnouncements
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,7 +89,7 @@ namespace AniwalkServer.Migrations
                     b.ToTable("Animes");
                 });
 
-            modelBuilder.Entity("AniwalkServer.Models.Annoucements", b =>
+            modelBuilder.Entity("AniwalkServer.Models.Announcements", b =>
                 {
                     b.Property<int>("SN")
                         .ValueGeneratedOnAdd()
@@ -112,7 +112,7 @@ namespace AniwalkServer.Migrations
 
                     b.HasKey("SN");
 
-                    b.ToTable("Annoucements");
+                    b.ToTable("Announcements");
                 });
 
             modelBuilder.Entity("AniwalkServer.Models.Comments", b =>
