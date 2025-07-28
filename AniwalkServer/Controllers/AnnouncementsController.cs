@@ -88,7 +88,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SN,Title,Content,CreatedDate")] Announcements announcements)
+        public async Task<IActionResult> Edit(int id, [Bind("SN,Title,Content")] Announcements announcements)
         {
             if (id != announcements.SN)
             {
