@@ -121,24 +121,6 @@ namespace AniwalkServer.Controllers
             return View(announcements);
         }
 
-        // GET: Announcements/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var announcements = await _context.Announcements
-                .FirstOrDefaultAsync(m => m.SN == id);
-            if (announcements == null)
-            {
-                return NotFound();
-            }
-
-            return View(announcements);
-        }
-
         // POST: Announcements/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

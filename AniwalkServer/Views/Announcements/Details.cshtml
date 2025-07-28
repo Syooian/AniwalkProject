@@ -32,6 +32,9 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.SN" class="btn btn-primary">編輯</a> |
-    <a asp-action="Delete" asp-route-id="@Model?.SN" class="btn btn-danger">刪除</a> |
+    <form asp-action="Delete">
+        <input type="hidden" value="@Model?.SN" name="id" />
+        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" /> |
+    </form>
     <a asp-action="Index" class="btn btn-outline-primary">返回</a>
 </div>

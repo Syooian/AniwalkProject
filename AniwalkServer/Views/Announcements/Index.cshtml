@@ -42,7 +42,10 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.SN" class="btn btn-primary">編輯</a> |
                     <a asp-action="Details" asp-route-id="@item.SN" class="btn btn-primary">檢視</a> |
-                    <a asp-action="Delete" asp-route-id="@item.SN" class="btn btn-danger">刪除</a>
+                    <form asp-action="Delete">
+                        <input type="hidden" value="@item.SN" name="id" />
+                        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" />
+                    </form>
                 </td>
             </tr>
         }
