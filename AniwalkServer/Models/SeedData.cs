@@ -302,6 +302,27 @@ namespace AniwalkServer.Models
                 }
                 #endregion
 
+                #region 公告
+                if (!context.Announcements.Any())
+                {
+                    context.Announcements.Add(new Announcements()
+                    {
+                        Title = "歡迎使用 AniWalk！",
+                        Content = "AniWalk 是一個專為動漫迷設計的到訪紀錄平台，快來分享你的動漫之旅吧！",
+                        CreatedDate = DateTime.Now.AddMonths(-1)
+                    });
+
+                    context.Announcements.Add(new Announcements()
+                    {
+                        Title = "Announcement Test 1",
+                        Content = "This is a test announcement content for testing purposes.",
+                        CreatedDate = DateTime.Now.AddDays(-10)
+                    });
+
+                    context.SaveChanges();
+                }
+                #endregion
+
                 // 開啟 IDENTITY_INSERT (自行填入ID)
                 //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT VisitsTags ON");
 
