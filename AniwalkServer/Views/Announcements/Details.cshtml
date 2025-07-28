@@ -1,0 +1,37 @@
+﻿@model AniwalkServer.Models.Announcements
+@{
+    ViewData["Title"] = "公告檢視";
+}
+
+<h1>
+    @ViewData["Title"]
+</h1>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.Raw(Model.Content.Replace("\r\n", "<br>"))
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.SN" class="btn btn-primary">編輯</a> |
+    <a asp-action="Delete" asp-route-id="@Model?.SN" class="btn btn-danger">刪除</a> |
+    <a asp-action="Index" class="btn btn-outline-primary">返回</a>
+</div>
