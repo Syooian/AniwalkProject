@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AniwalkServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialAccoucements : Migration
+    public partial class InitialAnnouncements : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Annoucements",
+                name: "Announcements",
                 columns: table => new
                 {
                     SN = table.Column<int>(type: "int", nullable: false)
@@ -23,7 +23,7 @@ namespace AniwalkServer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Annoucements", x => x.SN);
+                    table.PrimaryKey("PK_Announcements", x => x.SN);
                 });
         }
 
@@ -31,7 +31,7 @@ namespace AniwalkServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Annoucements");
+                name: "Announcements");
         }
     }
 }
