@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -10,15 +12,24 @@ namespace AniwalkServer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly AniwalkDBContext Context;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context)
         {
             _logger = logger;
             _configuration = configuration;
+            this.Context = Context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var Announcements = await Context.Announcements.OrderByDescending(A=>A.CreatedDate).ToListAsync();
+
+            ViewData["Announcements"] = Announcements;
+
             return View();
         }
 
