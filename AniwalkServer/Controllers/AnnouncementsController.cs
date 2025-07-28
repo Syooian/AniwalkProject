@@ -56,10 +56,13 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SN,Title,Content,CreatedDate")] Announcements announcements)
+        public async Task<IActionResult> Create([Bind("SN,Title,Content")] Announcements announcements)
         {
             if (ModelState.IsValid)
             {
+                //announcements.CreatedDate = DateTime.Now; // 設定建立日期
+                //似乎不需要特地寫，可能是因為已在Model指定預設值為Datetime.Now
+
                 _context.Add(announcements);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
