@@ -22,9 +22,20 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Announcements
-        public async Task<IActionResult> Index()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Skip">跳過開頭幾筆紀錄</param>
+        /// <param name="Take">取幾筆紀錄</param>
+        /// <returns></returns>
+        public async Task<IActionResult> Index(int? Skip, int? Take)
         {
-            return View(await _context.Announcements.OrderByDescending(A => A.CreatedDate).ToListAsync());
+            var Result = _context.Announcements.OrderByDescending(A => A.CreatedDate);
+
+            if (Skip != null && Take != null)
+                Result.Skip((int)Skip).Take((int)Take);
+
+            return View(await Result.ToListAsync());
         }
 
         // GET: Announcements/Details/5
