@@ -47,6 +47,10 @@ namespace AniwalkServer.Data
         /// 到訪紀錄照片
         /// </summary>
         public virtual DbSet<VisitsPhotos> VisitsPhotos { get; set; }
+        /// <summary>
+        /// 公告
+        /// </summary>
+        public virtual DbSet<Announcements> Announcements { get; set; }
         #endregion
 
         /// <summary>
