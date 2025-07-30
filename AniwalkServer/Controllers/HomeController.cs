@@ -26,10 +26,6 @@ namespace AniwalkServer.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var Announcements = await Context.Announcements.OrderByDescending(A=>A.CreatedDate).ToListAsync();
-
-            ViewData["Announcements"] = Announcements;
-
             return View();
         }
 
