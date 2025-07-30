@@ -106,6 +106,8 @@ namespace AniwalkServer.Controllers
 
                 members.RoleID = (int)RoleEnum.Member; // 設定會員角色為一般會員
 
+                members.MemberStatus = new MemberStatus();//新增會員狀態
+
                 _context.Add(members);
                 _context.Add(Login);
                 await _context.SaveChangesAsync();
