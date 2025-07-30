@@ -32,7 +32,14 @@ namespace AniwalkServer.Models
         /// 備註
         /// </summary>
         [Display(Name = "備註")]
-        [StringLength(100)]
+        [StringLength(20)]
         public string? Note { get; set; }
+
+        #region 外鍵關聯
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual List<MemberStatus>? MemberStatus { get; set; } = null!;
+        #endregion
     }
 }
