@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 namespace AniwalkServer.Models
 {
     /// <summary>
-    /// 會員狀態
+    /// 會員狀態碼
     /// </summary>
-    public partial class MemberStatus
+    public partial class MemberStatusCode
     {
         /// <summary>
         /// 狀態碼

@@ -9,7 +9,7 @@ namespace AniwalkServer.Data
         /// <summary>
         /// 會員狀態
         /// </summary>
-        public virtual DbSet<MemberStatus> MemberStatus { get; set; }
+        public virtual DbSet<MemberStatusCode> MemberStatus { get; set; }
 
         //protected partial void OnModelCreatingPartial(ModelBuilder ModelBuilder)
         //{

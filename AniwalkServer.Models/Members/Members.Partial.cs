@@ -91,7 +91,7 @@ namespace AniwalkServer.Models
         /// <summary>
         /// 會員狀態
         /// </summary>
-        public virtual MemberStatus? MemberStatus { get; set; } = null!;
+        public virtual MemberStatusCode? MemberStatus { get; set; } = null!;
         #endregion
     }
 }
