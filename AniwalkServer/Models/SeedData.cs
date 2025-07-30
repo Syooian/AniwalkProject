@@ -76,6 +76,14 @@ namespace AniwalkServer.Models
                 }
                 #endregion
 
+                #region 會員狀態
+                context.MemberStatus.Add(new MemberStatus() { StatusCode = 0, StatusName = "一般" });
+                context.MemberStatus.Add(new MemberStatus() { StatusCode = 1, StatusName = "已封鎖" });
+                context.MemberStatus.Add(new MemberStatus() { StatusCode = 2, StatusName = "已註銷" });
+
+                context.SaveChanges();
+                #endregion
+
                 #region 會員資料
                 if (context.Members.Any())
                 {

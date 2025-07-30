@@ -82,6 +82,16 @@ namespace AniwalkServer.Models
         /// 帳密
         /// </summary>
         public virtual Login? Login { get; set; } = null!;
+
+        /// <summary>
+        /// 會員狀態狀態碼
+        /// </summary>
+        [ForeignKey(nameof(MemberStatus))]
+        public int StatusCode { get; set; } = 0;
+        /// <summary>
+        /// 會員狀態
+        /// </summary>
+        public virtual MemberStatus? MemberStatus { get; set; } = null!;
         #endregion
     }
 }
