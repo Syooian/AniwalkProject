@@ -6,8 +6,8 @@
 <!DOCTYPE html>
 <html lang="en">
 @{
-    //共用Head
-    await Html.RenderPartialAsync("_SharedLayout.Head");
+        //共用Head
+        await Html.RenderPartialAsync("_SharedLayout.Head");
 }
 <body>
     <header>
@@ -31,6 +31,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Announcements" asp-action="Index">公告檢視</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Members" asp-action="Index">會員檢視</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav text-end">

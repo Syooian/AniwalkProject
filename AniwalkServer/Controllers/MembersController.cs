@@ -21,6 +21,26 @@ namespace AniwalkServer.Controllers
         }
 
         /// <summary>
+        /// 會員檢視
+        /// </summary>
+        /// <param name="Skip"></param>
+        /// <param name="Take"></param>
+        /// <returns></returns>
+        [Authorize(Roles = Shared.Role_Admin)]
+        public async Task<IActionResult> Index(int Skip = 0, int Take = 0)
+        {
+            var Result = _context.Members
+                .Include(M => M.Country)
+                .Include(MS => MS.MemberStatus).ThenInclude(MSC => MSC.MemberStatusCode)
+                .Skip(Skip);
+
+            if (Take > 0)
+                Result = Result.Take(Take);
+
+            return View(await Result.ToListAsync());
+        }
+
+        /// <summary>
         /// 註冊會員
         /// </summary>
         /// <returns></returns>

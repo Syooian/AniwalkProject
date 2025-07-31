@@ -1,0 +1,69 @@
+﻿@model IEnumerable<AniwalkServer.Models.Members>
+
+@{
+    ViewData["Title"] = "會員檢視";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MemberID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MemberRole)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MemberStatus.MemberStatusCode.StatusName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MemberID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country.CountryName)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.MemberRole.RoleName)*@
+                    @((RoleEnum)item.RoleID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MemberStatus.MemberStatusCode.StatusName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.MemberID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.MemberID">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

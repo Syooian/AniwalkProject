@@ -102,7 +102,12 @@ namespace AniwalkServer.Models
                         Name = "TestMember" + MemberIDs[a],
                         Email = MemberIDs[a] + "@example.com",
                         CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode,
-                        RoleID = 1
+                        RoleID = 1,
+                        MemberStatus = new MemberStatus()
+                        {
+                            MemberID = MemberIDs[a],
+                            StatusCode = 0, //一般狀態
+                        }
                     });
                 }
 
@@ -124,7 +129,12 @@ namespace AniwalkServer.Models
                     Name = "かんりいん",
                     Email = "Admin@example.com",
                     CountryCode = Countries[new Random().Next(0, Countries.Length)].CountryCode,
-                    RoleID = 9
+                    RoleID = 9,
+                    MemberStatus = new MemberStatus()
+                    {
+                        MemberID = MemberIDs[a],
+                        StatusCode = 0, //一般狀態
+                    }
                 });
 
                 //管理員帳密
