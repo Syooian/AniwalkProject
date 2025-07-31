@@ -3,6 +3,10 @@
     public class Shared
     {
         /// <summary>
+        /// 訪客角色名稱
+        /// </summary>
+        public const string Role_Guest = "Guest";
+        /// <summary>
         /// 一般會員角色名稱
         /// </summary>
         public const string Role_Member = "Member";
