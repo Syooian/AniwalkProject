@@ -44,6 +44,11 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Members/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"><see cref="Members.MemberID"/></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -51,51 +56,60 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            var members = await _context.Members
-                .Include(MS => MS.MemberStatus).ThenInclude(MSC => MSC.MemberStatusCode)
-                .FirstOrDefaultAsync(M => M.MemberID == id);
-            if (members == null)
+            //var members = await _context.Members
+            //    .Include(MS => MS.MemberStatus).ThenInclude(MSC => MSC.MemberStatusCode)
+            //    .FirstOrDefaultAsync(M => M.MemberID == id);
+            var MemberStatus = await _context.MemberStatus.Include(MSC => MSC.MemberStatusCode).FirstOrDefaultAsync(M => M.MemberID == id);
+            if (MemberStatus == null)
             {
                 return NotFound();
             }
 
-            SetViewData(members.CountryCode);
+            //SetViewData(members.CountryCode);
 
             //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
-            ViewData["CreatedDate"] = members.CreatedDate;
+            //ViewData["CreatedDate"] = members.CreatedDate;
             ViewData["MemberStatusCode"] = new SelectList(
                 _context.MemberStatusCode,
                 nameof(MemberStatusCode.StatusCode),
                 nameof(MemberStatusCode.StatusName),
-                members.MemberStatus?.StatusCode);
+                MemberStatus.StatusCode);
 
-            return View(members);
+            return View(MemberStatus);
         }
 
         // POST: Members/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"><see cref="Members.MemberID"/></param>
+        /// <param name="MemberStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("MemberID,Name,Email,CreatedDate,CountryCode,MemberStatus")] Members members)
+        public async Task<IActionResult> Edit(string id, [Bind("MemberID,StatusCode,Note")] MemberStatus MemberStatus)
         {
-            if (id != members.MemberID)
+            if (id != MemberStatus.MemberID)
             {
                 return NotFound();
             }
 
-            Console.WriteLine("MemberStatus : " + members.MemberStatus.StatusCode);
+            //Console.WriteLine("MemberStatus : " + members.MemberStatus.StatusCode);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(members);
+                    MemberStatus.UpdateDate = DateTime.Now;
+
+                    _context.Update(MemberStatus);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MembersExists(members.MemberID))
+                    if (!MembersExists(MemberStatus.MemberID))
                     {
                         return NotFound();
                     }
@@ -109,7 +123,7 @@ namespace AniwalkServer.Controllers
 
             Shared.ShowModelState(ModelState);
 
-            return View(members);
+            return View(MemberStatus);
         }
 
         private bool MembersExists(string id)

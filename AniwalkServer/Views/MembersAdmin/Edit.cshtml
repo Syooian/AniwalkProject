@@ -1,54 +1,25 @@
-﻿@model AniwalkServer.Models.Members
+﻿@model AniwalkServer.Models.MemberStatus
 
-@* @{
-    ViewData["Title"] = "編輯會員";
+@{
+    ViewData["Title"] = "編輯會員狀態";
 }
 
-<h1>@ViewData["Title"]</h1> *@
+<h1>@ViewData["Title"]</h1>
 
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Note" class="control-label"></label>
+                <input asp-for="Note" class="form-control" />
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
             <input type="hidden" asp-for="MemberID" />
             <div class="form-group">
-                @*<label asp-for="Name" class="control-label"></label>*@
-                <input asp-for="Name" class="form-control" hidden />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*<label asp-for="Email" class="control-label"></label>*@
-                <input asp-for="Email" class="form-control" hidden />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*<label asp-for="CreatedDate" class="control-label"></label>*@
-                <input asp-for="CreatedDate" class="form-control" hidden />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*<label asp-for="CountryCode" class="control-label"></label>*@
-                <select asp-for="CountryCode" class="form-control" asp-items="ViewBag.CountryCode" hidden></select>
-                <span asp-validation-for="CountryCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*<label asp-for="RoleID" class="control-label"></label>*@
-                <select asp-for="RoleID" class="form-control" asp-items="ViewBag.RoleID" hidden></select>
-                <span asp-validation-for="RoleID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                @*<label asp-for="CountryCode" class="control-label"></label>*@
-                <input asp-for="MemberStatus.MemberID" class="form-control" value="@Model.MemberID" hidden />
-                <span asp-validation-for="MemberStatus.MemberID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MemberStatus.StatusCode" class="control-label"></label>
-                <select asp-for="MemberStatus.StatusCode" class="form-control" asp-items="@ViewBag.MemberStatusCode"></select>
-                <span asp-validation-for="MemberStatus.StatusCode" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MemberStatus.Note" class="control-label"></label>
-                <input asp-for="MemberStatus.Note" class="form-control" />
+                <label asp-for="StatusCode" class="control-label"></label>
+                <select asp-for="StatusCode" class="form-control" asp-items="ViewBag.MemberStatusCode"></select>
+                <span asp-validation-for="StatusCode" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

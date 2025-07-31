@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Models;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace AniwalkServer.Data
 {
@@ -8,6 +9,10 @@ namespace AniwalkServer.Data
     {
         /// <summary>
         /// 會員狀態
+        /// </summary>
+        public virtual DbSet<MemberStatus> MemberStatus { get; set; }
+        /// <summary>
+        /// 會員狀態碼
         /// </summary>
         public virtual DbSet<MemberStatusCode> MemberStatusCode { get; set; }
 
