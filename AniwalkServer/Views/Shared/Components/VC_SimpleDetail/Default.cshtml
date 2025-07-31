@@ -35,7 +35,7 @@
         @foreach (var Item in Model.VisitsPhotos)
         {
             <div class="carousel-item @(IsFirst ? "active" : "")">
-                <img class="d-block w-100" src="/VisitsPhotos/@(Item.PhotoID).jpg" alt="@Item.Description">
+                <img class="d-block w-100" src="@($"/VisitsPhotos/{Model.MemberID}/{Item.PhotoID}.jpg")" alt="@Item.Description">
                 <div class="carousel-caption d-none d-md-block">
                     <p>
                         @Html.Raw(Item.Description.Replace("\r\n", "<br>"))

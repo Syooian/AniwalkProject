@@ -99,7 +99,7 @@
         @foreach (var Photo in Model.VisitsPhotos)
         {
             <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
-                <img class="card-img-top" src="/VisitsPhotos/@($"{Photo.PhotoID}.jpg")" alt="Card image cap">
+                <img class="card-img-top" src="@($"/VisitsPhotos/{Model.MemberID}/{Photo.PhotoID}.jpg")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <p class="card-text">
@@ -179,7 +179,7 @@
 
             if(ParentReplyID!="")//回覆給回覆
                 URL+='&ParentReplyID='+ParentReplyID;
-            
+
             console.log(URL);
             //評論：/Comments/Create?VisitSN=1
             //回覆評論：/Replies/Create?VisitSN=1&CommentID=43fe5ee2-fee3-447e-8204-02ace0443665
