@@ -261,7 +261,7 @@ namespace AniwalkServer.Models
                 if (!context.VisitsPhotos.Any())
                 {
                     #region 刪除現有照片
-                    string[] Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos"),
+                    string[] Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath),
                         "*",//所有檔案
                         SearchOption.AllDirectories);//所有子資料夾
                     for (int a = 0; a < Files.Length; a++)
@@ -304,7 +304,7 @@ namespace AniwalkServer.Models
 
                     #region 照片轉存
                     string SeedPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedPhotos", "Visits");//取得來源照片路徑
-                    string VisitsPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos");//目的路徑
+                    string VisitsPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath);//目的路徑
                     Files = Directory.GetFiles(SeedPhotosPath);  //取得指定路徑中的所有檔案
 
                     if (!Directory.Exists(VisitsPhotosPath))

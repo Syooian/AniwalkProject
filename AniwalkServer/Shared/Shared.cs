@@ -16,6 +16,11 @@
         public const string Role_Admin = "Admin";
 
         /// <summary>
+        /// 到訪照片根路徑
+        /// </summary>
+        public const string VisitsPhotosRootPath = "VisitsPhotos";
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="ModelState"></param>
