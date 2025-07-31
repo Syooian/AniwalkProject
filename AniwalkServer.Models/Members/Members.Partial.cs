@@ -12,6 +12,7 @@ namespace AniwalkServer.Models
         [Key]
         [HiddenInput]
         [StringLength(10, MinimumLength = 10)]
+        [Display(Name = "會員ID")]
         public string MemberID { get; set; } = null!;
 
         /// <summary>
@@ -35,6 +36,7 @@ namespace AniwalkServer.Models
         /// 創建日期
         /// </summary>
         [HiddenInput]
+        [Display(Name = "註冊日期")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         #region 外鍵關聯

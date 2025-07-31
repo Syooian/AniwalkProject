@@ -132,7 +132,7 @@ namespace AniwalkServer.Models
                     RoleID = 9,
                     MemberStatus = new MemberStatus()
                     {
-                        MemberID = MemberIDs[a],
+                        MemberID = AdminMemberID,
                         StatusCode = 0, //一般狀態
                     }
                 });

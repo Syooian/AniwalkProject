@@ -19,6 +19,7 @@ namespace AniwalkServer.Models
         /// 角色名稱
         /// </summary>
         [StringLength(10)]
+        [Display(Name = "角色名稱")]
         public string RoleName { get; set; } = null!;
 
         #region 外鍵關聯
