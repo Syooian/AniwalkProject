@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCook
     Options.LogoutPath = "/Login/Logout"; // 設定登出頁面路徑
     Options.AccessDeniedPath = "/Home/Index"; // 設定存取拒絕頁面路徑(若已登入但角色權限不符則強制導到此路徑)
 });
+
+builder.Services.AddScoped<MemberValidationService>(); //注入會員驗證服務
 
 var app = builder.Build();
 
