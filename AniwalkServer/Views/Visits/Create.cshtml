@@ -52,12 +52,47 @@
 
 <hr />
 
-<button type="button" class="btn btn-primary">
+@*照片*@
+<!-- 隱藏的文件選擇器 -->
+<input type="file" id="PhotoSelecter" accept="image/*" multiple style="display: none;" onchange="OnPhotoChange(event)" />
+<!-- 新增照片按鈕 -->
+<button type="button" class="btn btn-primary" onclick="OpenPhotoPicker()">
     新增照片
 </button>
+
+@if (Model?.VisitsPhotos.Count > 0)
+{
+    <hr />
+    <div class="row justify-content-center" id="PhotoContainer">
+        @foreach (var Photo in Model.VisitsPhotos)
+        {
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+                <button type="button" class="btn btn-outline-primary">刪除</button>
+                <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}.jpg")" alt="Card image cap">
+                <div class="card-body">
+                    <!--h5 class="card-title">Card title</h5>-->
+                    <textarea asp-for="MainText" class="form-control" rows="10"></textarea>
+                </div>
+            </div>
+        }
+    </div>
+}
+@*照片*@
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        //開啟圖片多選
+        function OpenPhotoPicker(){
+            document.getElementById("PhotoSelecter").click();
+        }
+
+        //處理圖片選擇
+        function OnPhotoChange(event){
+            console.log("選取了 "+event.target.files.length+" 張照片");
+        }
+    </script>
 }
