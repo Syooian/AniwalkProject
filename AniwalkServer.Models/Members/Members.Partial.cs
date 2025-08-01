@@ -21,6 +21,7 @@ namespace AniwalkServer.Models
         [StringLength(40)]
         [Display(Name = "會員名稱")]
         [Required(ErrorMessage = "請輸入會員名稱")]
+        [CheckName]
         public string Name { get; set; } = null!;
 
         /// <summary>
