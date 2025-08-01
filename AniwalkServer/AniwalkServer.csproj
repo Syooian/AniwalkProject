@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AniwalkServer.Data\AniwalkServer.Data.csproj" />
     <ProjectReference Include="..\AniwalkServer.Models\AniwalkServer.Models.csproj" />
   </ItemGroup>
 
