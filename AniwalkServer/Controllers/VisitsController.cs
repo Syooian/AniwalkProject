@@ -72,6 +72,7 @@ namespace AniwalkServer.Controllers
         /// 創建新的到訪記錄
         /// </summary>
         /// <returns></returns>
+        [HttpGet]
         [Authorize(Roles = Shared.Role_Member)]
         public IActionResult Create()
         {
@@ -85,15 +86,46 @@ namespace AniwalkServer.Controllers
         /// 送出新建到訪記錄表單
         /// </summary>
         /// <param name="Visit"></param>
+        /// <param name="VisitsPhotos">到訪紀錄照片</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate")] Visits Visit)
+        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate")] Visits Visit, IEnumerable<IFormFile>? VisitsPhotos)
         {
             if (ModelState.IsValid)
             {
                 Visit.CreatedDate = DateTime.Now;
+
+                if (VisitsPhotos != null)
+                {
+                    foreach (var Photo in VisitsPhotos)
+                    {
+                        if (Photo != null && Photo.Length != 0)
+                        {
+                            //新檔名
+                            var FileName = Guid.NewGuid() + Path.GetExtension(Photo.FileName);
+                            //上傳路徑
+                            var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID);
+                            //檢查上傳路徑
+                            if (!Directory.Exists(UploadPath))
+                                Directory.CreateDirectory(UploadPath);
+                            //上傳
+                            using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName), FileMode.Create))
+                            {
+                                Photo.CopyTo(FS);
+                            }
+
+                            //儲存新檔名到資料庫
+                            Context.VisitsPhotos.Add(new VisitsPhotos
+                            {
+                                SN = Visit.SN,
+                                PhotoID = FileName,
+                                Description = Photo.FileName
+                            });
+                        }
+                    }
+                }
 
                 Context.Add(Visit);
                 await Context.SaveChangesAsync();
