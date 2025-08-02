@@ -285,6 +285,7 @@ namespace AniwalkServer.Models
                         {
                             MemberID = MemberIDs[0],
                             PhotoID = Guid.NewGuid().ToString(),
+                            PhotoType = ".jpg",
                             Description = "七咲鞦韆 Photo " + a,
                             SN = 1
                         };
@@ -293,6 +294,7 @@ namespace AniwalkServer.Models
                         {
                             MemberID = MemberIDs[0],
                             PhotoID = Guid.NewGuid().ToString(),
+                            PhotoType = ".jpg",
                             Description = "怪獸襲來 Photo " + a,
                             SN = 2
                         };

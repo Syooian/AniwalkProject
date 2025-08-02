@@ -19,6 +19,14 @@ namespace AniwalkServer.Models
         [Key]
         public string PhotoID { get; set; } = null!;
         /// <summary>
+        /// 照片類型
+        /// <para>副檔名</para>
+        /// </summary>
+        [HiddenInput]
+        [StringLength(5)]
+        [Column(TypeName = "char")]
+        public string PhotoType { get; set; } = null!;
+        /// <summary>
         /// 說明
         /// </summary>
         [Display(Name = "說明", Description = "照片的說明")]
