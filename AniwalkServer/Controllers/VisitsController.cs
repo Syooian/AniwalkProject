@@ -97,6 +97,9 @@ namespace AniwalkServer.Controllers
             {
                 Visit.CreatedDate = DateTime.Now;
 
+                Context.Add(Visit);
+                await Context.SaveChangesAsync();
+
                 if (VisitsPhotos != null)
                 {
                     foreach (var Photo in VisitsPhotos)
@@ -118,14 +121,16 @@ namespace AniwalkServer.Controllers
                             }
 
                             //新檔名
-                            var FileName = Guid.NewGuid() + Path.GetExtension(Photo.FileName);
+                            var FileName = Guid.NewGuid().ToString();
+                            //副檔名
+                            var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
                             //上傳路徑
                             var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID);
                             //檢查上傳路徑
                             if (!Directory.Exists(UploadPath))
                                 Directory.CreateDirectory(UploadPath);
                             //上傳
-                            using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName), FileMode.Create))
+                            using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
                             {
                                 Photo.CopyTo(FS);
                             }
@@ -133,16 +138,18 @@ namespace AniwalkServer.Controllers
                             //儲存新檔名到資料庫
                             Context.VisitsPhotos.Add(new VisitsPhotos
                             {
+                                MemberID = Visit.MemberID,
                                 SN = Visit.SN,
                                 PhotoID = FileName,
+                                PhotoType = FileExtension,
                                 Description = Photo.FileName
                             });
                         }
                     }
+
+                    await Context.SaveChangesAsync();
                 }
 
-                Context.Add(Visit);
-                await Context.SaveChangesAsync();
                 return RedirectToAction(nameof(ShowVisitsOnList));
             }
 
