@@ -1,0 +1,67 @@
+﻿<!-- 隱藏的文件選擇器 -->
+<input type="file" id="PhotoSelecter" accept="image/*" multiple style="display: none;" onchange="OnPhotoChange(this)" /><!--如果 event 被標示為已淘汰，建議在函式中明確地傳遞事件物件，並避免依賴全域的 event 物件 (更安全且現代的做法)-->
+<!-- 新增照片按鈕 -->
+<button type="button" class="btn btn-primary" onclick="OpenPhotoPicker()">
+    新增照片
+</button>
+
+<div class="row justify-content-center" id="PhotoContainer">
+    @* @foreach (var Photo in Model.VisitsPhotos)
+        {
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+                <button type="button" class="btn btn-outline-primary">刪除</button>
+                <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}.jpg")" alt="Card image cap">
+                <div class="card-body">
+                    <!--h5 class="card-title">Card title</h5>-->
+                    <textarea asp-for="MainText" class="form-control" rows="10"></textarea>
+                </div>
+            </div>
+        } *@
+</div>
+
+<script>
+    //開啟圖片多選
+    function OpenPhotoPicker(){
+        document.getElementById("PhotoSelecter").click();
+    }
+
+    //處理圖片選擇
+    function OnPhotoChange(InputElement){
+        const Files=InputElement.files;
+        console.log("選取了 "+Files.length+" 張照片");
+
+        const PhotoContainer = document.getElementById("PhotoContainer");
+
+        for(var a=0;a<Files.length;a++){
+            console.log("處理第 "+(a+1)+" 張照片");
+
+            // 使用 FileReader 讀取圖片
+            const Reader=new FileReader();
+            Reader.onloadend=function(E){
+                const Card=document.createElement("div");
+                Card.className="card mt-1 mb-1 ms-1 me-1";
+                Card.style.maxWidth = "18rem";
+
+                Card.innerHTML=`
+                    <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(this)">刪除</button>
+                    <img class="card-img-top" src="${E.target.result}" alt="Card image cap">
+                    <div class="card-body">
+                        <textarea class="form-control" rows="10"></textarea>
+                    </div>
+                `;
+
+                PhotoContainer.appendChild(Card);
+            }
+
+            Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
+        }
+
+        console.log("圖片處理完成");
+    }
+
+        // 刪除圖片
+    function RemovePhoto(ButtonElement) {
+        const Card = ButtonElement.parentElement;
+        Card.remove();
+    }
+</script>
