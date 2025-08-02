@@ -103,6 +103,20 @@ namespace AniwalkServer.Controllers
                     {
                         if (Photo != null && Photo.Length != 0)
                         {
+                            switch (Photo.ContentType)
+                            {
+                                case "image/gif":
+                                case "image/bmp":
+                                case "image/jpg":
+                                case "image/jpeg":
+                                case "image/png":
+                                case "image/jfif":
+                                    break;
+                                default:
+                                    ViewData["PhotoError"] = "不支援的圖片類型";
+                                    return View(Visit);
+                            }
+
                             //新檔名
                             var FileName = Guid.NewGuid() + Path.GetExtension(Photo.FileName);
                             //上傳路徑
