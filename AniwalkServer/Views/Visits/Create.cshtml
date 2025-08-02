@@ -40,7 +40,7 @@
             </div>
             <div class="form-group">
                 @*<label asp-for="Photo" class="control-label"></label>*@
-                <input type="file" asp-for="VisitsPhotos" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple /><!--所有圖片類型：image/*-->
+                <input type="file" asp-for="VisitsPhotos" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple id="PhotoSelecter" hidden onchange="OnPhotoChange(this)" /><!--所有圖片類型：image/*-->
                 @*<span asp-validation-for="Photo" class="text-danger"></span>*@
                 <span class="text-danger">@ViewData["PhotoError"]</span>
             </div>
