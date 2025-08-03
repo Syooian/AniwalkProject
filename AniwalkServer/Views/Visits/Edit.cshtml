@@ -61,7 +61,7 @@
         @foreach (var Photo in Model.VisitsPhotos)
         {
             <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
-                <img class="card-img-top" src="/VisitsPhotos/@($"{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
+                <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <p class="card-text">
