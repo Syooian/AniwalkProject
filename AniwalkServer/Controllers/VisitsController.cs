@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Data;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -91,7 +92,7 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate")] Visits Visit, IEnumerable<IFormFile>? VisitsPhotos)
+        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? VisitsPhotos)
         {
             if (ModelState.IsValid)
             {
@@ -102,6 +103,22 @@ namespace AniwalkServer.Controllers
 
                 if (VisitsPhotos != null)
                 {
+                    if (Visit.VisitsPhotos != null)
+                    {
+                        Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
+
+                        foreach (var Des in Visit.VisitsPhotos)
+                        {
+                            //Console.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
+                            Debug.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
+                        }
+                    }
+                    else
+                    {
+                        //Console.WriteLine("Visit.VisitsPhotos is null");
+                        Debug.WriteLine("Visit.VisitsPhotos is null");
+                    }
+
                     foreach (var Photo in VisitsPhotos)
                     {
                         if (Photo != null && Photo.Length != 0)
@@ -142,7 +159,7 @@ namespace AniwalkServer.Controllers
                                 SN = Visit.SN,
                                 PhotoID = FileName,
                                 PhotoType = FileExtension,
-                                Description = Photo.FileName
+                                //Description = Visit.VisitsPhotos[async].Description
                             });
                         }
                     }
