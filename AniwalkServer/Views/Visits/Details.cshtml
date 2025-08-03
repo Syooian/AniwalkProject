@@ -103,7 +103,7 @@
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <p class="card-text">
-                        @Html.Raw(Photo.Description.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
+                        @Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
                     </p>
                     <a href="#" class="btn btn-primary">檢視大圖</a>
                 </div>

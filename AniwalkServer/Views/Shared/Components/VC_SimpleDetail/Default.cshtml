@@ -38,7 +38,7 @@
                 <img class="d-block w-100" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Item.PhotoID}{Item.PhotoType}")" alt="@Item.Description">
                 <div class="carousel-caption d-none d-md-block">
                     <p>
-                        @Html.Raw(Item.Description.Replace("\r\n", "<br>"))
+                        @Html.Raw(Item.Description?.Replace("\r\n", "<br>"))
                     </p>
                 </div>
             </div>
