@@ -307,7 +307,7 @@ namespace AniwalkServer.Controllers
             var VisitsPhotos = await Context.VisitsPhotos.Where(VP => Visit.SN == VP.SN).ToListAsync();
             foreach (var Photo in VisitsPhotos)
             {
-                var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "VisitsPhotos", Photo.PhotoID + Photo.PhotoType);
+                var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID, Photo.PhotoID + Photo.PhotoType);
 
                 if (System.IO.File.Exists(FilePath))
                 {
