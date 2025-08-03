@@ -211,10 +211,11 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="Visit"></param>
+        /// <param name="VisitsPhotos">到訪紀錄照片</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate")] Visits Visit)
+        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? VisitsPhotos)
         {
             //if (id != tStudent.fStuId)
             //{
@@ -228,6 +229,22 @@ namespace AniwalkServer.Controllers
                     Context.Update(Visit);
 
                     await Context.SaveChangesAsync();
+
+                    if (Visit.VisitsPhotos != null)
+                    {
+                        Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
+
+                        foreach (var Des in Visit.VisitsPhotos)
+                        {
+                            //Console.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
+                            Debug.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
+                        }
+                    }
+                    else
+                    {
+                        //Console.WriteLine("Visit.VisitsPhotos is null");
+                        Debug.WriteLine("Visit.VisitsPhotos is null");
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -243,6 +260,8 @@ namespace AniwalkServer.Controllers
 
                 return RedirectToAction(nameof(ShowVisitsOnList));
             }
+
+            Shared.ShowModelState(ModelState);
 
             SetViewData();
 

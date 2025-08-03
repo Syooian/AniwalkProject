@@ -9,7 +9,7 @@
             <input type="hidden" asp-for="SN" />
             <div class="form-group">
                 <label asp-for="MainText" class="control-label"></label>
-                <textarea asp-for="MainText" class="form-control"></textarea>
+                <textarea asp-for="MainText" class="form-control" rows="10"></textarea>
                 <span asp-validation-for="MainText" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -43,6 +43,20 @@
                 <span asp-validation-for="VisitedDate" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple id="PhotoSelecter" onchange="OnPhotoChange(this)" />
+                <div id="PhotoContainer">
+                    @for (int a = 0; a < Model.VisitsPhotos.Count; a++)
+                    {
+                        <div class="card">
+                            <input asp-for="@Model.VisitsPhotos[a].MemberID" class="form-control" value="@Model.MemberID" hidden />
+                            <input asp-for="@Model.VisitsPhotos[a].PhotoID" class="form-control" />
+                            <input asp-for="@Model.VisitsPhotos[a].PhotoType" class="form-control" />
+                            <textarea asp-for=@Model.VisitsPhotos[a].Description" class="form-control"></textarea>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="修改" class="btn btn-primary" />
             </div>
         </form>
@@ -64,9 +78,10 @@
                 <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
-                    <p class="card-text">
-                        @Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
-                    </p>
+                    <div class="card-body">
+                        <textarea class="form-control" rows="10">@Photo.Description</textarea>
+                        @*@Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)*@
+                    </div>
                     @*<a href="#" class="btn btn-primary">檢視大圖</a>*@
                 </div>
             </div>
@@ -75,7 +90,24 @@
 }
 
 @section Scripts {
-    @{
+@{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        const Photocontainer=document.getElementById("PhotoContainer");
+
+        function OnPhotoChange(InputElement){
+        for(let a=0;a<InputElement.files.length;a++){
+        const Card=document.createElement("div");
+        Card.className="card";
+
+        @{
+            Console.WriteLine("B1 " + Model.VisitsPhotos.Count);
+            Model.VisitsPhotos.Add(new VisitsPhotos { MemberID = Model.MemberID });
+                Console.WriteLine("B2 " + Model.VisitsPhotos.Count);
+            }
+
+        }
+    </script>
 }
