@@ -1,10 +1,11 @@
-﻿using AniwalkServer.Models;
+﻿using AniwalkServer.Data;
+using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace AniwalkServer.Controllers
 {
@@ -353,12 +354,14 @@ namespace AniwalkServer.Controllers
         {
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
             ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
-            ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
-                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            //ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
+            //    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            ViewData["MemberID"] = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             //Console.WriteLine(ViewData["CountryCode"]);
             //Console.WriteLine(ViewData["AnimeID"]);
-            Console.WriteLine("MemberID : " + ViewData["MemberID"]);
+            //Console.WriteLine("MemberID 1 : " + ViewData["MemberID"]);
+            //Console.WriteLine("MemberID 2 : " + User.FindFirstValue(ClaimTypes.NameIdentifier));
         }
 
         /// <summary>
