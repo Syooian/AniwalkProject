@@ -85,10 +85,8 @@
                 <button type="button" class="btn btn-outline-primary">刪除</button>
                 <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
                 <div class="card-body">
-                    <!--h5 class="card-title">Card title</h5>-->
-                    <div class="card-body">
-                        <textarea class="form-control" rows="10">@Photo.Description</textarea>
-                    </div>
+                    <p class="card-title">照片說明</p>
+                    <textarea class="form-control" rows="10">@Photo.Description</textarea>
                 </div>
             </div>
         }
@@ -129,12 +127,12 @@
                     PhotoContainer_Display.appendChild(Card);
 
                     @{
-                        var NewPhoto = new VisitsPhotos()
-                        {
-                            MemberID = Model.MemberID,
-                            PhotoID = Guid.NewGuid().ToString(),
-                            PhotoType = ".jpg"
-                        };
+                                    var NewPhoto = new VisitsPhotos()
+                                    {
+                                                    MemberID = Model.MemberID,
+                                                    PhotoID = Guid.NewGuid().ToString(),
+                                                    PhotoType = ".jpg"
+                                    };
                     }
 
                     FormData.innerHTML=`
