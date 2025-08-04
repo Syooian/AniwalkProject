@@ -75,7 +75,7 @@
                 const FormData=document.createElement("div");
                 FormData.innerHTML=`
                     <input name="VisitsPhotos[${a}].MemberID" class="form-control" value="@ViewBag.MemberID" />
-                    <input name="VisitsPhotos[${a}].PhotoID" class="form-control" value="@Guid.NewGuid().ToString()"/>
+                    <input name="VisitsPhotos[${a}].PhotoID" class="form-control" value="${crypto.randomUUID()}"/>
                     <input name="VisitsPhotos[${a}].PhotoType" class="form-control" value="${GetFileExtension(Files[a].name)}" />
                     <textarea name="VisitsPhotos[${a}].Description" class="form-control"></textarea>
                 `;
