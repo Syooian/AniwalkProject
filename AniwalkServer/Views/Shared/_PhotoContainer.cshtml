@@ -22,9 +22,16 @@
 </div>
 
 <script>
+    //下方顯示所有圖片Card的容器
+    const PhotoContainer = document.getElementById("PhotoContainer");
+    //表單內容納所有圖片說明和資訊的容器
+    const PhotoForm=document.getElementById("PhotoForm");
+    //隱藏的圖片選擇器
+    const PhotoSelecter=document.getElementById("PhotoSelecter");
+
     //開啟圖片多選
     function OpenPhotoPicker(){
-        document.getElementById("PhotoSelecter").click();
+        PhotoSelecter.click();
     }
 
     //獲取檔案副檔名
@@ -44,7 +51,23 @@
     }
 
     // 刪除圖片
-    function RemovePhoto(ButtonElement) {
+    function RemovePhoto(ID, ButtonElement) {
+        //刪除表單內對應的圖片div
+        var PhotoDIV=document.getElementById(`${GetPhotoFormDataID(ID)}`);
+        if (PhotoDIV) {
+            PhotoDIV.remove();
+        }
+
+        //刪除照片選擇的圖片
+        /*
+        1.	HTML 的 <input type="file"> 元素特性：
+            •	一旦檔案被選擇，無法直接從 JavaScript 中刪除特定的檔案，因為 FileList 是唯讀的。
+            •	解決方法是清空整個 PhotoSelecter 的值，然後重新管理已選擇的檔案。
+        2.	解決方案：
+            •	使用一個全域變數（如 selectedFiles）來儲存使用者選擇的檔案。
+            •	當使用者刪除某個檔案時，從該變數中移除對應的檔案，並更新顯示。
+        */
+
         const Card = ButtonElement.parentElement;
         Card.remove();
     }
@@ -53,9 +76,6 @@
     function OnPhotoChange(InputElement){
         const Files=InputElement.files;
         console.log("選取了 "+Files.length+" 張照片");
-
-        const PhotoContainer = document.getElementById("PhotoContainer");
-        const PhotoForm=document.getElementById("PhotoForm");
 
         for(let a=0;a<Files.length;a++){
             console.log("處理第 "+(a+1)+" 張照片");
@@ -69,7 +89,7 @@
                 Card.style.maxWidth = "18rem";
 
                 Card.innerHTML=`
-                    <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(this)">刪除</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${a}, this)">刪除</button>
                     <img class="card-img-top" src="${E.target.result}" alt="Card image cap">
                     <div class="card-body">
                         <p class="card-title">照片說明</p>
@@ -77,10 +97,10 @@
                     </div>
                 `;
                 /*
-                    1.	${this.value} 的問題：
+                1.	${this.value} 的問題：
                     •	this.value 是 JavaScript 的屬性，但在 HTML 中直接使用 ${} 是模板字串語法，這只在 JavaScript 中有效。
                     •	在 HTML 中，${this.value} 不會被解析為 JavaScript 表達式，而是被當作普通字串處理，導致傳遞的值為 undefined。
-                    2.	作用域問題：
+                2.	作用域問題：
                     •	this 在 onchange 中應該指向觸發事件的 <textarea> 元素，但因為模板字串語法錯誤，this 並未正確解析。
                 */
 
