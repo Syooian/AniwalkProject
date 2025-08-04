@@ -53,6 +53,15 @@
                 `;
 
                 PhotoContainer.appendChild(Card);
+
+                const FormData=document.createElement("div");
+                FormData.innerHTML=`
+                    <input asp-for="@Model.VisitsPhotos[a].MemberID" class="form-control" value="@Model.MemberID" />
+                    <input asp-for="@Model.VisitsPhotos[a].PhotoID" class="form-control" />
+                    <input asp-for="@Model.VisitsPhotos[a].PhotoType" class="form-control" />
+                    <textarea asp-for=@Model.VisitsPhotos[a].Description" class="form-control"></textarea>
+                `;
+
             }
 
             Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
