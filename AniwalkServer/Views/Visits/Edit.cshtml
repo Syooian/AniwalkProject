@@ -43,12 +43,13 @@
                 <span asp-validation-for="VisitedDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple id="PhotoSelecter" onchange="OnPhotoChange(this)" />
-                <div id="PhotoContainer">
+                <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple id="PhotoSelecter" onchange="OnPhotoChange(this)" hidden />
+                <div id="PhotoContainer_Form">
                     @for (int a = 0; a < Model.VisitsPhotos.Count; a++)
                     {
-                        <div class="card">
-                            <input asp-for="@Model.VisitsPhotos[a].MemberID" class="form-control" value="@Model.MemberID" hidden />
+                        <div>
+                            @Model.VisitsPhotos[a].PhotoID
+                            <input asp-for="@Model.VisitsPhotos[a].MemberID" class="form-control" value="@Model.MemberID" />
                             <input asp-for="@Model.VisitsPhotos[a].PhotoID" class="form-control" />
                             <input asp-for="@Model.VisitsPhotos[a].PhotoType" class="form-control" />
                             <textarea asp-for=@Model.VisitsPhotos[a].Description" class="form-control"></textarea>
@@ -68,21 +69,26 @@
     <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
 </div>
 
+<hr />
+
+<button type="button" class="btn btn-primary" onclick="OpenPhotoPicker()">
+    新增照片
+</button>
+
 @if (Model.VisitsPhotos.Count > 0)
 {
     <hr />
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" id="PhotoContainer_Display">
         @foreach (var Photo in Model.VisitsPhotos)
         {
             <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+                <button type="button" class="btn btn-outline-primary">刪除</button>
                 <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <div class="card-body">
                         <textarea class="form-control" rows="10">@Photo.Description</textarea>
-                        @*@Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)*@
                     </div>
-                    @*<a href="#" class="btn btn-primary">檢視大圖</a>*@
                 </div>
             </div>
         }
@@ -90,24 +96,69 @@
 }
 
 @section Scripts {
-@{
+    @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
     <script>
-        const Photocontainer=document.getElementById("PhotoContainer");
+        //開啟圖片多選
+        function OpenPhotoPicker(){
+            document.getElementById("PhotoSelecter").click();
+        }
+
+        const PhotoContainer_Form=document.getElementById("PhotoContainer_Form");
+        const PhotoContainer_Display=document.getElementById("PhotoContainer_Display");
 
         function OnPhotoChange(InputElement){
-        for(let a=0;a<InputElement.files.length;a++){
-        const Card=document.createElement("div");
-        Card.className="card";
+            for(let a=0;a<InputElement.files.length;a++){
+                const Card=document.createElement("div");
+                Card.className="card mt-1 mb-1 ms-1 me-1";
+                Card.style="max-width: 18rem;"
 
-        @{
-            Console.WriteLine("B1 " + Model.VisitsPhotos.Count);
-            Model.VisitsPhotos.Add(new VisitsPhotos { MemberID = Model.MemberID });
-                Console.WriteLine("B2 " + Model.VisitsPhotos.Count);
+                const FormData=document.createElement("div");
+
+                // 使用 FileReader 讀取圖片
+                const Reader=new FileReader();
+                Reader.onloadend=function(e){
+                    Card.innerHTML = `
+                        <button type="button" class="btn btn-outline-primary">刪除</button>
+                        <img class="card-img-top" src="${e.target.result}" alt="預覽圖片">
+                        <textarea asp-for="VisitsPhotos[${a}].Description" class="form-control"></textarea>
+                    `;
+
+                    PhotoContainer_Display.appendChild(Card);
+
+                    @{
+                        var NewPhoto = new VisitsPhotos()
+                        {
+                            MemberID = Model.MemberID,
+                            PhotoID = Guid.NewGuid().ToString(),
+                            PhotoType = ".jpg"
+                        };
+                    }
+
+                    FormData.innerHTML=`
+                        Model.VisitsPhotos[${a}].PhotoID
+                        <input asp-for="Model.VisitsPhotos[${a}].MemberID" class="form-control" value="@Model.MemberID" />
+                        <input asp-for="Model.VisitsPhotos[${a}].PhotoID" class="form-control" value="@Guid.NewGuid().ToString();"/>
+                        <input asp-for="Model.VisitsPhotos[${a}].PhotoType" class="form-control" />
+                        <textarea asp-for= "Model.VisitsPhotos[${a}].Description" class="form-control"></textarea>
+                    `;
+
+                    PhotoContainer_Form.appendChild(FormData);
+                };
+
+                Reader.readAsDataURL(InputElement.files[a]);
+
+                // Card.innerHTML = `
+                //     <input asp-for="VisitsPhotos[${a}].MemberID" class="form-control" value="@Model.MemberID" hidden />
+                //     <input asp-for="VisitsPhotos[${a}].PhotoID" class="form-control" />
+                //     <input asp-for="VisitsPhotos[${a}].PhotoType" class="form-control" />
+                //     <textarea asp-for="VisitsPhotos[${a}].Description" class="form-control"></textarea>
+                //     `;
+
+                //PhotoContainer.appendChild(Card);
             }
-
         }
     </script>
 }
