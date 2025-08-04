@@ -109,15 +109,13 @@ namespace AniwalkServer.Models
                             StatusCode = 0, //一般狀態
                         }
                     });
-                }
 
-                //一般會員帳密 (僅一個)
-                {
+                    //一般會員帳密
                     context.Login.Add(new Login()
                     {
-                        MemberID = MemberIDs[0],
-                        Account = "12345678",
-                        Password = "12345678"
+                        MemberID = MemberIDs[a],
+                        Account = a + "2345678",
+                        Password = a + "2345678"
                     });
                 }
 
