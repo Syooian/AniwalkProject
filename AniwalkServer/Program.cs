@@ -52,8 +52,19 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+#region 路由設定
+//Admin
+app.MapControllerRoute(
+    name: "Admin",
+    pattern: "{area=Admin}/{controller=Home}/{action=Index}/{id?}");
+//Member
+app.MapControllerRoute(
+    name: "Member",
+    pattern: "{area=Member}/{controller=Home}/{action=Index}/{id?}");
+//Guest
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+#endregion
 
 app.Run();
