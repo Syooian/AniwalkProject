@@ -33,6 +33,22 @@
         return "."+Extension[Extension.length-1].toLowerCase();
     }
 
+    // 獲取圖片表單資料的 ID
+    function GetPhotoFormDataID(ID){
+        return `PhotoFormData_${ID}`;
+    }
+
+    //更新圖片說明
+    function UpdateDescription(ID, Value){
+        document.getElementById(`${GetPhotoFormDataID(ID)}`).querySelector("textarea").value=Value;
+    }
+
+    // 刪除圖片
+    function RemovePhoto(ButtonElement) {
+        const Card = ButtonElement.parentElement;
+        Card.remove();
+    }
+
     //處理圖片選擇
     function OnPhotoChange(InputElement){
         const Files=InputElement.files;
@@ -57,9 +73,16 @@
                     <img class="card-img-top" src="${E.target.result}" alt="Card image cap">
                     <div class="card-body">
                         <p class="card-title">照片說明</p>
-                        <textarea name="VisitsPhotos[${a}].Description" rows="10"></textarea>
+                        <textarea name="VisitsPhotos[${a}].Description" rows="10" onchange="UpdateDescription(${a}, this.value)"></textarea>
                     </div>
                 `;
+                /*
+                    1.	${this.value} 的問題：
+                    •	this.value 是 JavaScript 的屬性，但在 HTML 中直接使用 ${} 是模板字串語法，這只在 JavaScript 中有效。
+                    •	在 HTML 中，${this.value} 不會被解析為 JavaScript 表達式，而是被當作普通字串處理，導致傳遞的值為 undefined。
+                    2.	作用域問題：
+                    •	this 在 onchange 中應該指向觸發事件的 <textarea> 元素，但因為模板字串語法錯誤，this 並未正確解析。
+                */
 
                 PhotoContainer.appendChild(Card);
 
@@ -74,6 +97,7 @@
                 }
 
                 const FormData=document.createElement("div");
+                FormData.id=GetPhotoFormDataID(a);
                 FormData.innerHTML=`
                     <input name="VisitsPhotos[${a}].MemberID" class="form-control" value="@ViewBag.MemberID" />
                     <input name="VisitsPhotos[${a}].PhotoID" class="form-control" value="${crypto.randomUUID()}"/>
@@ -88,11 +112,5 @@
         }
 
         console.log("圖片處理完成");
-    }
-
-        // 刪除圖片
-    function RemovePhoto(ButtonElement) {
-        const Card = ButtonElement.parentElement;
-        Card.remove();
     }
 </script>
