@@ -261,18 +261,22 @@ namespace AniwalkServer.Models
                 if (!context.VisitsPhotos.Any())
                 {
                     #region 刪除現有照片
-                    string[] Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath),
-                        "*",//所有檔案
-                        SearchOption.AllDirectories);//所有子資料夾
-                    for (int a = 0; a < Files.Length; a++)
+                    string[] Files;
+                    if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath)))
                     {
-                        try
+                        Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath),
+                           "*",//所有檔案
+                           SearchOption.AllDirectories);//所有子資料夾
+                        for (int a = 0; a < Files.Length; a++)
                         {
-                            File.Delete(Files[a]);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error deleting file {Files[a]}: {ex.Message}");
+                            try
+                            {
+                                File.Delete(Files[a]);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error deleting file {Files[a]}: {ex.Message}");
+                            }
                         }
                     }
                     #endregion
