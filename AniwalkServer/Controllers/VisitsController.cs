@@ -98,6 +98,8 @@ namespace AniwalkServer.Controllers
             {
                 Visit.CreatedDate = DateTime.Now;
 
+                Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
+
                 Context.Add(Visit);
                 await Context.SaveChangesAsync();
 
@@ -109,8 +111,10 @@ namespace AniwalkServer.Controllers
 
                         foreach (var Des in Visit.VisitsPhotos)
                         {
-                            //Console.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
-                            Debug.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
+                            Debug.WriteLine($"Visit.VisitsPhotos MemberID : {Des.MemberID}");
+                            Debug.WriteLine($"Visit.VisitsPhotos PhotoID : {Des.PhotoID}");
+                            Debug.WriteLine($"Visit.VisitsPhotos PhotoType : {Des.PhotoType}");
+                            Debug.WriteLine($"Visit.VisitsPhotos Description : {Des.Description}");
                         }
                     }
                     else
@@ -354,7 +358,7 @@ namespace AniwalkServer.Controllers
 
             //Console.WriteLine(ViewData["CountryCode"]);
             //Console.WriteLine(ViewData["AnimeID"]);
-            //Console.WriteLine(ViewData["MemberID"]);
+            Console.WriteLine("MemberID : " + ViewData["MemberID"]);
         }
 
         /// <summary>

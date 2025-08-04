@@ -27,19 +27,27 @@
         document.getElementById("PhotoSelecter").click();
     }
 
+    //獲取檔案副檔名
+    function GetFileExtension(FileName) {
+        const Extension=FileName.split('.');
+        return "."+Extension[Extension.length-1].toLowerCase();
+    }
+
     //處理圖片選擇
     function OnPhotoChange(InputElement){
         const Files=InputElement.files;
         console.log("選取了 "+Files.length+" 張照片");
 
         const PhotoContainer = document.getElementById("PhotoContainer");
+        const PhotoForm=document.getElementById("PhotoForm");
 
-        for(var a=0;a<Files.length;a++){
+        for(let a=0;a<Files.length;a++){
             console.log("處理第 "+(a+1)+" 張照片");
 
             // 使用 FileReader 讀取圖片
             const Reader=new FileReader();
             Reader.onloadend=function(E){
+                //let PhotoNum=a;
                 const Card=document.createElement("div");
                 Card.className="card mt-1 mb-1 ms-1 me-1";
                 Card.style.maxWidth = "18rem";
@@ -48,20 +56,31 @@
                     <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(this)">刪除</button>
                     <img class="card-img-top" src="${E.target.result}" alt="Card image cap">
                     <div class="card-body">
-                        <textarea name="VisitsPhotos[${a}].Description)" rows="10"></textarea>
+                        <textarea name="VisitsPhotos[${a}].Description" rows="10"></textarea>
                     </div>
                 `;
 
                 PhotoContainer.appendChild(Card);
 
+                try
+                {
+                    console.log(a);
+                    console.log("PhotoName : "+Files[a]);
+                }
+                catch
+                {
+
+                }
+
                 const FormData=document.createElement("div");
                 FormData.innerHTML=`
-                    <input asp-for="@Model.VisitsPhotos[a].MemberID" class="form-control" value="@Model.MemberID" />
-                    <input asp-for="@Model.VisitsPhotos[a].PhotoID" class="form-control" />
-                    <input asp-for="@Model.VisitsPhotos[a].PhotoType" class="form-control" />
-                    <textarea asp-for=@Model.VisitsPhotos[a].Description" class="form-control"></textarea>
+                    <input name="VisitsPhotos[${a}].MemberID" class="form-control" value="@ViewBag.MemberID" />
+                    <input name="VisitsPhotos[${a}].PhotoID" class="form-control" value="@Guid.NewGuid().ToString()"/>
+                    <input name="VisitsPhotos[${a}].PhotoType" class="form-control" value="${GetFileExtension(Files[a].name)}" />
+                    <textarea name="VisitsPhotos[${a}].Description" class="form-control"></textarea>
                 `;
 
+                PhotoForm.appendChild(FormData);
             }
 
             Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
