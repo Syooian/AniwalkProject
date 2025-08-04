@@ -99,36 +99,38 @@ namespace AniwalkServer.Controllers
             {
                 Visit.CreatedDate = DateTime.Now;
 
-                Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
+                //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
                 Context.Add(Visit);
                 await Context.SaveChangesAsync();
 
                 if (VisitsPhotos != null)
                 {
-                    if (Visit.VisitsPhotos != null)
-                    {
-                        Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
+                    //if (Visit.VisitsPhotos != null)
+                    //{
+                    //    Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
 
-                        foreach (var Des in Visit.VisitsPhotos)
-                        {
-                            Debug.WriteLine($"Visit.VisitsPhotos MemberID : {Des.MemberID}");
-                            Debug.WriteLine($"Visit.VisitsPhotos PhotoID : {Des.PhotoID}");
-                            Debug.WriteLine($"Visit.VisitsPhotos PhotoType : {Des.PhotoType}");
-                            Debug.WriteLine($"Visit.VisitsPhotos Description : {Des.Description}");
-                        }
-                    }
-                    else
-                    {
-                        //Console.WriteLine("Visit.VisitsPhotos is null");
-                        Debug.WriteLine("Visit.VisitsPhotos is null");
-                    }
+                    //    foreach (var Des in Visit.VisitsPhotos)
+                    //    {
+                    //        Debug.WriteLine($"Visit.VisitsPhotos MemberID : {Des.MemberID}");
+                    //        Debug.WriteLine($"Visit.VisitsPhotos PhotoID : {Des.PhotoID}");
+                    //        Debug.WriteLine($"Visit.VisitsPhotos PhotoType : {Des.PhotoType}");
+                    //        Debug.WriteLine($"Visit.VisitsPhotos Description : {Des.Description}");
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    //Console.WriteLine("Visit.VisitsPhotos is null");
+                    //    Debug.WriteLine("Visit.VisitsPhotos is null");
+                    //}
 
-                    foreach (var Photo in VisitsPhotos)
+                    var VisitsPhotosList = VisitsPhotos.ToList();
+
+                    for (int a = 0; a < VisitsPhotosList.Count(); a++)
                     {
-                        if (Photo != null && Photo.Length != 0)
+                        if (VisitsPhotosList[a] != null && VisitsPhotosList[a].Length != 0)
                         {
-                            switch (Photo.ContentType)
+                            switch (VisitsPhotosList[a].ContentType)
                             {
                                 case "image/gif":
                                 case "image/bmp":
@@ -143,9 +145,11 @@ namespace AniwalkServer.Controllers
                             }
 
                             //新檔名
-                            var FileName = Guid.NewGuid().ToString();
+                            //var FileName = Guid.NewGuid().ToString();
+                            var FileName = Visit.VisitsPhotos[a].PhotoID;
                             //副檔名
-                            var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
+                            //var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
+                            var FileExtension = Visit.VisitsPhotos[a].PhotoType;
                             //上傳路徑
                             var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID);
                             //檢查上傳路徑
@@ -154,18 +158,18 @@ namespace AniwalkServer.Controllers
                             //上傳
                             using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
                             {
-                                Photo.CopyTo(FS);
+                                VisitsPhotosList[a].CopyTo(FS);
                             }
 
                             //儲存新檔名到資料庫
-                            Context.VisitsPhotos.Add(new VisitsPhotos
-                            {
-                                MemberID = Visit.MemberID,
-                                SN = Visit.SN,
-                                PhotoID = FileName,
-                                PhotoType = FileExtension,
-                                //Description = Visit.VisitsPhotos[async].Description
-                            });
+                            //Context.VisitsPhotos.Add(new VisitsPhotos
+                            //{
+                            //    MemberID = Visit.MemberID,
+                            //    SN = Visit.SN,
+                            //    PhotoID = FileName,
+                            //    PhotoType = FileExtension,
+                            //    Description = Visit.VisitsPhotos[a].Description
+                            //});
                         }
                     }
 
@@ -174,6 +178,8 @@ namespace AniwalkServer.Controllers
 
                 return RedirectToAction(nameof(ShowVisitsOnList));
             }
+
+            Shared.ShowModelState(ModelState);
 
             SetViewData();
 
