@@ -101,11 +101,10 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                Context.Add(Visit);
-                await Context.SaveChangesAsync();
-
                 if (VisitsPhotos != null)
                 {
+                    //Debug.WriteLine("新增圖片數量 : " + VisitsPhotos.Count());
+
                     //if (Visit.VisitsPhotos != null)
                     //{
                     //    Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
@@ -124,57 +123,67 @@ namespace AniwalkServer.Controllers
                     //    Debug.WriteLine("Visit.VisitsPhotos is null");
                     //}
 
-                    var VisitsPhotosList = VisitsPhotos.ToList();
-
-                    for (int a = 0; a < VisitsPhotosList.Count(); a++)
+                    try
                     {
-                        if (VisitsPhotosList[a] != null && VisitsPhotosList[a].Length != 0)
+                        var VisitsPhotosList = VisitsPhotos.ToList();
+
+                        for (int a = 0; a < VisitsPhotosList.Count(); a++)
                         {
-                            switch (VisitsPhotosList[a].ContentType)
+                            if (VisitsPhotosList[a] != null && VisitsPhotosList[a].Length != 0)
                             {
-                                case "image/gif":
-                                case "image/bmp":
-                                case "image/jpg":
-                                case "image/jpeg":
-                                case "image/png":
-                                case "image/jfif":
-                                    break;
-                                default:
-                                    ViewData["PhotoError"] = "不支援的圖片類型";
-                                    return View(Visit);
-                            }
+                                switch (VisitsPhotosList[a].ContentType)
+                                {
+                                    case "image/gif":
+                                    case "image/bmp":
+                                    case "image/jpg":
+                                    case "image/jpeg":
+                                    case "image/png":
+                                    case "image/jfif":
+                                        break;
+                                    default:
+                                        ViewData["PhotoError"] = "不支援的圖片類型";
+                                        return View(Visit);
+                                }
 
-                            //新檔名
-                            //var FileName = Guid.NewGuid().ToString();
-                            var FileName = Visit.VisitsPhotos[a].PhotoID;
-                            //副檔名
-                            //var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
-                            var FileExtension = Visit.VisitsPhotos[a].PhotoType;
-                            //上傳路徑
-                            var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID);
-                            //檢查上傳路徑
-                            if (!Directory.Exists(UploadPath))
-                                Directory.CreateDirectory(UploadPath);
-                            //上傳
-                            using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
-                            {
-                                VisitsPhotosList[a].CopyTo(FS);
-                            }
+                                //新檔名
+                                //var FileName = Guid.NewGuid().ToString();
+                                var FileName = Visit.VisitsPhotos[a].PhotoID;
+                                //副檔名
+                                //var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
+                                var FileExtension = Visit.VisitsPhotos[a].PhotoType;
+                                //上傳路徑
+                                var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID);
+                                //檢查上傳路徑
+                                if (!Directory.Exists(UploadPath))
+                                    Directory.CreateDirectory(UploadPath);
+                                //上傳
+                                using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
+                                {
+                                    VisitsPhotosList[a].CopyTo(FS);
+                                }
 
-                            //儲存新檔名到資料庫
-                            //Context.VisitsPhotos.Add(new VisitsPhotos
-                            //{
-                            //    MemberID = Visit.MemberID,
-                            //    SN = Visit.SN,
-                            //    PhotoID = FileName,
-                            //    PhotoType = FileExtension,
-                            //    Description = Visit.VisitsPhotos[a].Description
-                            //});
+                                //儲存新檔名到資料庫
+                                //Context.VisitsPhotos.Add(new VisitsPhotos
+                                //{
+                                //    MemberID = Visit.MemberID,
+                                //    SN = Visit.SN,
+                                //    PhotoID = FileName,
+                                //    PhotoType = FileExtension,
+                                //    Description = Visit.VisitsPhotos[a].Description
+                                //});
+                            }
                         }
                     }
-
-                    await Context.SaveChangesAsync();
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error uploading photos : {ex.Message}");
+                        ViewData["PhotoError"] = "上傳失敗";
+                        return View(Visit);
+                    }
                 }
+
+                Context.Add(Visit);
+                await Context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(ShowVisitsOnList));
             }
