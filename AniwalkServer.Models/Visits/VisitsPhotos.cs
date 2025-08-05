@@ -57,5 +57,10 @@ namespace AniwalkServer.Models
         /// </summary>
         public virtual Visits? Visit { get; set; } = null!;
         #endregion
+
+        public override string ToString()
+        {
+            return $"MemberID : {MemberID}, PhotoID : {PhotoID}, PhotoType : {PhotoType}, Description : {Description}";
+        }
     }
 }
