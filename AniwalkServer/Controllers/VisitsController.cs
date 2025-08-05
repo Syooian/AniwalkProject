@@ -101,85 +101,11 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                if (VisitsPhotos != null)
+                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, VisitsPhotos);
+                if (UploadMsg != "")
                 {
-                    //Debug.WriteLine("新增圖片數量 : " + VisitsPhotos.Count());
-
-                    //if (Visit.VisitsPhotos != null)
-                    //{
-                    //    Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
-
-                    //    foreach (var Des in Visit.VisitsPhotos)
-                    //    {
-                    //        Debug.WriteLine($"Visit.VisitsPhotos MemberID : {Des.MemberID}");
-                    //        Debug.WriteLine($"Visit.VisitsPhotos PhotoID : {Des.PhotoID}");
-                    //        Debug.WriteLine($"Visit.VisitsPhotos PhotoType : {Des.PhotoType}");
-                    //        Debug.WriteLine($"Visit.VisitsPhotos Description : {Des.Description}");
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    //Console.WriteLine("Visit.VisitsPhotos is null");
-                    //    Debug.WriteLine("Visit.VisitsPhotos is null");
-                    //}
-
-                    try
-                    {
-                        var VisitsPhotosList = VisitsPhotos.ToList();
-
-                        for (int a = 0; a < VisitsPhotosList.Count(); a++)
-                        {
-                            if (VisitsPhotosList[a] != null && VisitsPhotosList[a].Length != 0)
-                            {
-                                switch (VisitsPhotosList[a].ContentType)
-                                {
-                                    case "image/gif":
-                                    case "image/bmp":
-                                    case "image/jpg":
-                                    case "image/jpeg":
-                                    case "image/png":
-                                    case "image/jfif":
-                                        break;
-                                    default:
-                                        ViewData["PhotoError"] = "不支援的圖片類型";
-                                        return View(Visit);
-                                }
-
-                                //新檔名
-                                //var FileName = Guid.NewGuid().ToString();
-                                var FileName = Visit.VisitsPhotos[a].PhotoID;
-                                //副檔名
-                                //var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
-                                var FileExtension = Visit.VisitsPhotos[a].PhotoType;
-                                //上傳路徑
-                                var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID);
-                                //檢查上傳路徑
-                                if (!Directory.Exists(UploadPath))
-                                    Directory.CreateDirectory(UploadPath);
-                                //上傳
-                                using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
-                                {
-                                    VisitsPhotosList[a].CopyTo(FS);
-                                }
-
-                                //儲存新檔名到資料庫
-                                //Context.VisitsPhotos.Add(new VisitsPhotos
-                                //{
-                                //    MemberID = Visit.MemberID,
-                                //    SN = Visit.SN,
-                                //    PhotoID = FileName,
-                                //    PhotoType = FileExtension,
-                                //    Description = Visit.VisitsPhotos[a].Description
-                                //});
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Error uploading photos : {ex.Message}");
-                        ViewData["PhotoError"] = "上傳失敗";
-                        return View(Visit);
-                    }
+                    ViewData["PhotoError"] = UploadMsg;
+                    return View(Visit);
                 }
 
                 Context.Add(Visit);
@@ -244,39 +170,15 @@ namespace AniwalkServer.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, VisitsPhotos);
+                if (UploadMsg != "")
                 {
-                    Context.Update(Visit);
-
-                    await Context.SaveChangesAsync();
-
-                    if (Visit.VisitsPhotos != null)
-                    {
-                        Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
-
-                        foreach (var Des in Visit.VisitsPhotos)
-                        {
-                            //Console.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
-                            Debug.WriteLine($"Visit.VisitsPhotos Description: {Des.Description}");
-                        }
-                    }
-                    else
-                    {
-                        //Console.WriteLine("Visit.VisitsPhotos is null");
-                        Debug.WriteLine("Visit.VisitsPhotos is null");
-                    }
+                    ViewData["PhotoError"] = UploadMsg;
+                    return View(Visit);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!IsStudentExists(Visit.SN))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                Context.Update(Visit);
+                await Context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(ShowVisitsOnList));
             }
@@ -371,7 +273,7 @@ namespace AniwalkServer.Controllers
             ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
             //ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
             //    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            ViewData["MemberID"] = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["MemberID"] = GetMemberID;
 
             //Console.WriteLine(ViewData["CountryCode"]);
             //Console.WriteLine(ViewData["AnimeID"]);
@@ -395,6 +297,96 @@ namespace AniwalkServer.Controllers
         private bool IsStudentExists(int VisitSN)
         {
             return Context.Visits.Any(V => V.SN == VisitSN);
+        }
+
+        /// <summary>
+        /// 到訪紀錄照片有變動
+        /// </summary>
+        /// <param name="VisitPhotoData"></param>
+        /// <param name="VisitPhotos"></param>
+        /// <returns></returns>
+        string OnVisitPhotoChanged(List<VisitsPhotos> VisitPhotoData, IEnumerable<IFormFile>? VisitPhotos)
+        {
+            if (VisitPhotos != null)
+            {
+                Debug.WriteLine("新增圖片數量 : " + VisitPhotos.Count());
+
+                if (VisitPhotoData != null)
+                {
+                    Debug.WriteLine($"Visit.VisitsPhotos Count : {VisitPhotoData.Count()}");
+
+                    foreach (var PhotoData in VisitPhotoData)
+                    {
+                        Debug.WriteLine($"Visit.VisitsPhotos MemberID : {PhotoData.MemberID}");
+                        Debug.WriteLine($"Visit.VisitsPhotos PhotoID : {PhotoData.PhotoID}");
+                        Debug.WriteLine($"Visit.VisitsPhotos PhotoType : {PhotoData.PhotoType}");
+                        Debug.WriteLine($"Visit.VisitsPhotos Description : {PhotoData.Description}");
+                    }
+                }
+                else
+                {
+                    //Console.WriteLine("Visit.VisitsPhotos is null");
+                    Debug.WriteLine("Visit.VisitsPhotos is null");
+                }
+
+                try
+                {
+                    var VisitsPhotosList = VisitPhotos.ToList();
+
+                    for (int a = 0; a < VisitsPhotosList.Count(); a++)
+                    {
+                        if (VisitsPhotosList[a] != null && VisitsPhotosList[a].Length != 0)
+                        {
+                            switch (VisitsPhotosList[a].ContentType)
+                            {
+                                case "image/gif":
+                                case "image/bmp":
+                                case "image/jpg":
+                                case "image/jpeg":
+                                case "image/png":
+                                case "image/jfif":
+                                    break;
+                                default:
+                                    return "不支援的圖片類型";
+                            }
+
+                            //新檔名
+                            //var FileName = Guid.NewGuid().ToString();
+                            var FileName = VisitPhotoData[a].PhotoID;
+                            //副檔名
+                            //var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
+                            var FileExtension = VisitPhotoData[a].PhotoType;
+                            Debug.WriteLine($"NewFile : {FileName + FileExtension}");
+                            //上傳路徑
+                            var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID);
+                            Debug.WriteLine($"UploadPath : {UploadPath}");
+                            //檢查上傳路徑
+                            if (!Directory.Exists(UploadPath))
+                                Directory.CreateDirectory(UploadPath);
+                            //上傳
+                            using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
+                            {
+                                VisitsPhotosList[a].CopyTo(FS);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error uploading photos : {ex.Message}");
+                    return "上傳失敗";
+                }
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        string GetMemberID
+        {
+            get { return User.FindFirstValue(ClaimTypes.NameIdentifier); }
         }
     }
 }
