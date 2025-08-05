@@ -40,6 +40,9 @@
     //隱藏的圖片選擇器
     const PhotoSelecter=document.getElementById("PhotoSelecter");
 
+    //儲存所有選取的檔案
+    let SelectedPhoto=[];
+
     //初始化圖片顯示和既有圖片資料插入表單
     function InitPhotoContainer(){
         //從後端傳遞的圖片資料
@@ -102,43 +105,60 @@
             •	使用一個全域變數（如 selectedFiles）來儲存使用者選擇的檔案。
             •	當使用者刪除某個檔案時，從該變數中移除對應的檔案，並更新顯示。
         */
+       /*
+        filter：SelectedPhoto = SelectedPhoto.filter(photo => photo.ID !== ID);
+            •	會建立一個新的陣列，包含所有符合條件的項目。在這裡，所有 photo.ID 不等於 ID 的項目，達到移除的效果。
+        splice：const index = SelectedPhoto.findIndex(photo => photo.ID === ID);
+                        if (index !== -1) {
+                            SelectedPhoto.splice(index, 1);
+                        }
+            •	直接修改原陣列，從指定的索引位置移除項目。需要先用 findIndex 找到目標項目的索引。
+       */
+       let DeleteIndex=SelectedPhoto.findIndex(P=>P.ID===ID);
+       if(DeleteIndex!==-1){
+           SelectedPhoto.splice(DeleteIndex, 1);//移除從索引 DeleteIndex 開始的 1 個項目。
+       }
 
         const Card = ButtonElement.parentElement;
         Card.remove();
+
+        console.log(`移除已選取的第 ${DeleteIndex+1} 張圖片`);
+
+        PrintSelectedPhoto();
     }
 
     //處理圖片選擇
     function OnPhotoChange(InputElement){
         const Files=InputElement.files;
-        console.log("選取了 "+Files.length+" 張照片");
+        console.log("新選取了 "+Files.length+" 張照片");
+
+        //儲存到變數
+        //SelectedPhoto.concat(Files);
 
         for(let a=0;a<Files.length;a++){
-            console.log("處理第 "+(a+1)+" 張照片");
+            let SelectedPhotoAmount=SelectedPhoto.length;
+
+            console.log("加入第 "+(SelectedPhotoAmount+1)+" 張照片");
+
+            //儲存到變數
+            SetSelectPhoto(SelectedPhotoAmount, Files[a]);
 
             // 使用 FileReader 讀取圖片
             const Reader=new FileReader();
             Reader.onloadend=function(E){
                 //let PhotoNum=a;
 
-                SetPhotoCard(a, E.target.result, "");
+                SetPhotoCard(SelectedPhotoAmount, E.target.result, "");
 
-                try
-                {
-                    console.log(a);
-                    console.log("PhotoName : "+Files[a]);
-                }
-                catch
-                {
-
-                }
-
-                SetPhotoFormData(a, crypto.randomUUID(), GetFileExtension(Files[a].name), "");
+                SetPhotoFormData(SelectedPhotoAmount, crypto.randomUUID(), GetFileExtension(Files[a].name), "");
             }
 
             Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
         }
 
-        console.log("圖片處理完成");
+        PrintSelectedPhoto();
+
+        console.log("加入圖片完成");
     }
 
     //設置圖片顯示
@@ -179,4 +199,25 @@
 
         PhotoForm.appendChild(FormData);
     }
+
+    //紀錄選取的照片
+    function SetSelectPhoto(ID, File){
+        SelectedPhoto.push({
+            ID: ID,
+            File:File
+        });
+
+        // console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
+        // for(let a=0;a<SelectedPhoto.length;a++){
+        //     console.log("第 "+(a+1)+" 張照片 : "+SelectedPhoto[a].name);
+        // }
+    }
+
+    function PrintSelectedPhoto(){
+        //console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
+        for(let a=0;a<SelectedPhoto.length;a++){
+            console.log(`${a} ID : ${SelectedPhoto[a].ID}, File : ${SelectedPhoto[a].File.name}`);
+        }
+    }
+
 </script>
