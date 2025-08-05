@@ -7,30 +7,29 @@
     新增照片
 </button>
 
-<div class="row justify-content-center" id="PhotoContainer">
+@{
+    //將後端傳來的圖片資料經由Json傳給前端
+    var PhotoListJson = "[]";
+    /*
+     * var PhotoListJson= "";
+     * 這樣輸出的是「物件」而不是「字串」，所以 PhotoListJson 必須是合法的 JSON，不能是空字串，否則會造成 JS 錯誤。
+     */
     @if (Model != null && Model.VisitsPhotos != null)
     {
-        var PhotoListJson = System.Text.Json.JsonSerializer.Serialize(
-        Model.VisitsPhotos.Select(PhotoListJson => new
-        {
-            PhotoID = PhotoListJson.PhotoID,
-            PhotoType = PhotoListJson.PhotoType,
-            Description = PhotoListJson.Description
-        })
+        PhotoListJson = System.Text.Json.JsonSerializer.Serialize(
+            Model.VisitsPhotos.Select(PhotoListJson => new
+            {
+                PhotoID = PhotoListJson.PhotoID,
+                PhotoType = PhotoListJson.PhotoType,
+                PhotoSrc = $"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{PhotoListJson.PhotoID}.jpg",
+                Description = PhotoListJson.Description
+            })
         );
-
-        @* foreach (var Photo in Model.VisitsPhotos)
-        {
-            <div data-PhotoID="@Photo.PhotoID" class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
-                <button type="button" class="btn btn-outline-primary">刪除</button>
-                <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}.jpg")" alt="Card image cap">
-                <div class="card-body">
-                    <p class="card-title">照片說明</p>
-                    <textarea asp-for="MainText" class="form-control" rows="10"></textarea>
-                </div>
-            </div>
-        } *@
     }
+}
+
+@*顯示所有圖片Card的容器*@
+<div class="row justify-content-center" id="PhotoContainer">
 </div>
 
 <script>
@@ -41,10 +40,28 @@
     //隱藏的圖片選擇器
     const PhotoSelecter=document.getElementById("PhotoSelecter");
 
-
+    //初始化圖片顯示和既有圖片資料插入表單
     function InitPhotoContainer(){
+        //從後端傳遞的圖片資料
+        const Json=@Html.Raw(PhotoListJson);
 
+        if(Json!=null)
+        {
+            console.log(Json);
+
+            for(let a=0;a<Json.length;a++)
+            {
+                SetPhotoCard(a,Json[a].PhotoSrc, Json[a].Description);
+
+                SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType,Json[a].Description);
+            }
+        }
+        else
+        {
+            console.log("沒有圖片資料");
+        }
     }
+    InitPhotoContainer();
 
 
     //開啟圖片多選
@@ -67,27 +84,6 @@
     function UpdateDescription(ID, Value){
         document.getElementById(`${GetPhotoFormDataID(ID)}`).querySelector("textarea").value=Value;
     }
-
-    //顯示所有圖片Card的容器
-    @* function SetPhotoContainer(){
-        @{
-                // 如果 Model.VisitsPhotos 有資料，則顯示圖片卡片
-                if (Model.VisitsPhotos != null && Model.VisitsPhotos.Count > 0)
-                {
-                        foreach (var photo in Model.VisitsPhotos)
-                        {
-                                    const Card = document.createElement("div");
-                                    Card.className = "card mt-1 mb-1 ms-1 me-1";
-                                    Card.style.maxWidth = "18rem";
-                                    // Card.innerHTML = `
-                                    //     <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto('@photo.PhotoID', this)">刪除</button>
-                                    //     <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{photo.PhotoID}.jpg")" alt="Card image cap">
-                                    //     <div class="card-body">
-                                    //                     <p class="card-title
-                    }
-                }
-        }
-    } *@
 
     // 刪除圖片
     function RemovePhoto(ID, ButtonElement) {
@@ -124,7 +120,7 @@
             Reader.onloadend=function(E){
                 //let PhotoNum=a;
 
-                SetPhotoCard(a, E.target.result);
+                SetPhotoCard(a, E.target.result, "");
 
                 try
                 {
@@ -146,7 +142,7 @@
     }
 
     //設置圖片顯示
-    function SetPhotoCard(ID, PhotoSrc){
+    function SetPhotoCard(ID, PhotoSrc, Description){
         const Card=document.createElement("div");
         Card.className="card mt-1 mb-1 ms-1 me-1";
         Card.style.maxWidth = "18rem";
@@ -156,7 +152,7 @@
             <img class="card-img-top" src="${PhotoSrc}" alt="Card image cap">
             <div class="card-body">
                 <p class="card-title">照片說明</p>
-                <textarea name="VisitsPhotos[${ID}].Description" rows="10" onchange="UpdateDescription(${ID}, this.value)"></textarea>
+                <textarea name="VisitsPhotos[${ID}].Description" rows="10" onchange="UpdateDescription(${ID}, this.value)">${Description}</textarea>
             </div>
         `;
         /*
