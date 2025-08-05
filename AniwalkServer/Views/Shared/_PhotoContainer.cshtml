@@ -275,4 +275,29 @@
         }
     }
 
+    //送出表單
+    function SendForm(){
+        //驗證失敗，表單不送出
+        if(!$('#DataForm').valid()){
+            console.log("表單驗證失敗");
+            return;
+        }
+
+        //使用Ajax送出表單
+        $.ajax({
+            type:"post",
+            url:"/Visits/@ViewData["FormAction"]",
+            data:$('#DataForm').serialize(),
+            success:function(){
+                console.log("表單送出成功");
+
+                //使用的是 AJAX 提交表單，伺服器返回的 RedirectToAction 不會自動在前端執行重導向。
+                //需要在 AJAX 的 success 回呼中手動處理重導向。
+                window.location.href = "/Visits/ShowVisitsOnList";
+            },
+            error:function(xhr, status, error){
+                console.log(`表單送出失敗 狀態碼 : ${xhr.status}, 錯誤狀態 : ${status}, 錯誤訊息 : ${error}, 伺服器回應 : ${xhr.responseText}`);
+            }
+        });
+    }
 </script>

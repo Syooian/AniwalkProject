@@ -1,10 +1,14 @@
 ﻿@model AniwalkServer.Models.Visits
 
+@{
+    ViewData["FormAction"] = "Edit";
+}
+
 <h4>編輯到訪紀錄</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
+        <form asp-action="Edit" id="DataForm" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="SN" />
             <div class="form-group">
@@ -59,7 +63,8 @@
                     } *@
             </div>
             <div class="form-group">
-                <input type="submit" value="修改" class="btn btn-primary" />
+                @*<input type="submit" value="修改" class="btn btn-primary" />*@
+                <input type="button" value="修改" class="btn btn-primary" onclick="SendForm()" />
             </div>
         </form>
     </div>
@@ -80,64 +85,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        //從Model載入照片
-        
-
-
-
-        //開啟圖片多選
-        // function OpenPhotoPicker(){
-        //     document.getElementById("PhotoSelecter").click();
-        // }
-
-        // const PhotoContainer_Form=document.getElementById("PhotoContainer_Form");
-        // const PhotoContainer_Display=document.getElementById("PhotoContainer_Display");
-
-        // function OnPhotoChange(InputElement){
-        //     for(let a=0;a<InputElement.files.length;a++){
-        //         const Card=document.createElement("div");
-        //         Card.className="card mt-1 mb-1 ms-1 me-1";
-        //         Card.style="max-width: 18rem;"
-
-        //         const FormData=document.createElement("div");
-
-        //         // 使用 FileReader 讀取圖片
-        //         const Reader=new FileReader();
-        //         Reader.onloadend=function(e){
-        //             Card.innerHTML = `
-        //                 <button type="button" class="btn btn-outline-primary">刪除</button>
-        //                 <img class="card-img-top" src="${e.target.result}" alt="預覽圖片">
-        //                 <textarea asp-for="VisitsPhotos[${a}].Description" class="form-control"></textarea>
-        //             `;
-
-        //             PhotoContainer_Display.appendChild(Card);
-
-
-
-        //             FormData.innerHTML=`
-        //                 Model.VisitsPhotos[${a}].PhotoID
-        //                 <input asp-for="Model.VisitsPhotos[${a}].MemberID" class="form-control" value="@Model.MemberID" />
-        //                 <input asp-for="Model.VisitsPhotos[${a}].PhotoID" class="form-control" value="@Guid.NewGuid().ToString();"/>
-        //                 <input asp-for="Model.VisitsPhotos[${a}].PhotoType" class="form-control" />
-        //                 <textarea asp-for= "Model.VisitsPhotos[${a}].Description" class="form-control"></textarea>
-        //             `;
-
-        //             PhotoContainer_Form.appendChild(FormData);
-        //         };
-
-        //         Reader.readAsDataURL(InputElement.files[a]);
-
-        //         // Card.innerHTML = `
-        //         //     <input asp-for="VisitsPhotos[${a}].MemberID" class="form-control" value="@Model.MemberID" hidden />
-        //         //     <input asp-for="VisitsPhotos[${a}].PhotoID" class="form-control" />
-        //         //     <input asp-for="VisitsPhotos[${a}].PhotoType" class="form-control" />
-        //         //     <textarea asp-for="VisitsPhotos[${a}].Description" class="form-control"></textarea>
-        //         //     `;
-
-        //         //PhotoContainer.appendChild(Card);
-        //     }
-        // }
-    </script>
 }

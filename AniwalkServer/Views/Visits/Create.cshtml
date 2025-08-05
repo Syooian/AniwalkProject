@@ -1,5 +1,9 @@
 ﻿@model AniwalkServer.Models.Visits
 
+@{
+    ViewData["FormAction"] = "Create";
+}
+
 <h4>新增到訪紀錄</h4>
 <hr />
 <div class="row">
@@ -50,8 +54,8 @@
                 <span asp-validation-for="VisitsPhotos" class="text-danger"></span> *@
             </div>
             <div class="form-group">
-                <input type="submit" value="新增" class="btn btn-primary" />
-                @*<input type="button" value="新增" class="btn btn-primary" onclick="SendForm()" />*@
+                @*<input type="submit" value="新增" class="btn btn-primary" />*@
+                <input type="button" value="新增" class="btn btn-primary" onclick="SendForm()" />
             </div>
         </form>
     </div>
@@ -72,37 +76,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        function SendForm(){
-            //驗證失敗，表單不送出
-            if(!$('#DataForm form').valid()){
-                console.log("表單驗證失敗");
-                return;
-            }
-
-          //console.log("Call AJAX");
-          $.ajax({
-              type:"post",
-              url:"/Visits/Create",
-              data:$('#ReplyForm form').serialize(),
-              success:function(){
-                  console.log("SendForm Success");
-
-                  //更新底下的回覆留言區
-                  @*$('#ReplyList').load('/Replies/GetViewComponent?MainTextID=@(Model.MainTextID)');*@
-
-                  //表單重新載入
-                  //LoadForm();
-
-                  //關閉Modal
-                  //ReplyFormModal.hide();
-              },
-              error:function(){
-                  //console.log("SendReply Fail");
-              }
-          });
-        }
-    </script>
-
 }
