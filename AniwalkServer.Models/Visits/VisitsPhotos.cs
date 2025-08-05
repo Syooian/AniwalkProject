@@ -24,7 +24,7 @@ namespace AniwalkServer.Models
         /// </summary>
         [HiddenInput]
         [StringLength(5)]
-        [Column(TypeName = "char")]
+        [Column(TypeName = "varchar")]
         public string PhotoType { get; set; } = null!;
         /// <summary>
         /// 說明
