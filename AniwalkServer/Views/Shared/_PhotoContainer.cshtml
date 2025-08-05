@@ -57,6 +57,9 @@
                 SetPhotoCard(a, Json[a].PhotoSrc, Json[a].Description);
 
                 SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType, Json[a].Description);
+
+                //如果模型傳來時已有圖片，也將其加入已選取檔案陣列
+                SetSelectPhoto(a, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
             }
         }
         else
