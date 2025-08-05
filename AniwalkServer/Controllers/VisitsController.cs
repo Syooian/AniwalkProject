@@ -88,7 +88,7 @@ namespace AniwalkServer.Controllers
         /// 送出新建到訪記錄表單
         /// </summary>
         /// <param name="Visit"></param>
-        /// <param name="VisitsPhotos">到訪紀錄照片</param>
+        /// <param name="PhotoUpload">上傳的圖片</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -163,11 +163,14 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="Visit"></param>
-        /// <param name="VisitsPhotos">到訪紀錄照片</param>
+        /// <param name="PhotoUpload">上傳的圖片</param>
+        /// <param name="DeletedPhoto">要刪除的圖片</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? PhotoUpload)
+        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit,
+            IEnumerable<IFormFile>? PhotoUpload,
+            List<string>? DeletedPhoto)
         {
             //if (id != tStudent.fStuId)
             //{
@@ -188,6 +191,10 @@ namespace AniwalkServer.Controllers
                     ViewData["PhotoError"] = UploadMsg;
                     return View(Visit);
                 }
+
+                //刪除照片
+                if (DeletedPhoto != null)
+                    DeletePhoto(DeletedPhoto);
 
                 //Debug.WriteLine($"VP Count 3 : " + Visit.VisitsPhotos.Count());
                 //foreach (var VP in Visit.VisitsPhotos)
@@ -264,15 +271,8 @@ namespace AniwalkServer.Controllers
 
             #region 刪除到訪紀錄照片
             var VisitsPhotos = await Context.VisitsPhotos.Where(VP => Visit.SN == VP.SN).ToListAsync();
-            foreach (var Photo in VisitsPhotos)
-            {
-                var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, Visit.MemberID, Photo.PhotoID + Photo.PhotoType);
 
-                if (System.IO.File.Exists(FilePath))
-                {
-                    System.IO.File.Delete(FilePath); //刪除圖片檔案
-                }
-            }
+            DeletePhoto(VisitsPhotos.Select(P => P.PhotoID + P.PhotoType).ToList());
             #endregion
 
             Context.Visits.Remove(Visit);
@@ -325,6 +325,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         string OnVisitPhotoChanged(List<VisitsPhotos> VisitPhotoData, IEnumerable<IFormFile>? PhotoUpload)
         {
+            #region 有圖片上傳
             if (PhotoUpload != null)
             {
                 Debug.WriteLine("新增圖片數量 : " + PhotoUpload.Count());
@@ -392,8 +393,30 @@ namespace AniwalkServer.Controllers
                     return "上傳失敗";
                 }
             }
+            #endregion
+
+            #region 檢查是否有刪除圖片
+
+            #endregion
 
             return "";
+        }
+
+        /// <summary>
+        /// 刪除照片
+        /// </summary>
+        /// <param name="PhotoName">照片檔名<para>含副檔名</para></param>
+        void DeletePhoto(List<string> PhotoName)
+        {
+            for (int a = 0; a < PhotoName.Count; a++)
+            {
+                var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID, PhotoName[a]);
+
+                if (System.IO.File.Exists(FilePath))
+                {
+                    System.IO.File.Delete(FilePath); //刪除照片檔案
+                }
+            }
         }
 
         /// <summary>
