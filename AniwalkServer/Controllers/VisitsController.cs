@@ -93,7 +93,7 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? VisitsPhotos)
+        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? PhotoUpload)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +101,7 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, VisitsPhotos);
+                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, PhotoUpload);
                 if (UploadMsg != "")
                 {
                     ViewData["PhotoError"] = UploadMsg;
@@ -142,6 +142,12 @@ namespace AniwalkServer.Controllers
                 .Include(V => V.VisitsPhotos)
                 .FirstOrDefaultAsync(V => V.SN == VisitSN);
 
+            //Debug.WriteLine($"VP Count 1 : " + Visit.VisitsPhotos.Count());
+            //foreach (var VP in Visit.VisitsPhotos)
+            //{
+            //    Debug.WriteLine(VP.ToString());
+            //}
+
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
@@ -161,7 +167,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? VisitsPhotos)
+        public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? PhotoUpload)
         {
             //if (id != tStudent.fStuId)
             //{
@@ -170,12 +176,24 @@ namespace AniwalkServer.Controllers
 
             if (ModelState.IsValid)
             {
-                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, VisitsPhotos);
+                //Debug.WriteLine($"VP Count 2 : " + Visit.VisitsPhotos.Count());
+                //foreach (var VP in Visit.VisitsPhotos)
+                //{
+                //    Debug.WriteLine(VP.ToString());
+                //}
+
+                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, PhotoUpload);
                 if (UploadMsg != "")
                 {
                     ViewData["PhotoError"] = UploadMsg;
                     return View(Visit);
                 }
+
+                //Debug.WriteLine($"VP Count 3 : " + Visit.VisitsPhotos.Count());
+                //foreach (var VP in Visit.VisitsPhotos)
+                //{
+                //    Debug.WriteLine(VP.ToString());
+                //}
 
                 Context.Update(Visit);
                 await Context.SaveChangesAsync();
@@ -302,14 +320,14 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 到訪紀錄照片有變動
         /// </summary>
-        /// <param name="VisitPhotoData"></param>
-        /// <param name="VisitPhotos"></param>
+        /// <param name="VisitPhotoData">圖片資料</param>
+        /// <param name="PhotoUpload">上傳的圖片</param>
         /// <returns></returns>
-        string OnVisitPhotoChanged(List<VisitsPhotos> VisitPhotoData, IEnumerable<IFormFile>? VisitPhotos)
+        string OnVisitPhotoChanged(List<VisitsPhotos> VisitPhotoData, IEnumerable<IFormFile>? PhotoUpload)
         {
-            if (VisitPhotos != null)
+            if (PhotoUpload != null)
             {
-                Debug.WriteLine("新增圖片數量 : " + VisitPhotos.Count());
+                Debug.WriteLine("新增圖片數量 : " + PhotoUpload.Count());
 
                 if (VisitPhotoData != null)
                 {
@@ -317,10 +335,7 @@ namespace AniwalkServer.Controllers
 
                     foreach (var PhotoData in VisitPhotoData)
                     {
-                        Debug.WriteLine($"Visit.VisitsPhotos MemberID : {PhotoData.MemberID}");
-                        Debug.WriteLine($"Visit.VisitsPhotos PhotoID : {PhotoData.PhotoID}");
-                        Debug.WriteLine($"Visit.VisitsPhotos PhotoType : {PhotoData.PhotoType}");
-                        Debug.WriteLine($"Visit.VisitsPhotos Description : {PhotoData.Description}");
+                        Debug.WriteLine(PhotoData.ToString());
                     }
                 }
                 else
@@ -331,13 +346,13 @@ namespace AniwalkServer.Controllers
 
                 try
                 {
-                    var VisitsPhotosList = VisitPhotos.ToList();
+                    var PhotoUploadList = PhotoUpload.ToList();
 
-                    for (int a = 0; a < VisitsPhotosList.Count(); a++)
+                    for (int a = 0; a < PhotoUploadList.Count(); a++)
                     {
-                        if (VisitsPhotosList[a] != null && VisitsPhotosList[a].Length != 0)
+                        if (PhotoUploadList[a] != null && PhotoUploadList[a].Length != 0)
                         {
-                            switch (VisitsPhotosList[a].ContentType)
+                            switch (PhotoUploadList[a].ContentType)
                             {
                                 case "image/gif":
                                 case "image/bmp":
@@ -366,7 +381,7 @@ namespace AniwalkServer.Controllers
                             //上傳
                             using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
                             {
-                                VisitsPhotosList[a].CopyTo(FS);
+                                PhotoUploadList[a].CopyTo(FS);
                             }
                         }
                     }
