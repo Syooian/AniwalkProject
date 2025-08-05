@@ -86,6 +86,11 @@
         return `PhotoFormData_${ID}`;
     }
 
+    // 獲取圖片卡片的 ID
+    function GetPhotoCardID(ID){
+        return `PhotoCard_${ID}`;
+    }
+
     //更新圖片說明
     function UpdateDescription(ID, Value){
         document.getElementById(`${GetPhotoFormDataID(ID)}`).querySelector("textarea").value=Value;
@@ -93,10 +98,12 @@
 
     // 刪除圖片
     function RemovePhoto(ID, ButtonElement) {
+        //console.log("刪除圖片 ID : "+ID);
+
         //刪除表單內對應的圖片div
-        var PhotoDIV=document.getElementById(`${GetPhotoFormDataID(ID)}`);
-        if (PhotoDIV) {
-            PhotoDIV.remove();
+        let PhotoForm=document.getElementById(GetPhotoFormDataID(ID));
+        if (PhotoForm) {
+            PhotoForm.remove();
         }
 
         //刪除照片選擇的圖片
@@ -122,12 +129,56 @@
            SelectedPhoto.splice(DeleteIndex, 1);//移除從索引 DeleteIndex 開始的 1 個項目。
        }
 
+       //刪除Card
         const Card = ButtonElement.parentElement;
         Card.remove();
 
-        console.log(`移除已選取的第 ${DeleteIndex+1} 張圖片`);
+        //console.log(`移除已選取的第 ${DeleteIndex+1} 張圖片`);
 
-        PrintSelectedPhoto();
+        //PrintSelectedPhoto();
+
+        //將刪除ID後面的所有ID都往前移
+        for(let a=DeleteIndex;a<SelectedPhoto.length;a++){
+            //let FormerID=SelectedPhoto[a].ID;//先記下變更前的ID
+
+            //更新表單內對應的圖片資料ID
+            //console.log("找 "+GetPhotoFormDataID(SelectedPhoto[a].ID));
+            const FormData=document.getElementById(GetPhotoFormDataID(SelectedPhoto[a].ID));
+            if(FormData){
+                //console.log("找到 "+GetPhotoFormDataID(SelectedPhoto[a].ID));
+                FormData.id=GetPhotoFormDataID(a);
+                //console.log("更改ID為 "+FormData.id);
+
+                FormData.querySelector(`input[name='VisitsPhotos[${SelectedPhoto[a].ID}].MemberID']`)
+                    .setAttribute("name", `VisitsPhotos[${a}].MemberID`);
+                FormData.querySelector(`input[name='VisitsPhotos[${SelectedPhoto[a].ID}].PhotoID']`)
+                    .setAttribute("name", `VisitsPhotos[${a}].PhotoID`);
+                FormData.querySelector(`input[name='VisitsPhotos[${SelectedPhoto[a].ID}].PhotoType']`)
+                    .setAttribute("name", `VisitsPhotos[${a}].PhotoType`);
+                FormData.querySelector(`textarea[name='VisitsPhotos[${SelectedPhoto[a].ID}].Description']`)
+                    .setAttribute("name", `VisitsPhotos[${a}].Description`);
+            }
+
+            //更新Card
+            //console.log("找 "+GetPhotoCardID(SelectedPhoto[a].ID));
+            const Card=document.getElementById(GetPhotoCardID(SelectedPhoto[a].ID));
+            if(Card){
+                Card.id=GetPhotoCardID(a);
+
+                Card.onclick=function(){RemovePhoto(a,this);}
+
+                const TextArea=Card.querySelector(`textarea[name='VisitsPhotos[${SelectedPhoto[a].ID}].Description']`);
+                if(TextArea){
+                    TextArea.setAttribute("name", `VisitsPhotos[${a}].Description`);
+                    TextArea.onchange=function(){UpdateDescription(a, this.value);}
+                }
+            }
+
+            //變更為新ID
+            SelectedPhoto[a].ID=a;
+        }
+
+        //PrintSelectedPhoto();
     }
 
     //處理圖片選擇
@@ -169,6 +220,7 @@
         const Card=document.createElement("div");
         Card.className="card mt-1 mb-1 ms-1 me-1";
         Card.style.maxWidth = "18rem";
+        Card.id = GetPhotoCardID(ID);
 
         Card.innerHTML=`
             <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${ID}, this)">刪除</button>
