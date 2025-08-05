@@ -21,7 +21,7 @@
             {
                 PhotoID = PhotoListJson.PhotoID,
                 PhotoType = PhotoListJson.PhotoType,
-                PhotoSrc = $"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{PhotoListJson.PhotoID}.jpg",
+                PhotoSrc = $"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{PhotoListJson.PhotoID}{PhotoListJson.PhotoType}",
                 Description = PhotoListJson.Description
             })
         );
@@ -51,9 +51,9 @@
 
             for(let a=0;a<Json.length;a++)
             {
-                SetPhotoCard(a,Json[a].PhotoSrc, Json[a].Description);
+                SetPhotoCard(a, Json[a].PhotoSrc, Json[a].Description);
 
-                SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType,Json[a].Description);
+                SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType, Json[a].Description);
             }
         }
         else
