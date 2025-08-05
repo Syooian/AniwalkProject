@@ -8,11 +8,20 @@
 </button>
 
 <div class="row justify-content-center" id="PhotoContainer">
-    @* @if (Model.VisitsPhotos != null)
+    @if (Model != null && Model.VisitsPhotos != null)
     {
-        foreach (var Photo in Model.VisitsPhotos)
+        var PhotoListJson = System.Text.Json.JsonSerializer.Serialize(
+        Model.VisitsPhotos.Select(PhotoListJson => new
         {
-            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+            PhotoID = PhotoListJson.PhotoID,
+            PhotoType = PhotoListJson.PhotoType,
+            Description = PhotoListJson.Description
+        })
+        );
+
+        @* foreach (var Photo in Model.VisitsPhotos)
+        {
+            <div data-PhotoID="@Photo.PhotoID" class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
                 <button type="button" class="btn btn-outline-primary">刪除</button>
                 <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}.jpg")" alt="Card image cap">
                 <div class="card-body">
@@ -20,8 +29,8 @@
                     <textarea asp-for="MainText" class="form-control" rows="10"></textarea>
                 </div>
             </div>
-        }
-    } *@
+        } *@
+    }
 </div>
 
 <script>
@@ -31,6 +40,12 @@
     const PhotoForm=document.getElementById("PhotoForm");
     //隱藏的圖片選擇器
     const PhotoSelecter=document.getElementById("PhotoSelecter");
+
+
+    function InitPhotoContainer(){
+
+    }
+
 
     //開啟圖片多選
     function OpenPhotoPicker(){
@@ -108,27 +123,8 @@
             const Reader=new FileReader();
             Reader.onloadend=function(E){
                 //let PhotoNum=a;
-                const Card=document.createElement("div");
-                Card.className="card mt-1 mb-1 ms-1 me-1";
-                Card.style.maxWidth = "18rem";
 
-                Card.innerHTML=`
-                    <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${a}, this)">刪除</button>
-                    <img class="card-img-top" src="${E.target.result}" alt="Card image cap">
-                    <div class="card-body">
-                        <p class="card-title">照片說明</p>
-                        <textarea name="VisitsPhotos[${a}].Description" rows="10" onchange="UpdateDescription(${a}, this.value)"></textarea>
-                    </div>
-                `;
-                /*
-                1.	${this.value} 的問題：
-                    •	this.value 是 JavaScript 的屬性，但在 HTML 中直接使用 ${} 是模板字串語法，這只在 JavaScript 中有效。
-                    •	在 HTML 中，${this.value} 不會被解析為 JavaScript 表達式，而是被當作普通字串處理，導致傳遞的值為 undefined。
-                2.	作用域問題：
-                    •	this 在 onchange 中應該指向觸發事件的 <textarea> 元素，但因為模板字串語法錯誤，this 並未正確解析。
-                */
-
-                PhotoContainer.appendChild(Card);
+                SetPhotoCard(a, E.target.result);
 
                 try
                 {
@@ -140,21 +136,51 @@
 
                 }
 
-                    const FormData=document.createElement("div");
-                    FormData.id=GetPhotoFormDataID(a);
-                    FormData.innerHTML=`
-                        <input name="VisitsPhotos[${a}].MemberID" class="form-control" value="@ViewBag.MemberID" />
-                        <input name="VisitsPhotos[${a}].PhotoID" class="form-control" value="${crypto.randomUUID()}"/>
-                        <input name="VisitsPhotos[${a}].PhotoType" class="form-control" value="${GetFileExtension(Files[a].name)}" />
-                        <textarea name="VisitsPhotos[${a}].Description" class="form-control"></textarea>
-                    `;
-
-                    PhotoForm.appendChild(FormData);
-                }
+                SetPhotoFormData(a, crypto.randomUUID(), GetFileExtension(Files[a].name), "");
+            }
 
             Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
         }
 
         console.log("圖片處理完成");
+    }
+
+    //設置圖片顯示
+    function SetPhotoCard(ID, PhotoSrc){
+        const Card=document.createElement("div");
+        Card.className="card mt-1 mb-1 ms-1 me-1";
+        Card.style.maxWidth = "18rem";
+
+        Card.innerHTML=`
+            <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${ID}, this)">刪除</button>
+            <img class="card-img-top" src="${PhotoSrc}" alt="Card image cap">
+            <div class="card-body">
+                <p class="card-title">照片說明</p>
+                <textarea name="VisitsPhotos[${ID}].Description" rows="10" onchange="UpdateDescription(${ID}, this.value)"></textarea>
+            </div>
+        `;
+        /*
+            1.	${this.value} 的問題：
+                •	this.value 是 JavaScript 的屬性，但在 HTML 中直接使用 ${} 是模板字串語法，這只在 JavaScript 中有效。
+                •	在 HTML 中，${this.value} 不會被解析為 JavaScript 表達式，而是被當作普通字串處理，導致傳遞的值為 undefined。
+            2.	作用域問題：
+                •	this 在 onchange 中應該指向觸發事件的 <textarea> 元素，但因為模板字串語法錯誤，this 並未正確解析。
+        */
+
+        PhotoContainer.appendChild(Card);
+    }
+
+    //設置表單內圖片資料
+    function SetPhotoFormData(ID, PhotoID, PhotoType, Description){
+        const FormData = document.createElement("div");
+        FormData.id = GetPhotoFormDataID(ID);
+        FormData.innerHTML = `
+            <input name="VisitsPhotos[${ID}].MemberID" class="form-control" value="@ViewBag.MemberID" />
+            <input name="VisitsPhotos[${ID}].PhotoID" class="form-control" value="${PhotoID}" />
+            <input name="VisitsPhotos[${ID}].PhotoType" class="form-control" value="${PhotoType}" />
+            <textarea name="VisitsPhotos[${ID}].Description" class="form-control">${Description}</textarea>
+        `;
+
+        PhotoForm.appendChild(FormData);
     }
 </script>
