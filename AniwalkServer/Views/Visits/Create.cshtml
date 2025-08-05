@@ -42,10 +42,10 @@
                 <input asp-for="VisitedDate" class="form-control" />
                 <span asp-validation-for="VisitedDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <input type="file" name="PhotoUpload" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple id="PhotoSelecter" hidden onchange="OnPhotoChange(this)" /><!--所有圖片類型：image/*-->
                 <span class="text-danger">@ViewData["PhotoError"]</span>
-            </div>
+            </div>*@
             <div class="form-group" id="PhotoForm">
                 @*<label asp-for="Photo" class="control-label"></label>*@
                 @*<span asp-validation-for="Photo" class="text-danger"></span>*@
