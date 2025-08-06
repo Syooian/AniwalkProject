@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Services
@@ -42,5 +43,27 @@ namespace AniwalkServer.Services
             return Visit;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Visit"></param>
+        /// <returns></returns>
+        public async Task<Visits> UpdateVisit(Visits Visit)
+        {
+            Context.Entry(Visit).State = EntityState.Modified;
+
+            try
+            {
+                //Context.Update(Visit);
+
+                await Context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return Visit;
+        }
     }
 }

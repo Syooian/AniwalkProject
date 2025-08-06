@@ -153,20 +153,15 @@ namespace AniwalkServer.Controllers
             {
                 try
                 {
-                    Context.Update(Visit);
+                    var OldVisit = await VisitsServices.GetVisit(Visit.SN);
+                    if (OldVisit == null)
+                        return NotFound("查無資料");
 
-                    await Context.SaveChangesAsync();
+                    await VisitsServices.UpdateVisit(Visit);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IsStudentExists(Visit.SN))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
 
                 return RedirectToAction(nameof(ShowVisitsOnList));
