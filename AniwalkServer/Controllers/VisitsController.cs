@@ -1,4 +1,5 @@
 ﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -88,12 +89,12 @@ namespace AniwalkServer.Controllers
         /// 送出新建到訪記錄表單
         /// </summary>
         /// <param name="Visit"></param>
-        /// <param name="PhotoUpload">上傳的圖片</param>
+        /// <param name="VisitPhotos">圖片資料</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<IFormFile>? PhotoUpload)
+        public async Task<IActionResult> Create([Bind("MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,VisitedDate,VisitsPhotos")] Visits Visit, IEnumerable<VisitsPhotosDTO>? VisitPhotos)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +102,7 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, PhotoUpload);
+                var UploadMsg = OnVisitPhotoChanged(ref Visit, VisitPhotos);
                 if (UploadMsg != "")
                 {
                     ViewData["PhotoError"] = UploadMsg;
@@ -163,14 +164,14 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="Visit"></param>
-        /// <param name="PhotoUpload">上傳的圖片</param>
-        /// <param name="DeletedPhoto">要刪除的圖片</param>
+        /// <param name="VisitPhotos">圖片資料</param>
+        /// <param name="DeletePhoto">要刪除的圖片</param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit,
-            IEnumerable<IFormFile>? PhotoUpload,
-            List<string>? DeletedPhoto)
+            IEnumerable<VisitsPhotosDTO>? VisitPhotos,
+            List<string>? DeletePhoto)
         {
             //if (id != tStudent.fStuId)
             //{
@@ -185,7 +186,7 @@ namespace AniwalkServer.Controllers
                 //    Debug.WriteLine(VP.ToString());
                 //}
 
-                var UploadMsg = OnVisitPhotoChanged(Visit.VisitsPhotos, PhotoUpload);
+                var UploadMsg = OnVisitPhotoChanged(ref Visit, VisitPhotos, DeletePhoto);
                 if (UploadMsg != "")
                 {
                     ViewData["PhotoError"] = UploadMsg;
@@ -193,8 +194,8 @@ namespace AniwalkServer.Controllers
                 }
 
                 //刪除照片
-                if (DeletedPhoto != null)
-                    DeletePhoto(DeletedPhoto);
+                //if (DeletedPhoto != null)
+                //    DeletePhoto(DeletedPhoto);
 
                 //Debug.WriteLine($"VP Count 3 : " + Visit.VisitsPhotos.Count());
                 //foreach (var VP in Visit.VisitsPhotos)
@@ -320,40 +321,28 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 到訪紀錄照片有變動
         /// </summary>
-        /// <param name="VisitPhotoData">圖片資料</param>
-        /// <param name="PhotoUpload">上傳的圖片</param>
+        /// <param name="Visit">到訪記錄</param>
+        /// <param name="VisitPhotos">圖片資料</param>
+        /// <param name="DeletePhoto">上傳的圖片</param>
         /// <returns></returns>
-        string OnVisitPhotoChanged(List<VisitsPhotos> VisitPhotoData, IEnumerable<IFormFile>? PhotoUpload)
+        string OnVisitPhotoChanged(ref Visits Visit, IEnumerable<VisitsPhotosDTO> VisitPhotos, List<string> DeletePhoto = null)
         {
-            #region 有圖片上傳
-            if (PhotoUpload != null)
+            #region 檢查圖片變動
+            if (VisitPhotos != null)
             {
-                Debug.WriteLine("新增圖片數量 : " + PhotoUpload.Count());
-
-                if (VisitPhotoData != null)
-                {
-                    Debug.WriteLine($"Visit.VisitsPhotos Count : {VisitPhotoData.Count()}");
-
-                    foreach (var PhotoData in VisitPhotoData)
-                    {
-                        Debug.WriteLine(PhotoData.ToString());
-                    }
-                }
-                else
-                {
-                    //Console.WriteLine("Visit.VisitsPhotos is null");
-                    Debug.WriteLine("Visit.VisitsPhotos is null");
-                }
+                Debug.WriteLine("圖片資料數量 : " + VisitPhotos.Count());
 
                 try
                 {
-                    var PhotoUploadList = PhotoUpload.ToList();
+                    var VisitPhotosList = VisitPhotos.ToList();
 
-                    for (int a = 0; a < PhotoUploadList.Count(); a++)
+                    for (int a = 0; a < VisitPhotosList.Count(); a++)
                     {
-                        if (PhotoUploadList[a] != null && PhotoUploadList[a].Length != 0)
+                        //檢查是否有圖片要上傳
+                        Debug.WriteLine($"{VisitPhotosList[a].PhotoID} 圖片 : {(VisitPhotosList[a].UploadFile == null ? null : VisitPhotosList[a].UploadFile.FileName)}");
+                        if (VisitPhotosList[a].UploadFile != null && VisitPhotosList[a].UploadFile.Length != 0)
                         {
-                            switch (PhotoUploadList[a].ContentType)
+                            switch (VisitPhotosList[a].UploadFile.ContentType)
                             {
                                 case "image/gif":
                                 case "image/bmp":
@@ -363,15 +352,15 @@ namespace AniwalkServer.Controllers
                                 case "image/jfif":
                                     break;
                                 default:
-                                    return "不支援的圖片類型";
+                                    return "有不支援的圖片類型";
                             }
 
                             //新檔名
                             //var FileName = Guid.NewGuid().ToString();
-                            var FileName = VisitPhotoData[a].PhotoID;
+                            var FileName = VisitPhotosList[a].PhotoID;
                             //副檔名
                             //var FileExtension = Path.GetExtension(Photo.FileName).ToLower();
-                            var FileExtension = VisitPhotoData[a].PhotoType;
+                            var FileExtension = VisitPhotosList[a].PhotoType;
                             Debug.WriteLine($"NewFile : {FileName + FileExtension}");
                             //上傳路徑
                             var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID);
@@ -382,7 +371,7 @@ namespace AniwalkServer.Controllers
                             //上傳
                             using (FileStream FS = new FileStream(Path.Combine(UploadPath, FileName + FileExtension), FileMode.Create))
                             {
-                                PhotoUploadList[a].CopyTo(FS);
+                                VisitPhotosList[a].UploadFile.CopyTo(FS);
                             }
                         }
                     }
@@ -392,6 +381,36 @@ namespace AniwalkServer.Controllers
                     Debug.WriteLine($"Error uploading photos : {ex.Message}");
                     return "上傳失敗";
                 }
+
+                //更新資料庫
+                if (Visit.VisitsPhotos == null)
+                    Visit.VisitsPhotos = new List<VisitsPhotos>();
+
+                foreach (var VP in VisitPhotos)
+                {
+                    //找出有無和原圖片資料相同
+                    var V = Visit.VisitsPhotos.FindIndex(R => R.PhotoID == VP.PhotoID);
+
+                    if (V == -1)//無相同資料，直接插入新的
+                    {
+                        Visit.VisitsPhotos.Add(new VisitsPhotos
+                        {
+                            PhotoID = VP.PhotoID,
+                            PhotoType = VP.PhotoType,
+                            Description = VP.Description,
+                            MemberID = GetMemberID,
+                            SN = Visit.SN
+                        });
+                    }
+                    else//有相同資料，用修改的 (也只有圖片說明會更改)
+                    {
+                        Visit.VisitsPhotos[V].Description = VP.Description;
+                    }
+                }
+            }
+            else
+            {
+                Debug.WriteLine("沒有圖片資料");
             }
             #endregion
 

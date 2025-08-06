@@ -43,7 +43,7 @@
     //隱藏的圖片選擇器
     const PhotoPicker=document.getElementById("PhotoPicker");
 
-    //儲存所有選取的檔案
+    //儲存所有選取的圖片資料
     let SelectedPhoto=[];
 
     //初始化圖片顯示和既有圖片資料插入表單
@@ -62,7 +62,7 @@
                 SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType, Json[a].Description);
 
                 //如果模型傳來時已有圖片，也將其加入已選取檔案陣列
-                SetSelectPhoto(a, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
+                SetSelectPhoto(a,  Json[a].PhotoID, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
             }
         }
         else
@@ -96,7 +96,9 @@
 
     //更新圖片說明
     function UpdateDescription(ID, Value){
-        document.getElementById(`${GetPhotoFormDataID(ID)}`).querySelector("textarea").value=Value;
+        //document.getElementById(`${GetPhotoFormDataID(ID)}`).querySelector("textarea").value=Value;
+
+        SelectedPhoto[ID].Description=Value;
     }
 
     // 刪除圖片
@@ -197,8 +199,13 @@
 
             console.log("加入第 "+(SelectedPhotoAmount+1)+" 張照片");
 
+            //取新的GUID作為PhotoID
+            const PhotoID = crypto.randomUUID();
+            //副檔名
+            const PhotoType = GetFileExtension(Files[a].name);
+
             //儲存到變數
-            SetSelectPhoto(SelectedPhotoAmount, Files[a]);
+            SetSelectPhoto(SelectedPhotoAmount, PhotoID, PhotoType, "", Files[a]);
 
             // 使用 FileReader 讀取圖片
             const Reader=new FileReader();
@@ -207,7 +214,7 @@
 
                 SetPhotoCard(SelectedPhotoAmount, E.target.result, "");
 
-                SetPhotoFormData(SelectedPhotoAmount, crypto.randomUUID(), GetFileExtension(Files[a].name), "");
+                SetPhotoFormData(SelectedPhotoAmount, PhotoID, PhotoType, "");
             }
 
             Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
@@ -246,22 +253,25 @@
 
     //設置表單內圖片資料
     function SetPhotoFormData(ID, PhotoID, PhotoType, Description){
-        const FormData = document.createElement("div");
-        FormData.id = GetPhotoFormDataID(ID);
-        FormData.innerHTML = `
-            <input name="VisitsPhotos[${ID}].MemberID" class="form-control" value="@ViewBag.MemberID" />
-            <input name="VisitsPhotos[${ID}].PhotoID" class="form-control" value="${PhotoID}" />
-            <input name="VisitsPhotos[${ID}].PhotoType" class="form-control" value="${PhotoType}" />
-            <textarea name="VisitsPhotos[${ID}].Description" class="form-control">${Description}</textarea>
-        `;
+        // const FormData = document.createElement("div");
+        // FormData.id = GetPhotoFormDataID(ID);
+        // FormData.innerHTML = `
+        //     <input name="VisitsPhotos[${ID}].MemberID" class="form-control" value="@ViewBag.MemberID" />
+        //     <input name="VisitsPhotos[${ID}].PhotoID" class="form-control" value="${PhotoID}" />
+        //     <input name="VisitsPhotos[${ID}].PhotoType" class="form-control" value="${PhotoType}" />
+        //     <textarea name="VisitsPhotos[${ID}].Description" class="form-control">${Description}</textarea>
+        // `;
 
-        PhotoForm.appendChild(FormData);
+        // PhotoForm.appendChild(FormData);
     }
 
     //紀錄選取的照片
-    function SetSelectPhoto(ID, File){
+    function SetSelectPhoto(ID, PhotoID, PhotoType, Description, File){
         SelectedPhoto.push({
             ID: ID,
+            PhotoID: PhotoID,
+            PhotoType: PhotoType,
+            Description: Description,
             File:File
         });
 
@@ -289,18 +299,59 @@
 
         //建立表單物件
         const FormDataObj=new FormData();
+
         //將原表單資料加入FormData
         const FormElements=$('#DataForm').serializeArray();
         FormElements.forEach(Element=>{
             FormDataObj.append(Element.name, Element.value);
         });
+
         //將SelectedPhoto中的每個File加入FormData
-        SelectedPhoto.forEach(SP=>{
-            //有東西才加入(因為編輯頁面下有些圖是既有圖片，非上傳用)
-            if(SP.File){
-                FormDataObj.append("PhotoUpload", SP.File);
+        console.log("SelectedPhoto 數量 : "+SelectedPhoto.length);
+        if(SelectedPhoto.length>0){
+            // let VisitPhotosFormData = document.createElement("div");
+            // VisitPhotosFormData.className="form-group";
+
+            for(let a=0;a<SelectedPhoto.length;a++){
+                //let PhotoData=document.createElement("div");
+
+                FormDataObj.append(`VisitPhotos[${a}].PhotoID`, SelectedPhoto[a].PhotoID);
+                FormDataObj.append(`VisitPhotos[${a}].PhotoType`, SelectedPhoto[a].PhotoType);
+                FormDataObj.append(`VisitPhotos[${a}].Description`, SelectedPhoto[a].Description);
+                // if(SelectedPhoto[a].File){
+                //     PhotoData.append(`VisitPhotos[${a}].UploadFile`, SelectedPhoto[a].File);
+                // }
+
+                // PhotoData.innerHTML = `
+                //     <input name="VisitPhotos[${a}].PhotoID" class="form-control" value="${SelectedPhoto[a].PhotoID}" />
+                //     <input name="VisitPhotos[${a}].PhotoType" class="form-control" value="${SelectedPhoto[a].PhotoType}" />
+                //     <textarea name="VisitsPhotos[${a}].Description" class="form-control">${SelectedPhoto[a].Description}</textarea>
+                // `;
+                // PhotoData.append(`<input name="VisitPhotos[${a}].PhotoID" class="form-control" value="${SelectedPhoto[a].PhotoID}" />`);
+                // PhotoData.append(`<input name="VisitPhotos[${a}].PhotoType" class="form-control" value="${SelectedPhoto[a].PhotoType}" />`);
+                // PhotoData.append(`<textarea name="VisitsPhotos[${a}].Description" class="form-control">${SelectedPhoto[a].Description}</textarea>`);
+
+                if(SelectedPhoto[a].File){
+                    //如果有實際的檔案，則加入到 PhotoData 內
+                    FormDataObj.append(`VisitPhotos[${a}].UploadFile`, SelectedPhoto[a].File);
+                    //PhotoData.append(`<input name="VisitPhotos[${a}].PhotoType" class="form-control" value="${SelectedPhoto[a].PhotoType}" />`);
+                }
+
+                //VisitPhotosFormData.append(PhotoData);
             }
-        });
+
+            //FormDataObj.append("VisitPhotos", VisitPhotosFormData);
+        }
+
+        //印出FormDataObj
+        // for (let pair of FormDataObj.entries()) {
+        //     // 如果是檔案，顯示檔名；否則顯示值
+        //     if (pair[1] instanceof File) {
+        //         console.log(pair[0], pair[1].name);
+        //     } else {
+        //         console.log(pair[0], pair[1]);
+        //     }
+        // }
 
         //使用Ajax送出表單
         $.ajax({
