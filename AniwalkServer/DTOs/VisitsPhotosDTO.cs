@@ -19,5 +19,10 @@
         /// 上傳圖片
         /// </summary>
         public IFormFile? UploadFile { get; set; }
+
+        public override string ToString()
+        {
+            return $"PhotoID : {PhotoID}, PhotoType : {PhotoType}, Description : {Description}, UploadFile : {(UploadFile == null ? "Null" : UploadFile.Name)}";
+        }
     }
 }
