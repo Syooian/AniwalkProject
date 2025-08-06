@@ -60,15 +60,12 @@ namespace AniwalkServer.Controllers
         [AllowAnonymous]//允許所有人檢視
         public async Task<IActionResult> ShowVisitsOnList()
         {
-            var Result = await Context.Visits
-                .Include(V => V.Member)
-                .Include(V => V.Anime)
-                .Include(V => V.Country)
-                .Include(V => V.VisitsPhotos)
-                .OrderByDescending(V => V.CreatedDate)
-                .ToListAsync();
+            var Visits = await VisitsServices.GetVisits();
 
-            return View(Result);
+            if (Visits == null)
+                return NotFound();
+
+            return View(Visits);
         }
 
         /// <summary>
@@ -125,9 +122,7 @@ namespace AniwalkServer.Controllers
             //    return NotFound();
             //}
 
-            var Visit = await Context.Visits
-                .Include(V => V.VisitsPhotos)
-                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            var Visit = await VisitsServices.GetVisit(VisitSN);
 
             if (Visit == null)
             {
@@ -189,12 +184,7 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Details(int VisitSN)
         {
-            var Visit = await Context.Visits
-                .Include(V => V.Member)
-                .Include(V => V.Anime)
-                .Include(V => V.Country)
-                .Include(V => V.VisitsPhotos)
-                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            var Visit = await VisitsServices.GetVisit(VisitSN);
 
             if (Visit == null)
             {
@@ -229,7 +219,7 @@ namespace AniwalkServer.Controllers
         {
             //Console.WriteLine($"Delete VisitSN : {VisitSN}");
 
-            var Visit = await Context.Visits.FindAsync(VisitSN);
+            var Visit = await VisitsServices.GetVisit(VisitSN);
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
