@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddControllersWithViews(Options =>
 
 builder.Services.AddDbContext<AniwalkDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
+
+builder.Services.AddScoped<VisitsServices>();
 
 //註冊 Cookie Authentication
 builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCookie(LoginController.AuthenticationScheme, Options =>
