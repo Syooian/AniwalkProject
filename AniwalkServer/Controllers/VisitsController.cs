@@ -244,10 +244,10 @@ namespace AniwalkServer.Controllers
                 //}
                 #endregion
 
-                var UploadMsg = await UploadPhoto(Visit, true, VisitPhotos);
-                if (UploadMsg != "")
+                var UploadPhotoMsg = await UploadPhoto(Visit, true, VisitPhotos);
+                if (UploadPhotoMsg != "")
                 {
-                    ViewData["PhotoError"] = UploadMsg;
+                    ViewData["PhotoError"] = UploadPhotoMsg;
                     return View(Visit);
                 }
 
@@ -277,15 +277,25 @@ namespace AniwalkServer.Controllers
                     return View(Visit);
                 }
 
-                //刪除照片
-                //if (DeletedPhoto != null)
-                //    DeletePhoto(DeletedPhoto);
-
-                //Debug.WriteLine($"VP Count 3 : " + Visit.VisitsPhotos.Count());
-                //foreach (var VP in Visit.VisitsPhotos)
+                //(寫法不佳)
+                //Visit.VisitsPhotos = new List<VisitsPhotos>();
+                //foreach (var VP in VisitPhotos)
                 //{
-                //    Debug.WriteLine(VP.ToString());
+                //    if (VP.UploadFile == null)
+                //    {
+                //        Visit.VisitsPhotos.Add(new VisitsPhotos()
+                //        {
+                //            PhotoID = VP.PhotoID,
+                //            PhotoType = VP.PhotoType,
+                //            Description = VP.Description,
+                //            MemberID = Visit.MemberID,
+                //            SN = Visit.SN
+                //        });
+                //    }
                 //}
+
+                //刪除照片
+                PhotoServices.DeletePhoto(Visit, VisitPhotos);
 
                 Context.Update(Visit);
                 await Context.SaveChangesAsync();
@@ -347,7 +357,9 @@ namespace AniwalkServer.Controllers
         {
             //Console.WriteLine($"Delete VisitSN : {VisitSN}");
 
-            var Visit = await Context.Visits.FindAsync(VisitSN);
+            var Visit = await Context.Visits
+                .Include(V => V.VisitsPhotos)
+                .FirstOrDefaultAsync(V => V.SN == VisitSN);
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
