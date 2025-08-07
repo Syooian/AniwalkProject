@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
+using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
@@ -15,12 +16,14 @@ namespace AniwalkServer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
         private readonly AniwalkDBContext Context;
+        readonly VisitsServices VisitsServices;
 
-        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context)
+        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices)
         {
             _logger = logger;
             _configuration = configuration;
             this.Context = Context;
+            this.VisitsServices = VisitsServices;
         }
 
         /// <summary>
