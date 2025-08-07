@@ -16,14 +16,34 @@ namespace AniwalkServer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
         private readonly AniwalkDBContext Context;
+        #region Services
+        /// <summary>
+        /// 
+        /// </summary>
         readonly VisitsServices VisitsServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly PhotoServices PhotoServices;
+        #endregion
 
-        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="configuration"></param>
+        /// <param name="Context"></param>
+        /// <param name="VisitsServices"></param>
+        /// <param name="PhotoServices"></param>
+        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices, PhotoServices PhotoServices)
         {
             _logger = logger;
             _configuration = configuration;
             this.Context = Context;
+            #region Services
             this.VisitsServices = VisitsServices;
+            this.PhotoServices = PhotoServices;
+            #endregion
         }
 
         /// <summary>
@@ -337,7 +357,7 @@ namespace AniwalkServer.Controllers
             #region 刪除到訪紀錄照片
             var VisitsPhotos = await Context.VisitsPhotos.Where(VP => Visit.SN == VP.SN).ToListAsync();
 
-            DeletePhoto(VisitsPhotos.Select(P => P.PhotoID + P.PhotoType).ToList());
+            PhotoServices.DeletePhoto(Visit.MemberID, VisitsPhotos.Select(P => P.PhotoID + P.PhotoType).ToList());
             #endregion
 
             Context.Visits.Remove(Visit);
@@ -638,23 +658,6 @@ namespace AniwalkServer.Controllers
             }
 
             return await Task.FromResult("");
-        }
-
-        /// <summary>
-        /// 刪除照片
-        /// </summary>
-        /// <param name="PhotoName">照片檔名<para>含副檔名</para></param>
-        void DeletePhoto(List<string> PhotoName)
-        {
-            for (int a = 0; a < PhotoName.Count; a++)
-            {
-                var FilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID, PhotoName[a]);
-
-                if (System.IO.File.Exists(FilePath))
-                {
-                    System.IO.File.Delete(FilePath); //刪除照片檔案
-                }
-            }
         }
 
         /// <summary>

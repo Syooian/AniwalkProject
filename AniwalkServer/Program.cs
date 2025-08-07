@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AniwalkDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
 
 builder.Services.AddScoped<VisitsServices>();
+builder.Services.AddScoped<PhotoServices>();
 
 //註冊 Cookie Authentication
 builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCookie(LoginController.AuthenticationScheme, Options =>
