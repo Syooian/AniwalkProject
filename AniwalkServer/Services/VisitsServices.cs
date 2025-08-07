@@ -18,6 +18,16 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 到訪紀錄是否存在
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        private bool IsVisitExists(int VisitSN)
+        {
+            return Context.Visits.Any(V => V.SN == VisitSN);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>

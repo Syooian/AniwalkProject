@@ -395,16 +395,6 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="VisitSN"></param>
-        /// <returns></returns>
-        private bool IsStudentExists(int VisitSN)
-        {
-            return Context.Visits.Any(V => V.SN == VisitSN);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="Visit"></param>
         /// <param name="VisitPhotos"></param>
         /// <returns></returns>
