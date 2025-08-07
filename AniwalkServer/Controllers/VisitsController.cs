@@ -354,11 +354,8 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            #region 刪除到訪紀錄照片
-            var VisitsPhotos = await Context.VisitsPhotos.Where(VP => Visit.SN == VP.SN).ToListAsync();
-
-            PhotoServices.DeletePhoto(Visit.MemberID, VisitsPhotos.Select(P => P.PhotoID + P.PhotoType).ToList());
-            #endregion
+            //刪除到訪紀錄照片
+            PhotoServices.DeletePhoto(Visit);
 
             Context.Visits.Remove(Visit);
             await Context.SaveChangesAsync();

@@ -1,12 +1,23 @@
-﻿namespace AniwalkServer.Services
+﻿using AniwalkServer.Models;
+
+namespace AniwalkServer.Services
 {
     /// <summary>
     /// 管理圖片上傳, 刪除的服務
     /// </summary>
     public class PhotoServices
     {
+        #region 刪除
         /// <summary>
-        /// 刪除照片
+        /// 刪除到訪記錄的全部照片
+        /// </summary>
+        /// <param name="Visit"></param>
+        public void DeletePhoto(Visits Visit)
+        {
+            DeletePhoto(Visit.MemberID, Visit.VisitsPhotos.Select(P => P.PhotoID + P.PhotoType).ToList());
+        }
+        /// <summary>
+        /// 刪除指定照片
         /// </summary>
         /// <param name="PhotoFileName">照片檔名<para>含副檔名</para></param>
         public void DeletePhoto(string MemberID, List<string> PhotoFileName)
@@ -21,5 +32,6 @@
                 }
             }
         }
+        #endregion
     }
 }
