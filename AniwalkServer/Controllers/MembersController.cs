@@ -8,16 +8,34 @@ using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
     public class MembersController : Controller
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly AniwalkDBContext _context;
+        #region Services
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly MembersServices MembersServices;
+        #endregion
 
-        public MembersController(AniwalkDBContext context)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="MembersServices"></param>
+        public MembersController(AniwalkDBContext context, MembersServices MembersServices)
         {
             _context = context;
+            #region Services
+            this.MembersServices = MembersServices;
+            #endregion
         }
 
         /// <summary>
@@ -178,7 +196,7 @@ namespace AniwalkServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MembersExists(members.MemberID))
+                    if (!MembersServices.IsMembersExists(members.MemberID))
                     {
                         return NotFound();
                     }
@@ -193,9 +211,21 @@ namespace AniwalkServer.Controllers
             return View(members);
         }
 
-        private bool MembersExists(string id)
+        /// <summary>
+        /// 個人資訊檢視
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Details(string MemberID)
         {
-            return _context.Members.Any(e => e.MemberID == id);
+            var Member = await MembersServices.GetMember(MemberID);
+
+            if (Member == null)
+            {
+                return NotFound();
+            }
+
+            return View(Member);
         }
 
         /// <summary>

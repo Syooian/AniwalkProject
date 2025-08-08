@@ -20,4 +20,11 @@
     <ProjectReference Include="..\AniwalkServer.Models\AniwalkServer.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Member\Controllers\" />
+    <Folder Include="Areas\Member\Data\" />
+    <Folder Include="Areas\Member\Models\" />
+    <Folder Include="Areas\Member\Views\" />
+  </ItemGroup>
+
 </Project>

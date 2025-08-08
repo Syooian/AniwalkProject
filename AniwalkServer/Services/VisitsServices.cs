@@ -12,7 +12,10 @@ namespace AniwalkServer.Services
         /// 
         /// </summary>
         readonly AniwalkDBContext Context;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
         public VisitsServices(AniwalkDBContext Context)
         {
             this.Context = Context;

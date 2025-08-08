@@ -19,8 +19,11 @@ builder.Services.AddControllersWithViews(Options =>
 builder.Services.AddDbContext<AniwalkDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
 
+#region 自訂Services
 builder.Services.AddScoped<VisitsServices>();
 builder.Services.AddScoped<PhotoServices>();
+builder.Services.AddScoped<MembersServices>();
+#endregion
 
 //註冊 Cookie Authentication
 builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCookie(LoginController.AuthenticationScheme, Options =>
