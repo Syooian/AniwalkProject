@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
+using AniwalkServer.QueryParameters;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
