@@ -71,6 +71,9 @@ namespace AniwalkServer.Services
         /// <param name="Visit"></param>
         public void DeletePhoto(Visits Visit)
         {
+            if (Visit.VisitsPhotos == null || Visit.VisitsPhotos.Count == 0)
+                return; //如果沒有照片則不執行
+
             DeletePhoto(Visit, Visit.VisitsPhotos.Select(P => new PhotoFileNameParam(P.PhotoID, P.PhotoType)).ToList());
         }
         /// <summary>
