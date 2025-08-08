@@ -295,7 +295,7 @@ namespace AniwalkServer.Controllers
                 //}
 
                 //刪除照片
-                PhotoServices.DeletePhoto(Visit, VisitPhotos);
+                await PhotoServices.DeletePhoto(Visit, VisitPhotos);
 
                 Context.Update(Visit);
                 await Context.SaveChangesAsync();
