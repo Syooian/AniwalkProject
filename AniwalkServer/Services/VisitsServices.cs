@@ -67,7 +67,6 @@ namespace AniwalkServer.Services
                 .Include(V => V.Anime)
                 .Include(V => V.Country)
                 .Include(V => V.VisitsPhotos)
-                .OrderByDescending(V => V.CreatedDate)
                 .FirstOrDefaultAsync(V => V.SN == VisitSN);
 
             if (SortVisitsPhotos)

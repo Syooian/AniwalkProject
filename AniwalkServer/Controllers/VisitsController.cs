@@ -56,7 +56,8 @@ namespace AniwalkServer.Controllers
             SetGoogleMapsApiKey();
 
             #region 在資料庫執行排序
-            var Result = await Context.Visits.Include(V => V.Member).ToListAsync();
+            //var Result = await Context.Visits.Include(V => V.Member).ToListAsync();
+            var Result = await VisitsServices.GetVisits();
             #endregion
             #region 在本機記憶體執行排序
             //var Result = await _context.Book.ToListAsync();
@@ -172,9 +173,10 @@ namespace AniwalkServer.Controllers
             //    return NotFound();
             //}
 
-            var Visit = await Context.Visits
-                .Include(V => V.VisitsPhotos)
-                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            //var Visit = await Context.Visits
+            //    .Include(V => V.VisitsPhotos)
+            //    .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            var Visit = await VisitsServices.GetVisit(VisitSN, true);
 
             //Debug.WriteLine($"VP Count 1 : " + Visit.VisitsPhotos.Count());
             //for (int a = 0; a < Visit.VisitsPhotos.Count(); a++)
@@ -346,9 +348,11 @@ namespace AniwalkServer.Controllers
         {
             //Console.WriteLine($"Delete VisitSN : {VisitSN}");
 
-            var Visit = await Context.Visits
-                .Include(V => V.VisitsPhotos)
-                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            //var Visit = await Context.Visits
+            //    .Include(V => V.VisitsPhotos)
+            //    .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            var Visit = await VisitsServices.GetVisit(VisitSN);
+
             if (Visit == null)
             {
                 Console.WriteLine($"VisitSN {VisitSN} not found");
