@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SeedPhotos\Visits\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AniwalkServer.Models\AniwalkServer.Models.csproj" />
   </ItemGroup>
 

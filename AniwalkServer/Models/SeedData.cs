@@ -145,12 +145,13 @@ namespace AniwalkServer.Models
                 #endregion
 
                 #region 到訪紀錄資料
+                var Visits = new List<Visits>();
                 if (context.Visits.Any())
                 {
                     return;   // DB has been seeded
                 }
 
-                context.Visits.Add(new Visits()
+                Visits.Add(new Visits()
                 {
                     MainText = "七咲鞦韆",
                     Latitude = 35.725771,
@@ -161,7 +162,7 @@ namespace AniwalkServer.Models
                     VisitedDate = DateTime.Now.AddDays(-5)
                 });
 
-                context.Visits.Add(new Visits()
+                Visits.Add(new Visits()
                 {
                     MainText = "七咲海岸",
                     Latitude = 35.706208,
@@ -172,7 +173,7 @@ namespace AniwalkServer.Models
                     VisitedDate = DateTime.Now.AddDays(-10)
                 });
 
-                context.Visits.Add(new Visits()
+                Visits.Add(new Visits()
                 {
                     MainText = "怪獸襲來",
                     Latitude = 22.684911,
@@ -182,9 +183,11 @@ namespace AniwalkServer.Models
                     AnimeID = Animes[2].AnimeID,
                     VisitedDate = DateTime.Now.AddDays(-15)
                 });
-                #endregion
+
+                context.Visits.AddRange(Visits);
 
                 context.SaveChanges();
+                #endregion
 
                 #region 到訪紀錄評論
                 //因為SN是自動生成的，所以要先執行上方的資料新增後才能繼續執行
@@ -279,55 +282,47 @@ namespace AniwalkServer.Models
                     }
                     #endregion
 
-                    var VPs = new VisitsPhotos[16];
+                    string VisitsPhotosRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath);//複製檔案的目的路徑
+                    if (!Directory.Exists(VisitsPhotosRootPath))
+                        Directory.CreateDirectory(VisitsPhotosRootPath); //如果目的Root路徑不存在，則建立
 
-                    for (int a = 1; a <= 12; a++)
+                    for (int a = 0; a < Visits.Count; a++)
                     {
-                        VPs[a - 1] = new VisitsPhotos()
-                        {
-                            MemberID = MemberIDs[0],
-                            PhotoID = Guid.NewGuid().ToString(),
-                            PhotoType = ".jpg",
-                            Description = "七咲鞦韆 Photo " + a,
-                            SN = 1
-                        };
+                        var SN = a + 1;
+                        var SeedPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedPhotos", "Visits", SN.ToString());//每個到訪記錄對應的SeedData照片路徑
 
-                        VPs[a + 3] = new VisitsPhotos()
+                        if (Directory.Exists(SeedPhotosPath))
                         {
-                            MemberID = MemberIDs[0],
-                            PhotoID = Guid.NewGuid().ToString(),
-                            PhotoType = ".jpg",
-                            Description = "怪獸襲來 Photo " + a,
-                            SN = 2
-                        };
+                            Files = Directory.GetFiles(SeedPhotosPath);  //取得SeedData路徑中的所有檔案
+
+                            //檢查該使用者的照片路徑是否存在
+                            var VisitsPhotosPath = Path.Combine(VisitsPhotosRootPath, Visits[a].MemberID);
+                            if (!Directory.Exists(VisitsPhotosPath))
+                                Directory.CreateDirectory(VisitsPhotosPath);
+
+                            for (int b = 0; b < Files.Length; b++)
+                            {
+                                //建立資料
+                                var VP = new VisitsPhotos()
+                                {
+                                    MemberID = Visits[a].MemberID,
+                                    PhotoID = Guid.NewGuid().ToString(),
+                                    PhotoType = Path.GetExtension(Files[b]),
+                                    Description = Visits[a].MainText + " Photo " + (b + 1),
+                                    SN = SN,
+                                    SortNumber = b
+                                };
+                                //加入資料表
+                                context.VisitsPhotos.Add(VP);
+
+                                //複製圖片檔案到wwwroot
+                                string ToFile = Path.Combine(VisitsPhotosPath, VP.PhotoID + ".jpg");
+                                File.Copy(Files[b], ToFile);
+                            }
+                        }
                     }
-
-                    context.VisitsPhotos.AddRange(VPs);
 
                     context.SaveChanges();
-
-                    #region 照片轉存
-                    string SeedPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedPhotos", "Visits");//取得來源照片路徑
-                    string VisitsPhotosPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath);//目的路徑
-                    Files = Directory.GetFiles(SeedPhotosPath);  //取得指定路徑中的所有檔案
-
-                    if (!Directory.Exists(VisitsPhotosPath))
-                    {
-                        Directory.CreateDirectory(VisitsPhotosPath); //如果目的路徑不存在，則建立
-                    }
-
-                    for (int a = 0; a < VPs.Length; a++)
-                    {
-                        //檢查該使用者的照片路徑
-                        var MemberPhotosPath = Path.Combine(VisitsPhotosPath, VPs[a].MemberID);
-                        if (!Directory.Exists(MemberPhotosPath))
-                            Directory.CreateDirectory(MemberPhotosPath);
-
-                        string ToFile = Path.Combine(MemberPhotosPath, VPs[a].PhotoID + ".jpg");
-
-                        File.Copy(Files[a], ToFile);
-                    }
-                    #endregion
                 }
                 #endregion
 
