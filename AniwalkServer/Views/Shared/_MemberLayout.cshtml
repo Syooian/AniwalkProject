@@ -6,8 +6,8 @@
 <!DOCTYPE html>
 <html lang="en">
 @{
-    //共用Head
-    await Html.RenderPartialAsync("_SharedLayout.Head");
+                    //共用Head
+                    await Html.RenderPartialAsync("_SharedLayout.Head");
 }
 <body>
     <header>
@@ -38,10 +38,16 @@
                     </ul>
                     <ul class="navbar-nav text-end">
                         <li class="nav-item">
-                            <p>歡迎，@User.Identity.Name</p>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light btn btn-primary" asp-area="" asp-controller="Login" asp-action="Logout">登出</a>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="DropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    歡迎，@User.Identity.Name
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="DropdownMenu">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">個人資訊</a></li>
+                                    <li><hr class="dropdown-divider"></li><!--分隔線-->
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Login" asp-action="Logout">登出</a></li>
+                                </ul>
+                            </div>
                         </li>
                     </ul>
                 </div>
