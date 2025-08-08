@@ -6,8 +6,8 @@
 <!DOCTYPE html>
 <html lang="en">
 @{
-                    //共用Head
-                    await Html.RenderPartialAsync("_SharedLayout.Head");
+    //共用Head
+    await Html.RenderPartialAsync("_SharedLayout.Head");
 }
 <body>
     <header>
@@ -43,7 +43,7 @@
                                     歡迎，@User.Identity.Name
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="DropdownMenu">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="" asp-action="">個人資訊</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Members" asp-action="Details" asp-route-MemberID="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value">個人資訊</a></li>
                                     <li><hr class="dropdown-divider"></li><!--分隔線-->
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Login" asp-action="Logout">登出</a></li>
                                 </ul>
