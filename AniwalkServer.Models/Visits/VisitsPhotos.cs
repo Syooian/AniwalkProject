@@ -33,6 +33,12 @@ namespace AniwalkServer.Models
         [StringLength(500)]
         [DataType(DataType.MultilineText)]//標註多行文字
         public string? Description { get; set; }
+        /// <summary>
+        /// 排序編號
+        /// </summary>
+        [HiddenInput]
+        [Column(TypeName = "smallint")]
+        public int SortNumber { get; set; }
 
         #region 外鍵關聯
         /// <summary>
