@@ -237,7 +237,7 @@
             <img class="card-img-top" src="${PhotoSrc}" alt="Card image cap">
             <div class="card-body">
                 <p class="card-title">照片說明</p>
-                <textarea name="VisitsPhotos[${ID}].Description" rows="10" onchange="UpdateDescription(${ID}, this.value)">${Description}</textarea>
+                <textarea name="VisitsPhotos[${ID}].Description" rows="10" onchange="UpdateDescription(${ID}, this.value)">${Description==null?"":Description}</textarea>
             </div>
         `;
         /*
