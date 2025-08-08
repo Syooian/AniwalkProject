@@ -25,7 +25,7 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <returns></returns>
         // GET: Members/Create
-        [Authorize(Roles = Shared.Role_Guest)]
+        //[Authorize(Roles = Shared.Role_Guest)]
         public IActionResult Create()
         {
             SetViewData();
@@ -38,7 +38,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Shared.Role_Guest)]
+        //[Authorize(Roles = Shared.Role_Guest)]
         public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members, /*[Bind("Account,Password")]*/ Login Login)
         {
             #region Dev
