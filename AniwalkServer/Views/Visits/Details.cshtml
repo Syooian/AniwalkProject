@@ -105,7 +105,7 @@
                     <p class="card-text">
                         @Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
                     </p>
-                    <a href="#" class="btn btn-primary">檢視大圖</a>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LargePhotoModal">檢視大圖</button>
                 </div>
             </div>
         }
@@ -267,3 +267,36 @@
 
     window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
 </script>
+
+<!--===================================檢視大圖===================================-->
+<div class="modal fade" id="LargePhotoModal" tabindex="-1" aria-labelledby="LargePhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!--Carousel-->
+                <div id="PhotosCarousel" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner" style="height:500px">
+                        @for (int a = 0; a < Model.VisitsPhotos.Count; a++)
+                        {
+                            <div class="carousel-item @(a == 0 ? "active" : "")">
+                                <img class="d-block w-100 h-100" style="object-fit: contain" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Model.VisitsPhotos[a].PhotoID}{Model.VisitsPhotos[a].PhotoType}")" />
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#PhotosCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#PhotosCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--===================================檢視大圖===================================-->
