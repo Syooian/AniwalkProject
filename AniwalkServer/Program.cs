@@ -1,13 +1,19 @@
 ﻿using AniwalkServer;
 using AniwalkServer.Controllers;
+using AniwalkServer.Data;
+using AniwalkServer.Filters;
 using AniwalkServer.Models;
+using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using AniwalkServer.Data;
-using AniwalkServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<LogFilter>();
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(Options =>
