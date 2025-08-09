@@ -19,6 +19,7 @@ namespace AniwalkServer.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
+            var Area = context.RouteData.Values["area"];
             var controller = context.RouteData.Values["controller"];
             var action = context.RouteData.Values["action"];
             var id = context.RouteData.Values["id"];
@@ -30,7 +31,7 @@ namespace AniwalkServer.Filters
             var time = DateTime.Now;
 
 
-            string logMessage = $"{time.ToString("HH-mm-ss")}\t{user}\t{ip}\t{agent}\t{controller}/{action}/{id}";
+            string logMessage = $"{time.ToString("HH-mm-ss")}\t{user}\t{ip}\t{agent}\t{Area}\t{controller}/{action}/{id}";
 
 
             // 寫入日誌系統
