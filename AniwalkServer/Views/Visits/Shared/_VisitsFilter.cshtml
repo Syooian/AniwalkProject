@@ -9,10 +9,10 @@
         </h2>
         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body">
-                到訪國家：<input />
-                動畫：<input />
-                發表會員：<input />
-                到訪日期：<input />
+                到訪國家：<input id="Ipt_Country" />
+                動畫：<input id="Ipt_Anime" />
+                發表會員：<input id="Ipt_Member" />
+                到訪日期：<input id="Ipt_VisitedDate" />
                 <button type="button" class="btn btn-primary" onclick="VisitsSearch()">搜尋</button>
             </div>
         </div>
@@ -20,7 +20,17 @@
 </div>
 
 <script>
-    function VisitsSearch(){
+    const Ipt_Country = document.getElementById("Ipt_Country");
+    const Ipt_Anime = document.getElementById("Ipt_Anime");
+    const Ipt_Member = document.getElementById("Ipt_Member");
+    const Ipt_VisitedDate = document.getElementById("Ipt_VisitedDate");
 
+    function VisitsSearch(){
+        let Filters={
+            Country=Ipt_Country.value,
+            Anime=Ipt_Anime.value,
+            Member=Ipt_Member.value,
+            VisitedDate=Ipt_VisitedDate.value
+        }
     }
 </script>
