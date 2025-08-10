@@ -13,6 +13,8 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">新增到訪紀錄</a>
 </p>
+<!--篩選條件-->
+@await Html.PartialAsync("~/Views/Visits/Shared/_VisitsFilter.cshtml")
 
 <link rel="stylesheet" type="text/css" href="./style.css" />
 <script type="module" src="./index.js"></script>
