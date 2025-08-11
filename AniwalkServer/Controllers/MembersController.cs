@@ -9,6 +9,7 @@ using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using AniwalkServer.Data;
 using AniwalkServer.Services;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -160,18 +161,19 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            var members = await _context.Members.FindAsync(id);
-            if (members == null)
+            var Member = await MembersServices.GetMember(id);
+
+            if (Member == null)
             {
                 return NotFound();
             }
 
-            SetViewData(members.CountryCode);
+            //SetViewData(members.CountryCode);
 
             //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
-            ViewData["CreatedDate"] = members.CreatedDate;
+            ViewData["CreatedDate"] = Member.CreatedDate;
 
-            return View(members);
+            return View(Member);
         }
 
         // POST: Members/Edit/5
@@ -205,7 +207,8 @@ namespace AniwalkServer.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Details), new { MemberID = members.MemberID });
             }
 
             return View(members);
