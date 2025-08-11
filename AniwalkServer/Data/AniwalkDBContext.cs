@@ -1,4 +1,5 @@
-﻿using AniwalkServer.Models;
+﻿using AniwalkServer.DTOs;
+using AniwalkServer.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Data
@@ -39,6 +40,10 @@ namespace AniwalkServer.Data
         /// 到訪紀錄
         /// </summary>
         public virtual DbSet<Visits> Visits { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual DbSet<VisitsDTO> VisitsDTO { get; set; }
         /// <summary>
         /// 到訪紀錄明細
         /// </summary>
@@ -117,6 +122,8 @@ namespace AniwalkServer.Data
                     .HasForeignKey(E => E.AnimeID)
                     .OnDelete(DeleteBehavior.NoAction);
             });
+
+            ModelBuilder.Entity<VisitsDTO>(Entity => Entity.HasNoKey());
 
             ModelBuilder.Entity<Login>(Entity =>
             {

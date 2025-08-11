@@ -4,6 +4,7 @@ using AniwalkServer.QueryParameters;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
 namespace AniwalkServer.Services
@@ -124,9 +125,37 @@ namespace AniwalkServer.Services
             //依建立日期排序
             //SQLQuery += "order by V.CreatedDate desc;";
 
-            var Visits = await Context.Visits.FromSqlRaw(SQLQuery, SQLPara.ToArray())
+            //雖然直接加入include能夠正常顯示"到訪國家", "動畫名稱", "會員名稱"，但因為已經在SQLQuery join了Members, Animes, Countries，因此再加include等於做了重複的事，浪費資源
+            var VisitsDTO = await Context.VisitsDTO.FromSqlRaw(SQLQuery, SQLPara.ToArray())
+                //.Include(V => V.Member)
+                //.Include(V => V.Anime)
+                //.Include(V => V.Country)
                 .OrderByDescending(V => V.CreatedDate)
                 .ToListAsync();
+
+            //將VisitsDTO轉換成Visits
+            var Visits = new List<Visits>();
+            foreach (var Visit in VisitsDTO)
+            {
+                //Debug.WriteLine(Visit.CountryCode);
+                //Debug.WriteLine(Visit.CountryName);
+
+                Visits.Add(new Visits
+                {
+                    SN = Visit.SN,
+                    MainText = Visit.MainText,
+                    Latitude = Visit.Latitude,
+                    Longitude = Visit.Longitude,
+                    VisitedDate = Visit.VisitedDate,
+                    CreatedDate = Visit.CreatedDate,
+                    MemberID = Visit.MemberID,
+                    Member = new Members { MemberID = Visit.MemberID, Name = Visit.Name },
+                    CountryCode = Visit.CountryCode,
+                    Country = new Countries { CountryCode = Visit.CountryCode, CountryName = Visit.CountryName },
+                    AnimeID = Visit.AnimeID,
+                    Anime = new Animes { AnimeID = Visit.AnimeID, Title = Visit.Title }
+                });
+            }
 
             //SQLQuery A搭配這個有效，但無法自訂其他搜索條件
             //var Visits = await Context.Visits.FromSqlRaw(SQLQuery)
@@ -143,13 +172,13 @@ namespace AniwalkServer.Services
             //    .OrderByDescending(V => V.CreatedDate)
             //    .ToListAsync();
 
-            if (SortVisitsPhotos)
-            {
-                foreach (var Visit in Visits)
-                {
-                    Visit.VisitsPhotos = SortVisitPhotos(Visit.VisitsPhotos);
-                }
-            }
+            //if (SortVisitsPhotos)
+            //{
+            //    foreach (var Visit in Visits)
+            //    {
+            //        Visit.VisitsPhotos = SortVisitPhotos(Visit.VisitsPhotos);
+            //    }
+            //}
 
             return Visits;
         }
