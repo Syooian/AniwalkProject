@@ -65,22 +65,24 @@
         });
 
         //先將Model的東西轉到JS (C#和JS物件無法互相放置)
-        var Markers=[];
+        var MarkerData=[];
 
         //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
         @foreach (var Visit in Model)
         {
             //添加Marker的屬性
-            <text>Markers.push({
-                lat:@Visit.Latitude,
-                lng:@Visit.Longitude,
-                MemberName:'@Visit.Member.Name',
-                VisitSN:@Visit.SN
+                <text>MarkerData.push({
+                latitude:@Visit.Latitude,
+                longitude:@Visit.Longitude,
+                member:{
+                        name: '@Visit.Member.Name'
+                },
+                sn:@Visit.SN
             });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
-        SetMarkers(Markers);
+        SetMarkers(MarkerData);
     }
 
     window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
@@ -90,14 +92,25 @@
         window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}`;
     });
 
+    //紀錄所有已生成的Marker
+    let Markers=[];
+
     //設置地圖上的點
-    function SetMarkers(Markers){
-        for(let i = 0; i < Markers.length; i++)
+    function SetMarkers(MarkerData){
+        console.log("SetMarkers Count : "+MarkerData.length);
+
+        //清空map上已有的Marker
+        for(let a=0;a<Markers.length;a++){
+            Markers[a].setMap(null);
+        }
+        Markers=[];
+
+        for(let i = 0; i < MarkerData.length; i++)
         {
               const Marker=new google.maps.marker.AdvancedMarkerElement({
                 position: {
-                    lat: Number(Markers[i].lat),
-                    lng: Number(Markers[i].lng)
+                    lat: Number(MarkerData[i].latitude),
+                    lng: Number(MarkerData[i].longitude)
                 },
                 map: map,
                 //title:MarkerData.Title
@@ -115,7 +128,7 @@
                 // console.log(`Marker clicked: ${Marker.VisitSN}`);
                 //LoadSimpleDetail(Markers[i].VisitSN);
 
-                $('#LoadSimpleDetail').load(`/Visits/SimpleDetails?VisitSN=${Markers[i].VisitSN}`,function(){
+                $('#LoadSimpleDetail').load(`/Visits/SimpleDetails?VisitSN=${MarkerData[i].sn}`,function(){
 
                     //console.log("ASDASDASD");
                     //Load結束之後才會呼叫此function
@@ -126,16 +139,19 @@
                 });
 
                 //console.log(`Marker clicked: ${Markers[i].MemberName}`);
-                document.querySelector('#SimpleDetailTitle').innerText =Markers[i].MemberName;
+                document.querySelector('#SimpleDetailTitle').innerText =MarkerData[i].member.name;
 
                 // 顯示模態框
                 const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
                 modal.show();
 
                 //在Modal的按鈕中加入點擊事件，點下後跳至到訪紀錄的詳細資訊
-                SelectedVisitSN=Markers[i].VisitSN;//記錄點選的VisitSN
+                SelectedVisitSN=MarkerData[i].sn;//記錄點選的VisitSN
                 //console.log("SVN : "+SelectedVisitSN);
             });
+
+            //將此生成的Marker加入到陣列
+            Markers.push(Marker);
         }
     }
 </script>

@@ -81,7 +81,20 @@ namespace AniwalkServer.Controllers
 
             ViewData["AJAXAction"] = nameof(ShowVisitsOnMap);
 
-            return View(Result.ToArray());
+            // 判斷是否為 AJAX 請求
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                //Debug.WriteLine("Return AJAX");
+
+                // 回傳部分視圖（只渲染清單）
+                return Json(Result); // _VisitsList.cshtml 需只渲染清單
+            }
+            else// 一般頁面載入
+            {
+                //Debug.WriteLine("Return View");
+
+                return View(Result.ToArray());
+            }
         }
 
         /// <summary>
@@ -105,14 +118,14 @@ namespace AniwalkServer.Controllers
             // 判斷是否為 AJAX 請求
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                Debug.WriteLine("Return AJAX");
+                //Debug.WriteLine("Return AJAX");
 
                 // 回傳部分視圖（只渲染清單）
                 return PartialView("ShowVisitsOnList.VisitsList", Result); // _VisitsList.cshtml 需只渲染清單
             }
             else// 一般頁面載入
             {
-                Debug.WriteLine("Return View");
+                //Debug.WriteLine("Return View");
 
                 return View(Result);
             }

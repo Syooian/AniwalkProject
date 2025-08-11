@@ -60,7 +60,25 @@ ShowVisitsOnMap.cshtml
             console.log("Html");
             console.log(Html);
 
-            document.getElementById("VisitsListContainer").innerHTML = Html;
+            //給ShowVisitsOnList
+            try{
+                document.getElementById("VisitsListContainer").innerHTML = Html;
+            }
+            catch(Error){
+                console.error("VisitsFilter Error 1 : "+Error);
+            }
+
+            //給ShowVisitsOnMap
+            try{
+                //將Html Json文字轉成物件
+                let FiltedVisits=JSON.parse(Html);
+                //console.log("FiltedVisits : "+FiltedVisits);
+
+                SetMarkers(FiltedVisits);
+            }
+            catch(Error){
+                console.error("VisitsFilter Error 2 : "+Error);
+            }
         });
     }
 </script>
