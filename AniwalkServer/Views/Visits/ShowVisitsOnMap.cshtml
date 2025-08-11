@@ -48,6 +48,9 @@
     //紀錄選取的到訪記錄的SN，用作跳轉至詳細檢視
     let SelectedVisitSN;
 
+    //地圖物件
+    let map;
+
     function InitMap(){
         //console.log("Initing GoogleMap");
 
@@ -55,7 +58,7 @@
         const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
 
          // 建立地圖
-        const map = new google.maps.Map(document.getElementById("Gmap"), {
+        map = new google.maps.Map(document.getElementById("Gmap"), {
             center: center,
             zoom: 10,
             mapId: "DEMO_MAP_ID"
@@ -67,16 +70,28 @@
         //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
         @foreach (var Visit in Model)
         {
-                //添加Marker的屬性
-                <text>Markers.push({
-                    lat:@Visit.Latitude,
-                    lng:@Visit.Longitude,
-                    MemberName:'@Visit.Member.Name',
-                    VisitSN:@Visit.SN
-                });</text>
+            //添加Marker的屬性
+            <text>Markers.push({
+                lat:@Visit.Latitude,
+                lng:@Visit.Longitude,
+                MemberName:'@Visit.Member.Name',
+                VisitSN:@Visit.SN
+            });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
+        SetMarkers(Markers);
+    }
+
+    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+
+    //在Modal下的按鈕增加監聽，按下後前往到訪紀錄詳細檢視畫面
+    document.querySelector('#ToDetails').addEventListener('click',(E)=>{
+        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}`;
+    });
+
+    //設置地圖上的點
+    function SetMarkers(Markers){
         for(let i = 0; i < Markers.length; i++)
         {
               const Marker=new google.maps.marker.AdvancedMarkerElement({
@@ -122,39 +137,10 @@
                 //console.log("SVN : "+SelectedVisitSN);
             });
         }
-
-        // 加入自訂 Marker
-        // Markers.forEach(MarkerData=>{
-        //     const Marker=new google.maps.marker.AdvancedMarkerElement({
-        //         position: {
-        //             lat: Number(MarkerData.Lat),
-        //             lng: Number(MarkerData.Lng)
-        //         },
-        //         map: map,
-        //         title:MarkerData.Title
-        //     });
-
-        //     Marker.addListener('click',()=>{
-        //         alert(`Marker clicked: ${MarkerData.Title}`);
-        //     });
-
-        //     //console.log(MarkerData);
-        //     //console.log(`Marker added: ${MarkerData.Title} at (${MarkerData.Lat}, ${MarkerData.Lng})`);
-        // });
     }
-
-    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
-
-    //在Modal下的按鈕增加監聽，按下後前往到訪紀錄詳細檢視畫面
-    document.querySelector('#ToDetails').addEventListener('click',(E)=>{
-        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}`;
-    });
 </script>
 
-@* <gmp-map center="22.593469753520136, 120.3088710110155"
-         zoom="10"
-         map-id="DEMO_MAP_ID"
-         style="width:100vw; height:100vh"></gmp-map> *@
+<!--到訪記錄地圖-->
 <div id="Gmap"
      style="width:100vw; height:100vh"></div>
 
