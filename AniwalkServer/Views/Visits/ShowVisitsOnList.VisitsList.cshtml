@@ -1,0 +1,71 @@
+﻿@model IEnumerable<AniwalkServer.Models.Visits>
+@using System.Security.Claims
+@{
+    var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CountryCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Anime.Title)
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Longitude)*@
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Member.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VisitedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country.CountryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Anime.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MainText)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Member.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VisitedDate)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
+                    @if (MemberID == item.MemberID)
+                    {
+                        <a>|</a>
+                        <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
+                        <a>|</a>
+                        <form asp-action="Delete">
+                            <input type="hidden" value="@item.SN" name="VisitSN" />
+                            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                        </form>
+                    }
+                    else if (User.IsInRole(RoleEnum.Admin.ToString()))
+                    {
+                        <a>|</a>
+                        <form asp-action="Delete">
+                            <input type="hidden" value="@item.SN" name="VisitSN" />
+                            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

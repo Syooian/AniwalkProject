@@ -1,6 +1,4 @@
-﻿@model IEnumerable<AniwalkServer.Models.Visits>
-
-@*
+﻿@*
 移動此檔案位置時，需修改下列檔案的呼叫路徑
 @await Html.PartialAsync("~/Views/Visits/Shared/_VisitsFilter.cshtml")
 
@@ -54,7 +52,8 @@ ShowVisitsOnMap.cshtml
 
         console.log(`/Visits/@ViewData["AJAXAction"]?${Filters}`);
         fetch(`/Visits/@ViewData["AJAXAction"]?${Filters}`, {
-            method: 'get'
+            method: 'get',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(Response=>Response.text())
         .then(Html=>{
