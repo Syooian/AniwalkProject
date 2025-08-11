@@ -34,6 +34,20 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VisitsParam"></param>
+        /// <returns></returns>
+        public async Task<List<Visits>> GetVisits(VisitsParam? VisitsParam)
+        {
+            if (VisitsParam == null)
+            {
+                VisitsParam = new VisitsParam();
+            }
+
+            return await GetVisits(VisitsParam.CountryName, VisitsParam.AnimeTitle, VisitsParam.MemberName, VisitsParam.VisitedDate, VisitsParam.SortVisitsPhotos);
+        }
+        /// <summary>
         /// 對到訪紀錄照片做排序
         /// </summary>
         /// <param name="CountryName"></param>

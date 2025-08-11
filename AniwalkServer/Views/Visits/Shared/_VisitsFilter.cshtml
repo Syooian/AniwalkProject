@@ -47,6 +47,21 @@ ShowVisitsOnMap.cshtml
             VisitedDate: Ipt_VisitedDate.value.trim()
         };
 
-        console.log(`Filting CountryName : ${Filters.CountryName}, AnimeTitle : ${Filters.AnimeTitle}, MemberName : ${Filters.MemberName}, VisitedDate : ${Filters.VisitedDate}`);
+        //console.log(`Filting CountryName : ${Filters.CountryName}, AnimeTitle : ${Filters.AnimeTitle}, MemberName : ${Filters.MemberName}, VisitedDate : ${Filters.VisitedDate}`);
+
+        //用 URLSearchParams 轉換 (不然直接Filters.toString()會印出[object Object]而不是CountryName=xxx&AnimeTitle=yyy&MemberName=zzz&VisitedDate=2025-08-11)
+        Filters=new URLSearchParams(Filters);
+
+        console.log(`/Visits/@ViewData["AJAXAction"]?${Filters}`);
+        fetch(`/Visits/@ViewData["AJAXAction"]?${Filters}`, {
+            method: 'get'
+        })
+        .then(Response=>Response.text())
+        .then(Html=>{
+            console.log("Html");
+            console.log(Html);
+
+            document.getElementById("VisitsListContainer").innerHTML = Html;
+        });
     }
 </script>

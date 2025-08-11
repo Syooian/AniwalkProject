@@ -1,13 +1,14 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.DTOs;
 using AniwalkServer.Models;
+using AniwalkServer.QueryParameters;
+using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
-using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
@@ -78,6 +79,8 @@ namespace AniwalkServer.Controllers
 
             //ViewBag.Markers = Markers;
 
+            ViewData["AJAXAction"] = nameof(ShowVisitsOnMap);
+
             return View(Result.ToArray());
         }
 
@@ -90,11 +93,29 @@ namespace AniwalkServer.Controllers
         /// <param name="VisitedDate"></param>
         /// <returns></returns>
         [AllowAnonymous]//允許所有人檢視
-        public async Task<IActionResult> ShowVisitsOnList(string? CountryName, string? AnimeTitle, string? MemberName, string? VisitedDate)
+        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam)
         {
-            var Result = await VisitsServices.GetVisits(CountryName, AnimeTitle, MemberName, VisitedDate);
+            //if (VisitsParam != null)
+            //    Debug.WriteLine(VisitsParam.ToString());
 
-            return View(Result);
+            var Result = await VisitsServices.GetVisits(VisitsParam);
+
+            ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
+
+            // 判斷是否為 AJAX 請求
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                Debug.WriteLine("Return AJAX");
+
+                // 回傳部分視圖（只渲染清單）
+                return PartialView("_VisitsList", Result); // _VisitsList.cshtml 需只渲染清單
+            }
+            else// 一般頁面載入
+            {
+                Debug.WriteLine("Return View");
+
+                return View(Result);
+            }
         }
 
         /// <summary>
