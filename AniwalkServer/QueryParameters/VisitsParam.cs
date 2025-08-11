@@ -6,7 +6,8 @@
         public string CountryName { get; set; }
         public string AnimeTitle { get; set; }
         public string MemberName { get; set; }
-        public string VisitedDate { get; set; }
+        public DateTime? VisitedDate_From { get; set; }
+        public DateTime? VisitedDate_To { get; set; }
         /// <summary>
         /// 對到訪紀錄照片做排序
         /// </summary>
@@ -24,7 +25,7 @@
         /// <returns></returns>
         public override string ToString()
         {
-            return $"CountryName: {CountryName}, AnimeTitle: {AnimeTitle}, MemberName: {MemberName}, VisitedDate: {VisitedDate}, SortVisitsPhotos: {SortVisitsPhotos}";
+            return $"CountryName: {CountryName}, AnimeTitle: {AnimeTitle}, MemberName: {MemberName}, VisitedDate_From : {(VisitedDate_From != null ? VisitedDate_From : "")}, VisitedDate_To : {(VisitedDate_To != null ? VisitedDate_To : "")} SortVisitsPhotos: {SortVisitsPhotos}";
         }
     }
 }

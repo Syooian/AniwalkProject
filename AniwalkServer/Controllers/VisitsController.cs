@@ -50,19 +50,16 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 從地圖瀏覽到訪紀錄
         /// </summary>
-        /// <param name="CountryName"></param>
-        /// <param name="AnimeTitle"></param>
-        /// <param name="MemberName"></param>
-        /// <param name="VisitedDate"></param>
+        /// <param name="VisitsParam"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> ShowVisitsOnMap(string? CountryName, string? AnimeTitle, string? MemberName, string? VisitedDate)
+        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam)
         {
             SetGoogleMapsApiKey();
 
             #region 在資料庫執行排序
             //var Result = await Context.Visits.Include(V => V.Member).ToListAsync();
-            var Result = await VisitsServices.GetVisits(CountryName, AnimeTitle, MemberName, VisitedDate);
+            var Result = await VisitsServices.GetVisits(VisitsParam);
             #endregion
             #region 在本機記憶體執行排序
             //var Result = await _context.Book.ToListAsync();
@@ -100,10 +97,7 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 從清單瀏覽到訪紀錄
         /// </summary>
-        /// <param name="CountryName"></param>
-        /// <param name="AnimeTitle"></param>
-        /// <param name="MemberName"></param>
-        /// <param name="VisitedDate"></param>
+        /// <param name="VisitsParam"></param>
         /// <returns></returns>
         [AllowAnonymous]//允許所有人檢視
         public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam)

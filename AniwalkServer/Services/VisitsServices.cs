@@ -46,7 +46,7 @@ namespace AniwalkServer.Services
                 VisitsParam = new VisitsParam();
             }
 
-            return await GetVisits(VisitsParam.CountryName, VisitsParam.AnimeTitle, VisitsParam.MemberName, VisitsParam.VisitedDate, VisitsParam.SortVisitsPhotos);
+            return await GetVisits(VisitsParam.CountryName, VisitsParam.AnimeTitle, VisitsParam.MemberName, VisitsParam.VisitedDate_From, VisitsParam.VisitedDate_To, VisitsParam.SortVisitsPhotos);
         }
         /// <summary>
         /// 對到訪紀錄照片做排序
@@ -54,10 +54,11 @@ namespace AniwalkServer.Services
         /// <param name="CountryName"></param>
         /// <param name="AnimeTitle"></param>
         /// <param name="MemberName"></param>
-        /// <param name="VisitedDate"></param>
+        /// <param name="VisitedDate_From"></param>
+        /// <param name="VisitedDate_To"></param>
         /// <param name="SortVisitsPhotos"></param>
         /// <returns></returns>
-        public async Task<List<Visits>> GetVisits(string? CountryName, string? AnimeTitle, string? MemberName, string? VisitedDate, bool SortVisitsPhotos = false)
+        public async Task<List<Visits>> GetVisits(string? CountryName, string? AnimeTitle, string? MemberName, DateTime? VisitedDate_From, DateTime? VisitedDate_To, bool SortVisitsPhotos = false)
         {
             //直接在資料庫select是完整有東西的，但畫面上卻看不到"到訪國家", "動畫名稱", "會員名稱"
             var SQLQuery = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " +
@@ -114,11 +115,18 @@ namespace AniwalkServer.Services
                 SQLPara.Add(new SqlParameter("@MemberName", MemberName));
             }
 
-            if (!string.IsNullOrEmpty(VisitedDate))
+            if (VisitedDate_From != null && VisitedDate_To != null)
             {
-                //SQLQuery += $"and V.VisitedDate = @VisitedDate ";
-                SQLQuery += $"and CONVERT(varchar, V.VisitedDate, 111) = @VisitedDate ";
-                SQLPara.Add(new SqlParameter("@VisitedDate", VisitedDate));
+                //Debug.WriteLine($"VisitedDate_From : {VisitedDate_From}, VisitedDate_To : {VisitedDate_To}");
+
+                //SQLQuery += $"and V.VisitedDate between CONVERT(varchar, @VisitedDate_From, 111) and CONVERT(varchar, @VisitedDate_To, 111) ";//用資料庫語法轉換日期格式為yyyy/MM/dd
+                //VisitedDate_From 和 VisitedDate_To 目前是 DateTime 型別，CONVERT(varchar, @VisitedDate_From, 111) 會把參數轉成字串（如 2025/07/29），但 V.VisitedDate 是 datetime 型別，這樣比較會失敗或無法正確查詢。
+                //直接用 datetime 型別做比較，不需要 CONVERT
+                //只比對日期，忽略時間
+                SQLQuery += $"and convert(date, V.VisitedDate) between @VisitedDate_From and @VisitedDate_To ";
+
+                SQLPara.Add(new SqlParameter("@VisitedDate_From", VisitedDate_From));
+                SQLPara.Add(new SqlParameter("@VisitedDate_To", VisitedDate_To));
             }
             #endregion
 
