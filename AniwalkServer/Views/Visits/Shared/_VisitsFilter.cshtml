@@ -27,11 +27,11 @@ ShowVisitsOnMap.cshtml
     </div>
 </div>
 
-@{
+@* @{
     var FilteredVisits = Model;
 
 
-}
+} *@
 
 <script>
     const Ipt_CountryName = document.getElementById("Ipt_CountryName");
@@ -41,13 +41,12 @@ ShowVisitsOnMap.cshtml
 
     function VisitsFiltedSearch(){
         let Filters={
-            CountryName=Ipt_CountryName.value.trim(),//trim()：去除前後空白
-            AnimeTitle=Ipt_AnimeTitle.value.trim(),
-            MemberName=Ipt_MemberName.value.trim(),
-            VisitedDate=Ipt_VisitedDate.value.trim()
-        }
+            CountryName: Ipt_CountryName.value.trim(),//trim()：去除前後空白
+            AnimeTitle: Ipt_AnimeTitle.value.trim(),
+            MemberName: Ipt_MemberName.value.trim(),
+            VisitedDate: Ipt_VisitedDate.value.trim()
+        };
 
-        //console.log(`Filting Country : ${Country}, AnimeTitle : ${AnimeTitle}, MemberName : ${MemberName}, VisitedDate : ${VisitedDate}`);
-        console.log("Filting : "+Filters);
+        console.log(`Filting CountryName : ${Filters.CountryName}, AnimeTitle : ${Filters.AnimeTitle}, MemberName : ${Filters.MemberName}, VisitedDate : ${Filters.VisitedDate}`);
     }
 </script>
