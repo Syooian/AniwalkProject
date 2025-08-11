@@ -14,13 +14,19 @@ ShowVisitsOnMap.cshtml
             </button>
         </h2>
         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-                到訪國家：<input id="Ipt_CountryName" placeholder="請輸入國家名稱"/>
-                動畫：<input id="Ipt_AnimeTitle" placeholder="請輸入動畫標題"/>
-                發表會員：<input id="Ipt_MemberName" placeholder="請輸入會員名字"/>
-                到訪日期：<input id="Ipt_VisitedDate" />
-                <button type="button" class="btn btn-primary" onclick="VisitsFiltedSearch()">搜尋</button>
-                <button type="button" class="btn btn-outline-primary" onclick="ResetFilter()">清空</button>
+            <div class="accordion-body row">
+                <div>
+                    到訪國家：<input id="Ipt_CountryName" placeholder="請輸入國家名稱" />
+                    動畫：<input id="Ipt_AnimeTitle" placeholder="請輸入動畫標題" />
+                    發表會員：<input id="Ipt_MemberName" placeholder="請輸入會員名字" />
+                </div>
+                <div>
+                    到訪日期：從<input id="Ipt_VisitedDate_From" type="date" />至<input id="Ipt_VisitedDate_To" type="date" />
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="VisitsFiltedSearch()">搜尋</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="ResetFilter()">清空</button>
+                </div>
             </div>
         </div>
     </div>
@@ -36,14 +42,16 @@ ShowVisitsOnMap.cshtml
     const Ipt_CountryName = document.getElementById("Ipt_CountryName");
     const Ipt_AnimeTitle = document.getElementById("Ipt_AnimeTitle");
     const Ipt_MemberName = document.getElementById("Ipt_MemberName");
-    const Ipt_VisitedDate = document.getElementById("Ipt_VisitedDate");
+    const Ipt_VisitedDate_From = document.getElementById("Ipt_VisitedDate_From");
+    const Ipt_VisitedDate_To = document.getElementById("Ipt_VisitedDate_To");
 
     //清空篩選條件
     function ResetFilter(){
         Ipt_CountryName.value="";
         Ipt_AnimeTitle.value="";
         Ipt_MemberName.value="";
-        Ipt_VisitedDate.value="";
+        Ipt_VisitedDate_From.value="";
+        Ipt_VisitedDate_To.value="";
 
         VisitsFiltedSearch();
     }
@@ -53,7 +61,8 @@ ShowVisitsOnMap.cshtml
             CountryName: Ipt_CountryName.value.trim(),//trim()：去除前後空白
             AnimeTitle: Ipt_AnimeTitle.value.trim(),
             MemberName: Ipt_MemberName.value.trim(),
-            VisitedDate: Ipt_VisitedDate.value.trim()
+            VisitedDate_From: Ipt_VisitedDate_From.value,
+            VisitedDate_To: Ipt_VisitedDate_To.value
         };
 
         //console.log(`Filting CountryName : ${Filters.CountryName}, AnimeTitle : ${Filters.AnimeTitle}, MemberName : ${Filters.MemberName}, VisitedDate : ${Filters.VisitedDate}`);
