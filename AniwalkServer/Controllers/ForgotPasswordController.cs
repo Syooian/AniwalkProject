@@ -1,4 +1,5 @@
 ﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
 using AniwalkServer.Models.ForgotPassword;
 using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -78,15 +79,15 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
-        public async Task<IActionResult> Create(string Email)
+        public async Task<IActionResult> Create([Bind("Email")] ForgotPasswordDTO EmailDTO)
         {
             //檢查此會員是否存在
-            var Member = await MembersServices.GetMemberByEmail(Email);
+            var Member = await MembersServices.GetMemberByEmail(EmailDTO.Email);
             if (Member == null)
             {
-                ModelState.AddModelError("MemberID", "指定的會員不存在。");
+                //ModelState.AddModelError("MemberID", "指定的會員不存在。");
                 SetErrorMessage("會員不存在。");
-                return View(Email);
+                return View(EmailDTO);
             }
 
             //檢查驗證碼是否到期
@@ -96,7 +97,7 @@ namespace AniwalkServer.Controllers
                 var Result = await ForgotPasswordServices.CreateForgotPassword(Member);
                 if (Result != "")
                 {
-                    return View(Email);
+                    return View(EmailDTO);
                 }
 
                 //回到Home的Index
@@ -105,7 +106,7 @@ namespace AniwalkServer.Controllers
             else
             {
                 SetErrorMessage("驗證碼尚未過期，請稍後再試。");
-                return View(Email);
+                return View(EmailDTO);
             }
         }
 

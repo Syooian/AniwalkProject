@@ -28,6 +28,7 @@ namespace AniwalkServer.Models.ForgotPassword
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         /// <summary>
         /// 驗證碼
+        /// <para>ForgotPasswordDTO裡也有一個VerifyCode，如果將來要修改驗證規則須連那個一起改</para>
         /// </summary>
         [Display(Name = "驗證碼")]
         [Column(TypeName = "char")]

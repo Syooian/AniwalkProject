@@ -25,6 +25,7 @@ namespace AniwalkServer.Models
 
         /// <summary>
         /// 電子郵件
+        /// <para>ForgotPasswordDTO也有一個Email，如果將來要修改驗證規則須連那個一起改</para>
         /// </summary>
         [EmailAddress]
         [StringLength(50)]
