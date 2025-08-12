@@ -124,6 +124,7 @@ namespace AniwalkServer.Data
             });
 
             ModelBuilder.Entity<VisitsDTO>(Entity => Entity.HasNoKey());
+            ModelBuilder.Ignore<VisitsDTO>();//告訴 Entity Framework 完全忽略該類型，避免將其映射到資料表。
 
             ModelBuilder.Entity<Login>(Entity =>
             {
