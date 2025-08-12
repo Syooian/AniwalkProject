@@ -30,7 +30,7 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
-        /// 
+        /// 由MemberID查找使用者
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
@@ -41,6 +41,16 @@ namespace AniwalkServer.Services
                        .FirstOrDefaultAsync(M => M.MemberID == MemberID);
 
             return Member;
+        }
+
+        /// <summary>
+        /// 由Email查找使用者
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        public async Task<Members> GetMemberByEmail(string Email)
+        {
+            return await Context.Members.FirstOrDefaultAsync(M => M.Email == Email);
         }
     }
 }

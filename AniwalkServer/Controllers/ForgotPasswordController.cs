@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Data;
+using AniwalkServer.Models.ForgotPassword;
+using AniwalkServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
-using AniwalkServer.Models.ForgotPassword;
-using AniwalkServer.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
@@ -24,15 +25,22 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
+        MembersServices MembersServices;
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="context"></param>
         /// <param name="ForgotPasswordServices"></param>
-        public ForgotPasswordController(AniwalkDBContext context, ForgotPasswordServices ForgotPasswordServices)
+        /// <param name="MembersServices"></param>
+        public ForgotPasswordController(AniwalkDBContext context, ForgotPasswordServices ForgotPasswordServices, MembersServices MembersServices)
         {
             _context = context;
             this.ForgotPasswordServices = ForgotPasswordServices;
+            this.MembersServices = MembersServices;
         }
 
         // GET: ForgotPassword
+        [Authorize(Roles = Shared.Role_Admin)]
         public async Task<IActionResult> Index()
         {
             var aniwalkDBContext = _context.ForgotPassword.Include(f => f.Member);
@@ -61,7 +69,6 @@ namespace AniwalkServer.Controllers
         // GET: ForgotPassword/Create
         public IActionResult Create()
         {
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID");
             return View();
         }
 
@@ -70,16 +77,36 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
+        //public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
+        public async Task<IActionResult> Create(string Email)
         {
-            if (ModelState.IsValid)
+            //檢查此會員是否存在
+            var Member = await MembersServices.GetMemberByEmail(Email);
+            if (Member == null)
             {
-                _context.Add(forgotPassword);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("MemberID", "指定的會員不存在。");
+                SetErrorMessage("會員不存在。");
+                return View(Email);
             }
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", forgotPassword.MemberID);
-            return View(forgotPassword);
+
+            //檢查驗證碼是否到期
+            if (await ForgotPasswordServices.IsForgotPasswordExpired(Member))
+            {
+                //新增表單
+                var Result = await ForgotPasswordServices.CreateForgotPassword(Member);
+                if (Result != "")
+                {
+                    return View(Email);
+                }
+
+                //回到Home的Index
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                SetErrorMessage("驗證碼尚未過期，請稍後再試。");
+                return View(Email);
+            }
         }
 
         // GET: ForgotPassword/Edit/5
@@ -120,7 +147,7 @@ namespace AniwalkServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ForgotPasswordExists(forgotPassword.SN))
+                    if (!ForgotPasswordServices.IsForgotPasswordExists(forgotPassword.SN))
                     {
                         return NotFound();
                     }
@@ -135,43 +162,13 @@ namespace AniwalkServer.Controllers
             return View(forgotPassword);
         }
 
-        // GET: ForgotPassword/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Message"></param>
+        void SetErrorMessage(string Message)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var forgotPassword = await _context.ForgotPassword
-                .Include(f => f.Member)
-                .FirstOrDefaultAsync(m => m.SN == id);
-            if (forgotPassword == null)
-            {
-                return NotFound();
-            }
-
-            return View(forgotPassword);
-        }
-
-        // POST: ForgotPassword/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var forgotPassword = await _context.ForgotPassword.FindAsync(id);
-            if (forgotPassword != null)
-            {
-                _context.ForgotPassword.Remove(forgotPassword);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ForgotPasswordExists(int id)
-        {
-            return _context.ForgotPassword.Any(e => e.SN == id);
+            ViewData["ErrorMessage"] = Message;
         }
     }
 }
