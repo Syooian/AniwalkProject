@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
+using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
@@ -15,10 +16,15 @@ namespace AniwalkServer.Controllers
     public class AnnouncementsController : Controller
     {
         private readonly AniwalkDBContext _context;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly AnnouncementsServices AnnouncementsServices;
 
-        public AnnouncementsController(AniwalkDBContext context)
+        public AnnouncementsController(AniwalkDBContext context, AnnouncementsServices AnnouncementsServices)
         {
             _context = context;
+            this.AnnouncementsServices = AnnouncementsServices;
         }
 
         // GET: Announcements
@@ -30,24 +36,16 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(int? Skip, int? Take)
         {
-            var Result = _context.Announcements.OrderByDescending(A => A.CreatedDate);
+            var Result = await AnnouncementsServices.GetAnnouncements(Skip, Take);
 
-            if (Skip != null && Take != null)
-                Result.Skip((int)Skip).Take((int)Take);
-
-            return View(await Result.ToListAsync());
+            return View(Result);
         }
 
         // GET: Announcements/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var announcements = await AnnouncementsServices.GetAnnouncement(id);
 
-            var announcements = await _context.Announcements
-                .FirstOrDefaultAsync(m => m.SN == id);
             if (announcements == null)
             {
                 return NotFound();
@@ -82,18 +80,15 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Announcements/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var announcements = await AnnouncementsServices.GetAnnouncement(id);
 
-            var announcements = await _context.Announcements.FindAsync(id);
             if (announcements == null)
             {
                 return NotFound();
             }
+
             return View(announcements);
         }
 
@@ -118,7 +113,7 @@ namespace AniwalkServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AnnouncementsExists(announcements.SN))
+                    if (!AnnouncementsServices.IsAnnouncementsExists(announcements.SN))
                     {
                         return NotFound();
                     }
@@ -145,11 +140,6 @@ namespace AniwalkServer.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool AnnouncementsExists(int id)
-        {
-            return _context.Announcements.Any(e => e.SN == id);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
@@ -17,10 +18,19 @@ namespace AniwalkServer.Controllers
     public class CommentsController : Controller
     {
         private readonly AniwalkDBContext _context;
-
-        public CommentsController(AniwalkDBContext context)
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly CommentsServices CommentsServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="CommentsServices"></param>
+        public CommentsController(AniwalkDBContext context, CommentsServices CommentsServices)
         {
             _context = context;
+            this.CommentsServices = CommentsServices;
         }
 
         // GET: Comments/Create?VisitSN=V
@@ -86,14 +96,16 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            var comments = await _context.Comments.FindAsync(id);
+            var comments = await CommentsServices.GetComment(id);
+
             if (comments == null)
             {
                 return NotFound();
             }
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
+
+            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
-            ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
+            //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
             return View(comments);
         }
 
@@ -118,7 +130,7 @@ namespace AniwalkServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentsExists(comments.CommentID))
+                    if (!CommentsServices.IsCommentsExists(comments.CommentID))
                     {
                         return NotFound();
                     }
@@ -161,7 +173,13 @@ namespace AniwalkServer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var comments = await _context.Comments.FindAsync(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var comments = await CommentsServices.GetComment(id);
+
             if (comments != null)
             {
                 _context.Comments.Remove(comments);
@@ -169,11 +187,6 @@ namespace AniwalkServer.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool CommentsExists(string id)
-        {
-            return _context.Comments.Any(e => e.CommentID == id);
         }
     }
 }

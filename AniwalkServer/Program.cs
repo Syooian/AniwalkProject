@@ -29,6 +29,9 @@ builder.Services.AddDbContext<AniwalkDBContext>(Options =>
 builder.Services.AddScoped<VisitsServices>();
 builder.Services.AddScoped<PhotoServices>();
 builder.Services.AddScoped<MembersServices>();
+builder.Services.AddScoped<AddNewAnimesServices>();
+builder.Services.AddScoped<AnnouncementsServices>();
+builder.Services.AddScoped<CommentsServices>();
 #endregion
 
 //註冊 Cookie Authentication

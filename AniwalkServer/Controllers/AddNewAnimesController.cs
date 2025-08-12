@@ -9,16 +9,26 @@ using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
     public class AddNewAnimesController : Controller
     {
         private readonly AniwalkDBContext _context;
-
-        public AddNewAnimesController(AniwalkDBContext context)
+        /// <summary>
+        /// 
+        /// </summary>
+        AddNewAnimesServices AddNewAnimesServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="AddNewAnimesServices"></param>
+        public AddNewAnimesController(AniwalkDBContext context, AddNewAnimesServices AddNewAnimesServices)
         {
             _context = context;
+            this.AddNewAnimesServices = AddNewAnimesServices;
         }
 
         // GET: AddNewAnimes
@@ -29,7 +39,9 @@ namespace AniwalkServer.Controllers
         [Authorize(Roles = Shared.Role_Admin)]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AddNewAnimes.ToListAsync());
+            var Result = await AddNewAnimesServices.GetAddNewAnimes();
+
+            return View(Result);
         }
 
         // GET: AddNewAnimes/Create
@@ -67,14 +79,9 @@ namespace AniwalkServer.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize(Roles = Shared.Role_Admin)]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var addNewAnime = await _context.AddNewAnimes.FindAsync(id);
+            var addNewAnime = await AddNewAnimesServices.GetAddNewAnime(id);
             if (addNewAnime == null)
             {
                 return NotFound();
@@ -125,7 +132,7 @@ namespace AniwalkServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AddNewAnimeExists(addNewAnime.SN))
+                    if (!AddNewAnimesServices.IsAddNewAnimeExists(addNewAnime.SN))
                     {
                         return NotFound();
                     }
@@ -137,11 +144,6 @@ namespace AniwalkServer.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(addNewAnime);
-        }
-
-        private bool AddNewAnimeExists(int id)
-        {
-            return _context.AddNewAnimes.Any(e => e.SN == id);
         }
     }
 }
