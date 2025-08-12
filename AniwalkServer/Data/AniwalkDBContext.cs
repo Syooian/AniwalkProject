@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.DTOs;
 using AniwalkServer.Models;
+using AniwalkServer.Models.ForgotPassword;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Data
@@ -56,6 +57,10 @@ namespace AniwalkServer.Data
         /// 公告
         /// </summary>
         public virtual DbSet<Announcements> Announcements { get; set; }
+        /// <summary>
+        /// 忘記密碼
+        /// </summary>
+        public virtual DbSet<ForgotPassword> ForgotPassword { get; set; }
         #endregion
 
         /// <summary>
