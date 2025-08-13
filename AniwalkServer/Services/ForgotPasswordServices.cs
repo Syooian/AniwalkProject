@@ -85,6 +85,16 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="VerifyCode"></param>
+        /// <returns></returns>
+        public async Task<bool> IsForgotPasswordExists(string VerifyCode)
+        {
+            return await Context.ForgotPassword.AnyAsync(V => V.VerifyCode == VerifyCode);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         public bool IsForgotPasswordExists(int id)

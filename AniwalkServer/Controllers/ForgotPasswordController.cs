@@ -79,35 +79,56 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
-        public async Task<IActionResult> Create([Bind("Email")] ForgotPasswordDTO EmailDTO)
+        public async Task<IActionResult> Create([Bind("Email,Phase,VerifyCode")] ForgotPasswordDTO FP_DTO)
         {
-            //檢查此會員是否存在
-            var Member = await MembersServices.GetMemberByEmail(EmailDTO.Email);
-            if (Member == null)
+            switch (FP_DTO.Phase)
             {
-                //ModelState.AddModelError("MemberID", "指定的會員不存在。");
-                SetErrorMessage("會員不存在。");
-                return View(EmailDTO);
+                case ForgotPasswordDTOPhase.Email://檢查Email
+                    {
+                        //檢查此會員是否存在
+                        var Member = await MembersServices.GetMemberByEmail(FP_DTO.Email);
+                        if (Member == null)
+                        {
+                            //ModelState.AddModelError("MemberID", "指定的會員不存在。");
+                            SetErrorMessage("會員不存在。");
+                            return View(FP_DTO);
+                        }
+
+                        //檢查驗證碼是否到期
+                        if (await ForgotPasswordServices.IsForgotPasswordExpired(Member))
+                        {
+                            //新增表單
+                            var Result = await ForgotPasswordServices.CreateForgotPassword(Member);
+                            if (Result != "")
+                            {
+                                return View(FP_DTO);
+                            }
+
+                            FP_DTO.Phase = ForgotPasswordDTOPhase.VerifyCode; //設定為第二階段，輸入驗證碼
+
+                            return View(FP_DTO);
+                        }
+                        else
+                        {
+                            SetErrorMessage("驗證碼尚未過期，請稍後再試。");
+                            return View(FP_DTO);
+                        }
+                    }
+                case ForgotPasswordDTOPhase.VerifyCode://檢查驗證碼
+                    {
+                        //檢查驗證碼是否正確
+                        if (!await ForgotPasswordServices.IsForgotPasswordExists(FP_DTO.VerifyCode))
+                        {
+                            SetErrorMessage("驗證碼錯誤");
+                            return View(FP_DTO);
+                        }
+
+                        //回到登入畫面讓使用者登入
+                        return RedirectToAction("Login", "Login");
+                    }
             }
 
-            //檢查驗證碼是否到期
-            if (await ForgotPasswordServices.IsForgotPasswordExpired(Member))
-            {
-                //新增表單
-                var Result = await ForgotPasswordServices.CreateForgotPassword(Member);
-                if (Result != "")
-                {
-                    return View(EmailDTO);
-                }
-
-                //回到Home的Index
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                SetErrorMessage("驗證碼尚未過期，請稍後再試。");
-                return View(EmailDTO);
-            }
+            return View();
         }
 
         // GET: ForgotPassword/Edit/5
