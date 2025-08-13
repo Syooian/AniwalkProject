@@ -21,5 +21,22 @@ namespace AniwalkServer.DTOs
         [Column(TypeName = "char")]
         [StringLength(5, MinimumLength = 5, ErrorMessage = "驗證碼長度必須為5個字元")]
         public string? VerifyCode { get; set; }
+
+        /// <summary>
+        /// 驗證階段
+        /// </summary>
+        public ForgotPasswordDTOPhase Phase { get; set; } = ForgotPasswordDTOPhase.Email;
+    }
+
+    public enum ForgotPasswordDTOPhase
+    {
+        /// <summary>
+        /// 輸入Email
+        /// </summary>
+        Email,
+        /// <summary>
+        /// 輸入驗證碼
+        /// </summary>
+        VerifyCode
     }
 }
