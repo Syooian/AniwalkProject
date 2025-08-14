@@ -28,6 +28,9 @@ namespace AniwalkServer.DTOs
         public ForgotPasswordDTOPhase Phase { get; set; } = ForgotPasswordDTOPhase.Email;
     }
 
+    /// <summary>
+    /// 驗證階段
+    /// </summary>
     public enum ForgotPasswordDTOPhase
     {
         /// <summary>

@@ -24,19 +24,14 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 查找忘記密碼表單是否已過期
         /// </summary>
-        /// <param name="Member"></param>
+        /// <param name="FP"></param>
         /// <returns></returns>
-        public async Task<bool> IsForgotPasswordExpired(Members Member)
+        public async Task<bool> IsForgotPasswordExpired(ForgotPassword FP)
         {
             try
             {
-                var Result = await Context.ForgotPassword
-                    .Where(M => M.MemberID == Member.MemberID)
-                    .OrderByDescending(M => M.CreatedDate)
-                    .FirstOrDefaultAsync();
-
                 //判斷是否已過期
-                if (Result != null && DateTime.Now < Result.VerifyCodeExpiryDate)
+                if (FP != null && DateTime.Now < FP.VerifyCodeExpiryDate)
                 {
                     return false; // 驗證碼未過期
                 }
@@ -79,6 +74,46 @@ namespace AniwalkServer.Services
                 return "GetForgotPassword Error";
             }
 
+            return "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VerifyCode"></param>
+        /// <returns></returns>
+        public async Task<ForgotPassword> GetForgotPasswordByVerifyCode(string VerifyCode)
+        {
+            var Result = await Context.ForgotPassword
+                .Where(M => M.VerifyCode == VerifyCode)
+                .OrderByDescending(M => M.CreatedDate)
+                .FirstOrDefaultAsync();
+
+            return Result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public async Task<ForgotPassword> GetForgotPasswordByMemberID(string MemberID)
+        {
+            var Result = await Context.ForgotPassword
+                .Where(M => M.MemberID == MemberID)
+                .OrderByDescending(M => M.CreatedDate)
+                .FirstOrDefaultAsync();
+
+            return Result;
+        }
+
+        /// <summary>
+        /// 發送驗證碼到會員的信箱
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        public async Task<string> SendVerifyCodeToMember(string Email)
+        {
             return "";
         }
 

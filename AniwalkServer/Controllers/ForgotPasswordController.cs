@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -95,14 +96,29 @@ namespace AniwalkServer.Controllers
                         }
 
                         //檢查驗證碼是否到期
-                        if (await ForgotPasswordServices.IsForgotPasswordExpired(Member))
+                        var Result = await ForgotPasswordServices.GetForgotPasswordByMemberID(Member.MemberID);
+                        if (Result == null)//驗證碼不存在，代表從來沒有使用忘記密碼功能過
+                        {
+                            Debug.WriteLine("All New FP");
+                            Result = new ForgotPassword();
+                        }
+
+                        if (await ForgotPasswordServices.IsForgotPasswordExpired(Result))
                         {
                             //新增表單
-                            var Result = await ForgotPasswordServices.CreateForgotPassword(Member);
-                            if (Result != "")
+                            var NewFP = await ForgotPasswordServices.CreateForgotPassword(Member);
+                            if (NewFP != "")
                             {
                                 return View(FP_DTO);
                             }
+
+                            //發送驗證碼到會員的信箱
+                            _ = ForgotPasswordServices.SendVerifyCodeToMember(Member.Email);
+                            /*
+                                不等待也不處理結果（fire-and-forget）
+                                直接呼叫但不加 await，會收到警告（CS4014），但程式仍會執行。
+                                若想消除警告，可用 _ =：
+                             */
 
                             FP_DTO.Phase = ForgotPasswordDTOPhase.VerifyCode; //設定為第二階段，輸入驗證碼
 
@@ -110,18 +126,30 @@ namespace AniwalkServer.Controllers
                         }
                         else
                         {
+                            Debug.WriteLine(FP_DTO.Phase + " 驗證碼尚未過期");
                             SetErrorMessage("驗證碼尚未過期，請稍後再試。");
                             return View(FP_DTO);
                         }
                     }
                 case ForgotPasswordDTOPhase.VerifyCode://檢查驗證碼
                     {
+                        var Result = await ForgotPasswordServices.GetForgotPasswordByVerifyCode(FP_DTO.VerifyCode);
+
                         //檢查驗證碼是否正確
-                        if (!await ForgotPasswordServices.IsForgotPasswordExists(FP_DTO.VerifyCode))
+                        if (Result == null || (Result != null && Result.VerifyCode != FP_DTO.VerifyCode))
                         {
                             SetErrorMessage("驗證碼錯誤");
                             return View(FP_DTO);
                         }
+
+                        //驗證是否過期
+                        if (await ForgotPasswordServices.IsForgotPasswordExpired(Result))
+                        {
+                            SetErrorMessage("驗證碼已過期，請重新輸入Email");
+                            return View(FP_DTO);
+                        }
+
+                        //讓使用者修改密碼
 
                         //回到登入畫面讓使用者登入
                         return RedirectToAction("Login", "Login");
