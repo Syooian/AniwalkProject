@@ -33,14 +33,20 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
+        LoginServices LoginServices;
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="context"></param>
         /// <param name="ForgotPasswordServices"></param>
         /// <param name="MembersServices"></param>
-        public ForgotPasswordController(AniwalkDBContext context, ForgotPasswordServices ForgotPasswordServices, MembersServices MembersServices)
+        /// <param name="LoginServices"></param>
+        public ForgotPasswordController(AniwalkDBContext context, ForgotPasswordServices ForgotPasswordServices, MembersServices MembersServices, LoginServices LoginServices)
         {
             _context = context;
             this.ForgotPasswordServices = ForgotPasswordServices;
             this.MembersServices = MembersServices;
+            this.LoginServices = LoginServices;
         }
 
         // GET: ForgotPassword
@@ -174,17 +180,26 @@ namespace AniwalkServer.Controllers
                         }
                         #endregion
 
-                        //if (!ModelState.IsValid)//加入這段才會觸發NewPasswordCheck
-                        //{
-                        //    Shared.ShowModelState(ModelState);
-                        //    return View(FP_DTO);
-                        //}
+                        //更新密碼
+                        var Member = await MembersServices.GetMemberByEmail(FP_DTO.Email);
+                        if (Member == null)
+                        {
+                            Debug.WriteLine("會員不存在。");
+                            return NotFound();
+                        }
 
-                        Debug.WriteLine("OK");
-                        return View(FP_DTO);
+                        var ChangePasswordResult = await LoginServices.ChangePassword(Member.MemberID, FP_DTO.NewPassword);
+                        if (ChangePasswordResult == null)
+                        {
+                            Debug.WriteLine(ChangePasswordResult);
+                            return NotFound();
+                        }
+
+                        //Debug.WriteLine("OK");
+                        //return View(FP_DTO);
 
                         //回到登入畫面讓使用者登入
-                        //return RedirectToAction("Login", "Login");
+                        return RedirectToAction("Login", "Login");
                     }
             }
 

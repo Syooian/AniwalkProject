@@ -1,6 +1,7 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace AniwalkServer.Services
 {
@@ -11,6 +12,35 @@ namespace AniwalkServer.Services
         /// </summary>
         /// <param name="Context"></param>
         public LoginServices(AniwalkDBContext Context) : base(Context) { }
+
+        /// <summary>
+        /// 修改密碼
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <param name="NewPassword">新的密碼</param>
+        /// <returns></returns>
+        public async Task<string> ChangePassword(string MemberID, string NewPassword)
+        {
+            var Login = await GetLogin(MemberID);
+            if (Login == null)
+            {
+                return "找不到帳號";
+            }
+
+            try
+            {
+                Login.Password = NewPassword;
+                Context.Login.Update(Login);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ChangePassword Error : {ex.Message}");
+                return "更新密碼時發生錯誤";
+            }
+
+            return "";
+        }
 
         /// <summary>
         /// 取得帳密

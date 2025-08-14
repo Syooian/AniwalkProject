@@ -32,6 +32,11 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <h3>請輸入發送至信箱的驗證碼</h3>
                 <div class="form-group">
+                    <!--為了記住使用者輸入的Email所以需保留此欄位-->
+                    <input asp-for="Email" class="form-control" hidden />
+                    @*<span asp-validation-for="Email" class="text-danger"></span>*@
+                </div>
+                <div class="form-group">
                     @*<label asp-for="VerifyCodeExpiryDate" class="control-label"></label>*@
                     <input asp-for="VerifyCode" class="form-control" />
                     <span asp-validation-for="VerifyCode" class="text-danger"></span>
@@ -48,10 +53,11 @@
                 <input type="hidden" asp-for="Phase" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <h3>輸入新密碼</h3>
-                @* <div class="form-group"><!--必要項目-->
-                    <input asp-for="Email" class="form-control" hidden/>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div> *@
+                <div class="form-group">
+                    <!--為了記住使用者輸入的Email所以需保留此欄位-->
+                    <input asp-for="Email" class="form-control" hidden />
+                    @*<span asp-validation-for="Email" class="text-danger"></span>*@
+                </div>
                 <div class="form-group">
                     <label class="control-label">密碼</label>
                     <input asp-for="NewPassword" class="form-control" />
