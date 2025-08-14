@@ -42,6 +42,9 @@ builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCook
     Options.LoginPath = "/Login/Login"; // 設定登入頁面路徑(若需登入而未登入時則強制導到此路徑)
     Options.LogoutPath = "/Login/Logout"; // 設定登出頁面路徑
     Options.AccessDeniedPath = "/Home/Index"; // 設定存取拒絕頁面路徑(若已登入但角色權限不符則強制導到此路徑)
+    Options.Cookie.Name = "AniwalkCookie";
+    Options.Cookie.HttpOnly = true;// 防止客戶端腳本訪問 Cookie
+    Options.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
 
 var app = builder.Build();

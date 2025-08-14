@@ -90,6 +90,8 @@ namespace AniwalkServer.Controllers
         //public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
         public async Task<IActionResult> Create([Bind("Email,Phase,VerifyCode,NewPassword,NewPasswordConfirm")] ForgotPasswordDTO FP_DTO)
         {
+            //忘記密碼疑似會有RoleID變為0的問題，待查
+
             switch (FP_DTO.Phase)
             {
                 case ForgotPasswordDTOPhase.Email://檢查Email
