@@ -2,12 +2,14 @@
 using AniwalkServer.DTOs;
 using AniwalkServer.Models.ForgotPassword;
 using AniwalkServer.Services;
+using AniwalkServer.ValidationAttributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,7 +82,7 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
-        public async Task<IActionResult> Create([Bind("Email,Phase,VerifyCode,NewPassword")] ForgotPasswordDTO FP_DTO)
+        public async Task<IActionResult> Create([Bind("Email,Phase,VerifyCode,NewPassword,NewPasswordConfirm")] ForgotPasswordDTO FP_DTO)
         {
             switch (FP_DTO.Phase)
             {
@@ -156,14 +158,33 @@ namespace AniwalkServer.Controllers
                     }
                 case ForgotPasswordDTOPhase.ChangePassword:
                     {
-                        if (!ModelState.IsValid)//加入這段才會觸發NewPasswordCheck
+                        #region 手動執行驗證，不經過ModelState.IsValid
+                        //因為Model.IsValid會優先判斷Email，此階段不需要
+
+                        var VC = new ValidationContext(FP_DTO);
+                        var Check = new ForgotPasswordDTOCheck();
+                        var Result = Check.GetValidationResult(FP_DTO, VC);
+
+                        if (Result != ValidationResult.Success)//輸入的密碼不相同
                         {
-                            Shared.ShowModelState(ModelState);
+                            //Debug.WriteLine(Result.ErrorMessage);
+                            SetErrorMessage(Result.ErrorMessage);
+
                             return View(FP_DTO);
                         }
+                        #endregion
+
+                        //if (!ModelState.IsValid)//加入這段才會觸發NewPasswordCheck
+                        //{
+                        //    Shared.ShowModelState(ModelState);
+                        //    return View(FP_DTO);
+                        //}
+
+                        Debug.WriteLine("OK");
+                        return View(FP_DTO);
 
                         //回到登入畫面讓使用者登入
-                        return RedirectToAction("Login", "Login");
+                        //return RedirectToAction("Login", "Login");
                     }
             }
 
