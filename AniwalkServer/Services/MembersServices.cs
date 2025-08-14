@@ -4,20 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Services
 {
-    public class MembersServices
+    public class MembersServices : ServicesBase
     {
         /// <summary>
         /// 
         /// </summary>
-        readonly AniwalkDBContext Context;
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="Context"></param>
-        public MembersServices(AniwalkDBContext Context)
-        {
-            this.Context = Context;
-        }
+        public MembersServices(AniwalkDBContext Context) : base(Context) { }
 
         /// <summary>
         /// 

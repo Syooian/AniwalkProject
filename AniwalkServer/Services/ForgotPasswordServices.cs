@@ -6,20 +6,13 @@ using System.Diagnostics;
 
 namespace AniwalkServer.Services
 {
-    public class ForgotPasswordServices
+    public class ForgotPasswordServices : ServicesBase
     {
         /// <summary>
         /// 
         /// </summary>
-        private readonly AniwalkDBContext Context;
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="context"></param>
-        public ForgotPasswordServices(AniwalkDBContext Context)
-        {
-            this.Context = Context;
-        }
+        public ForgotPasswordServices(AniwalkDBContext Context) : base(Context) { }
 
         /// <summary>
         /// 查找忘記密碼表單是否已過期
