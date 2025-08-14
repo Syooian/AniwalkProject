@@ -1,4 +1,6 @@
-﻿namespace AniwalkServer
+﻿using System.Diagnostics;
+
+namespace AniwalkServer
 {
     public class Shared
     {
@@ -31,7 +33,7 @@
                 var errors = ModelState[key].Errors;
                 if (errors.Any())
                 {
-                    Console.WriteLine($"Key : {key}, Errors : {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
+                    Debug.WriteLine($"Key : {key}, Errors : {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
                 }
             }
         }

@@ -42,6 +42,32 @@
                 </div>
             </form>
         }
+        @if (Model != null && Model.Phase == ForgotPasswordDTOPhase.ChangePassword)//修改密碼階段
+        {
+            <form asp-action="Create">
+                <input type="hidden" asp-for="Phase" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <h3>輸入新密碼</h3>
+                <div class="form-group"><!--必要項目-->
+                    <input asp-for="Email" class="form-control" hidden/>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">密碼</label>
+                    <input asp-for="NewPassword[0]" class="form-control" />
+                    <span asp-validation-for="NewPassword[0]" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">再輸入一次密碼</label>
+                    <input asp-for="NewPassword[1]" class="form-control" />
+                    <span asp-validation-for="NewPassword[1]" class="text-danger"></span>
+                </div>
+                <p class="alert-danger">@ViewData["ErrorMessage"]</p>
+                <div class="form-group">
+                    <input type="submit" value="送出" class="btn btn-primary" />
+                </div>
+            </form>
+        }
     </div>
 </div>
 

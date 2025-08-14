@@ -80,7 +80,7 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("SN,VerifyCodeExpiryDate,CreatedDate,VerifyCode,MemberID")] ForgotPassword forgotPassword)
-        public async Task<IActionResult> Create([Bind("Email,Phase,VerifyCode")] ForgotPasswordDTO FP_DTO)
+        public async Task<IActionResult> Create([Bind("Email,Phase,VerifyCode,NewPassword")] ForgotPasswordDTO FP_DTO)
         {
             switch (FP_DTO.Phase)
             {
@@ -120,7 +120,7 @@ namespace AniwalkServer.Controllers
                                 若想消除警告，可用 _ =：
                              */
 
-                            FP_DTO.Phase = ForgotPasswordDTOPhase.VerifyCode; //設定為第二階段，輸入驗證碼
+                            FP_DTO.Phase = ForgotPasswordDTOPhase.VerifyCode; //設定為第二階段：輸入驗證碼
 
                             return View(FP_DTO);
                         }
@@ -150,6 +150,17 @@ namespace AniwalkServer.Controllers
                         }
 
                         //讓使用者修改密碼
+                        FP_DTO.Phase = ForgotPasswordDTOPhase.ChangePassword; //設定為第三階段：輸入新密碼
+                        ModelState.Remove(nameof(FP_DTO.Phase));//移除ModelState，不然FP_DTO.Phase會被舊的狀態覆蓋
+                        return View(FP_DTO);
+                    }
+                case ForgotPasswordDTOPhase.ChangePassword:
+                    {
+                        if (!ModelState.IsValid)//加入這段才會觸發NewPasswordCheck
+                        {
+                            Shared.ShowModelState(ModelState);
+                            return View(FP_DTO);
+                        }
 
                         //回到登入畫面讓使用者登入
                         return RedirectToAction("Login", "Login");
