@@ -162,6 +162,7 @@ namespace AniwalkServer.Controllers
                         //讓使用者修改密碼
                         FP_DTO.Phase = ForgotPasswordDTOPhase.ChangePassword; //設定為第三階段：輸入新密碼
                         ModelState.Remove(nameof(FP_DTO.Phase));//移除ModelState，不然FP_DTO.Phase會被舊的狀態覆蓋
+                        ModelState.Clear(); // 清除所有 ModelState 錯誤
                         return View(FP_DTO);
                     }
                 case ForgotPasswordDTOPhase.ChangePassword:
