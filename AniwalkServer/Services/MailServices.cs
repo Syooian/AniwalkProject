@@ -52,14 +52,48 @@ namespace AniwalkServer.Services
         /// <returns></returns>
         SmtpClient GetClient()
         {
-            Debug.WriteLine($"Host : {_configuration["Host"]}, Port : {_configuration["Port"]}, User : {_configuration["Username"]}, PW : {_configuration["Password"]}");
+            var Host = _configuration["Host"];
+            var Port = _configuration["Port"];
+            var User = _configuration["Username"];
+            var PW = _configuration["Password"];
+            var Ssl = _configuration["EnableSsl"];
 
-            return new SmtpClient(_configuration["Host"])
+            //Debug.WriteLine($"Host : {Host}, Port : {Port}, User : {User}, PW : {PW}, EnableSsl : {Ssl}");
+
+            //return new SmtpClient(_configuration["Host"])
+            //{
+            //    UseDefaultCredentials = false,//需在Credentials = new NetworkCredential之前做，因為UseDefaultCredentials = false會把Credentials設為null
+            //    Port = int.Parse(_configuration["Port"]),
+            //    Credentials = new NetworkCredential(_configuration["Username"], _configuration["Password"]),
+            //    EnableSsl = bool.Parse(_configuration["EnableSsl"]),
+            //    DeliveryMethod = SmtpDeliveryMethod.Network
+            //};
+
+
+
+            var SC = new SmtpClient()
             {
+                UseDefaultCredentials = false,//需在Credentials = new NetworkCredential之前做，因為UseDefaultCredentials = false會把Credentials設為null
+                Host = _configuration["Host"],
                 Port = int.Parse(_configuration["Port"]),
                 Credentials = new NetworkCredential(_configuration["Username"], _configuration["Password"]),
                 EnableSsl = bool.Parse(_configuration["EnableSsl"]),
+                DeliveryMethod = SmtpDeliveryMethod.Network
             };
+
+            SC.SendCompleted += (s, e) =>
+            {
+                if (e.Error != null)
+                {
+                    Debug.WriteLine("SendCompleted : " + e.Error.Message);
+                }
+                else
+                {
+                    Debug.WriteLine("SendCompleted : Email sent successfully.");
+                }
+            };
+
+            return SC;
         }
     }
 }
