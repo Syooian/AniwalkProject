@@ -37,16 +37,22 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
+        MailServices MailServices;
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="context"></param>
         /// <param name="ForgotPasswordServices"></param>
         /// <param name="MembersServices"></param>
         /// <param name="LoginServices"></param>
-        public ForgotPasswordController(AniwalkDBContext context, ForgotPasswordServices ForgotPasswordServices, MembersServices MembersServices, LoginServices LoginServices)
+        /// <param name="MailServices"></param>
+        public ForgotPasswordController(AniwalkDBContext context, ForgotPasswordServices ForgotPasswordServices, MembersServices MembersServices, LoginServices LoginServices, MailServices MailServices)
         {
             _context = context;
             this.ForgotPasswordServices = ForgotPasswordServices;
             this.MembersServices = MembersServices;
             this.LoginServices = LoginServices;
+            this.MailServices = MailServices;
         }
 
         // GET: ForgotPassword
@@ -123,7 +129,12 @@ namespace AniwalkServer.Controllers
                             }
 
                             //發送驗證碼到會員的信箱
-                            _ = ForgotPasswordServices.SendVerifyCodeToMember(Member.Email);
+                            //_ = ForgotPasswordServices.SendVerifyCodeToMember(Member.Email);
+                            var MailResult = MailServices.SendEmailAsync(
+                                     Member.Email,
+                                     "Aniwalk 忘記密碼驗證碼",
+                                     $"您的驗證碼為：{NewFP}，請在5分鐘內使用。"
+                                 );
                             /*
                                 不等待也不處理結果（fire-and-forget）
                                 直接呼叫但不加 await，會收到警告（CS4014），但程式仍會執行。
