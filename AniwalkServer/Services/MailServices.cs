@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Mail;
 
 namespace AniwalkServer.Services
@@ -25,17 +26,24 @@ namespace AniwalkServer.Services
         /// <param name="body">郵件內容</param>
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            var Client = GetClient();
-
-            var mailMessage = new MailMessage
+            try
             {
-                From = new MailAddress(_configuration["From"]),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true,
-            };
-            mailMessage.To.Add(toEmail);
-            await Client.SendMailAsync(mailMessage);
+                var Client = GetClient();
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(_configuration["From"]),
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true,
+                };
+                mailMessage.To.Add(toEmail);
+                await Client.SendMailAsync(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("SendEmailAsync : " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -44,6 +52,8 @@ namespace AniwalkServer.Services
         /// <returns></returns>
         SmtpClient GetClient()
         {
+            Debug.WriteLine($"Host : {_configuration["Host"]}, Port : {_configuration["Port"]}, User : {_configuration["Username"]}, PW : {_configuration["Password"]}");
+
             return new SmtpClient(_configuration["Host"])
             {
                 Port = int.Parse(_configuration["Port"]),
