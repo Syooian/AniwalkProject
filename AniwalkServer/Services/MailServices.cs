@@ -38,12 +38,17 @@ namespace AniwalkServer.Services
                     IsBodyHtml = true,
                 };
                 mailMessage.To.Add(toEmail);
+
+                //Debug.WriteLine("SM 1");
                 await Client.SendMailAsync(mailMessage);
+                //Debug.WriteLine("SM 2");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("SendEmailAsync : " + ex.Message);
             }
+
+            //Debug.WriteLine("SM 3");
         }
 
         /// <summary>
@@ -78,7 +83,8 @@ namespace AniwalkServer.Services
                 Port = int.Parse(_configuration["Port"]),
                 Credentials = new NetworkCredential(_configuration["Username"], _configuration["Password"]),
                 EnableSsl = bool.Parse(_configuration["EnableSsl"]),
-                DeliveryMethod = SmtpDeliveryMethod.Network
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Timeout = 30000//30秒
             };
 
             SC.SendCompleted += (s, e) =>
