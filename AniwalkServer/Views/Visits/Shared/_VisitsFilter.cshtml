@@ -1,4 +1,6 @@
-﻿@*
+﻿@using AniwalkServer.Data;
+
+@*
 移動此檔案位置時，需修改下列檔案的呼叫路徑
 @await Html.PartialAsync("~/Views/Visits/Shared/_VisitsFilter.cshtml")
 
@@ -17,7 +19,7 @@ ShowVisitsOnMap.cshtml
             <div class="accordion-body row">
                 <div>
                     到訪國家：<select id="Ipt_CountryName" placeholder="請輸入國家名稱" class="js-example-basic-single">
-                        @foreach (var Item in ViewBag.CountryName)
+                        @foreach (var Item in ViewBag.CountryCode)
                         {
                             <option value="@Item.Value">@Item.Text</option>
                         }

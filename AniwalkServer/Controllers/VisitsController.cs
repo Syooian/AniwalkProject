@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
@@ -26,6 +27,14 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         readonly PhotoServices PhotoServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly AnimesServices AnimesServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly CountriesServices CountriesServices;
         #endregion
 
         /// <summary>
@@ -36,7 +45,9 @@ namespace AniwalkServer.Controllers
         /// <param name="Context"></param>
         /// <param name="VisitsServices"></param>
         /// <param name="PhotoServices"></param>
-        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices, PhotoServices PhotoServices)
+        /// <param name="AnimesServices"></param>
+        /// <param name="CountriesServices"></param>
+        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices, PhotoServices PhotoServices, AnimesServices AnimesServices, CountriesServices CountriesServices)
         {
             _logger = logger;
             _configuration = configuration;
@@ -44,6 +55,8 @@ namespace AniwalkServer.Controllers
             #region Services
             this.VisitsServices = VisitsServices;
             this.PhotoServices = PhotoServices;
+            this.AnimesServices = AnimesServices;
+            this.CountriesServices = CountriesServices;
             #endregion
         }
 
@@ -77,6 +90,7 @@ namespace AniwalkServer.Controllers
             //ViewBag.Markers = Markers;
 
             ViewData["AJAXAction"] = nameof(ShowVisitsOnMap);
+            await SetViewData();
 
             // 判斷是否為 AJAX 請求
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -108,6 +122,7 @@ namespace AniwalkServer.Controllers
             var Result = await VisitsServices.GetVisits(VisitsParam);
 
             ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
+            await SetViewData();
 
             // 判斷是否為 AJAX 請求
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -131,11 +146,11 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = Shared.Role_Member)]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             SetGoogleMapsApiKey();
 
-            SetViewData();
+            await SetViewData();
 
             return View();
         }
@@ -187,7 +202,7 @@ namespace AniwalkServer.Controllers
 
             Shared.ShowModelState(ModelState);
 
-            SetViewData();
+            await SetViewData();
 
             return View(Visit);
         }
@@ -227,7 +242,7 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            SetViewData();
+            await SetViewData();
 
             return View(Visit);
         }
@@ -337,7 +352,7 @@ namespace AniwalkServer.Controllers
 
             Shared.ShowModelState(ModelState);
 
-            SetViewData();
+            await SetViewData();
 
             return View(Visit);
         }
@@ -408,10 +423,10 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public void SetViewData()
+        public async Task SetViewData()
         {
             ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
-            ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
+            ViewData[ViewDataKeys.AnimeID] = await AnimesServices.GetAnimesSelect();
             //ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
             //    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             ViewData["MemberID"] = GetMemberID;
