@@ -1,8 +1,5 @@
 ﻿@model IEnumerable<AniwalkServer.Models.Members>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -16,38 +13,43 @@
                 @Html.DisplayNameFor(model => model.CreatedDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Country)
+                @Html.DisplayNameFor(model => model.CountryCode)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MemberRole)
+                @Html.DisplayNameFor(model => model.MemberRole.RoleName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MemberStatus.MemberStatusCode.StatusName)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Country.CountryCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MemberRole.RoleName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MemberID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MemberID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MemberID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.Raw(item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country.CountryName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MemberRole.RoleName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MemberStatus.MemberStatusCode.StatusName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.MemberID" class="btn btn-primary">編輯</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -28,7 +28,11 @@ namespace AniwalkServer.Services
         /// <returns></returns>
         public async Task<List<Members>> GetMembers()
         {
-            return await Context.Members.OrderByDescending(C => C.CreatedDate).ToListAsync();
+            return await Context.Members
+                .Include(C => C.Country)
+                .Include(R => R.MemberRole)
+                .Include(S => S.MemberStatus).ThenInclude(SC => SC.MemberStatusCode)
+                .OrderByDescending(C => C.CreatedDate).ToListAsync();
         }
 
         /// <summary>
