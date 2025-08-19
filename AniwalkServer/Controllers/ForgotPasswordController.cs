@@ -123,7 +123,7 @@ namespace AniwalkServer.Controllers
                         {
                             //新增表單
                             var NewFP = await ForgotPasswordServices.CreateForgotPassword(Member);
-                            if (NewFP != "")
+                            if (NewFP.Type == ResultType.Fail)
                             {
                                 return View(FP_DTO);
                             }
@@ -133,7 +133,7 @@ namespace AniwalkServer.Controllers
                             var MailResult = MailServices.SendEmailAsync(
                                      Member.Email,
                                      "Aniwalk 忘記密碼驗證碼",
-                                     $"您的驗證碼為：{NewFP}，請在5分鐘內使用。"
+                                     $"您的驗證碼為：{NewFP.Message}，請在5分鐘內使用。"
                                  );
                             /*
                                 不等待也不處理結果（fire-and-forget）

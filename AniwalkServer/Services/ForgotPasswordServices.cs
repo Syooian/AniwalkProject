@@ -42,7 +42,7 @@ namespace AniwalkServer.Services
         /// </summary>
         /// <param name="Member"></param>
         /// <returns></returns>
-        public async Task<string> CreateForgotPassword(Members Member)
+        public async Task<Result> CreateForgotPassword(Members Member)
         {
             try
             {
@@ -60,14 +60,14 @@ namespace AniwalkServer.Services
 
                 Context.Add(Form);
                 await Context.SaveChangesAsync();
+
+                return new Result(Message: RanVerifyCode);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"GetForgotPassword Error : {ex.Message}");
-                return "GetForgotPassword Error";
+                return new Result(ResultType.Fail, "GetForgotPassword Error");
             }
-
-            return "";
         }
 
         /// <summary>
