@@ -48,6 +48,8 @@ builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCook
     Options.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
 
+builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
 //建立SeedData初始化
@@ -74,8 +76,11 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+#region 路由設定
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+#endregion
 
 app.Run();
