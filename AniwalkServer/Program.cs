@@ -35,6 +35,7 @@ builder.Services.AddScoped<CommentsServices>();
 builder.Services.AddScoped<ForgotPasswordServices>();
 builder.Services.AddScoped<LoginServices>();
 builder.Services.AddScoped<MailServices>();
+builder.Services.AddScoped<CountriesServices>();
 #endregion
 
 //註冊 Cookie Authentication
