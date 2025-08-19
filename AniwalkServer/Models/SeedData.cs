@@ -38,7 +38,15 @@ namespace AniwalkServer.Models
                 {
                     new Countries() { CountryCode = "JPN", CountryName = "日本" },
                     new Countries() { CountryCode = "GBR", CountryName = "英國" },
-                    new Countries() { CountryCode = "TWN", CountryName = "台灣" }
+                    new Countries() { CountryCode = "TWN", CountryName = "台灣" },
+                    new Countries() {CountryCode="AFG",CountryName="阿富汗"},
+                    new Countries() {CountryCode="COL",CountryName="哥倫比亞"},
+                    new Countries() {CountryCode="MMR",CountryName="緬甸"},
+                    new Countries() {CountryCode="CAN",CountryName="加拿大"},
+                    new Countries() {CountryCode="CZE",CountryName="捷克"},
+                    new Countries() {CountryCode="FRA",CountryName="法國"},
+                    new Countries() {CountryCode="DEU",CountryName="德國"},
+                    new Countries() {CountryCode="USA",CountryName="美國"}
                 };
 
                 context.Countries.AddRange(Countries);
