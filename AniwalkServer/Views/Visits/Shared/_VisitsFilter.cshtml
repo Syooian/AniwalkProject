@@ -16,8 +16,18 @@ ShowVisitsOnMap.cshtml
         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body row">
                 <div>
-                    到訪國家：<input id="Ipt_CountryName" placeholder="請輸入國家名稱" />
-                    動畫：<input id="Ipt_AnimeTitle" placeholder="請輸入動畫標題" />
+                    到訪國家：<select id="Ipt_CountryName" placeholder="請輸入國家名稱" class="js-example-basic-single">
+                        @foreach (var Item in ViewBag.CountryName)
+                        {
+                            <option value="@Item.Value">@Item.Text</option>
+                        }
+                    </select>
+                    動畫：<select id="Ipt_AnimeTitle" placeholder="請輸入動畫標題" class="js-example-basic-single">
+                        @foreach (var Item in ViewBag.AnimeID)
+                        {
+                            <option value="@Item.Value">@Item.Text</option>
+                        }
+                    </select>
                     發表會員：<input id="Ipt_MemberName" placeholder="請輸入會員名字" />
                 </div>
                 <div>
@@ -32,11 +42,9 @@ ShowVisitsOnMap.cshtml
     </div>
 </div>
 
-@* @{
-    var FilteredVisits = Model;
-
-
-} *@
+@section Scripts {
+    @await Html.PartialAsync("_Select2");
+}
 
 <script>
     const Ipt_CountryName = document.getElementById("Ipt_CountryName");
