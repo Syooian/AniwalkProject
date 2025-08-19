@@ -1,6 +1,7 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Diagnostics;
 
 namespace AniwalkServer.Services
@@ -21,7 +22,7 @@ namespace AniwalkServer.Services
         /// <returns></returns>
         public async Task<Result> ChangePassword(string MemberID, string NewPassword)
         {
-            var Login = await GetLogin(MemberID);
+            var Login = await GetLoginByMemberID(MemberID);
             if (Login == null)
             {
                 return new Result(ResultType.Fail, "找不到帳號");
@@ -43,13 +44,44 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
-        /// 取得帳密
+        /// 取得會員帳密
+        /// </summary>
+        /// <param name="Login">登入畫面輸入的帳密</param>
+        /// <returns></returns>
+        public async Task<Login> GetLogin(Login Login)
+        {
+            return await Context.Login.FirstOrDefaultAsync(M => M.Account == Login.Account && M.Password == Login.Password);
+        }
+
+        /// <summary>
+        /// 取得會員帳密
+        /// </summary>
+        /// <param name="Account"></param>
+        /// <returns></returns>
+        public async Task<Login> GetLoginByAccount(string Account)
+        {
+            return await Context.Login.FirstOrDefaultAsync(M => M.Account == Account);
+        }
+
+        /// <summary>
+        /// 取得會員帳密
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
-        public async Task<Login> GetLogin(string MemberID)
+        public async Task<Login> GetLoginByMemberID(string MemberID)
         {
             return await Context.Login.FirstOrDefaultAsync(M => M.MemberID == MemberID);
+        }
+
+        /// <summary>
+        /// 檢查密碼
+        /// </summary>
+        /// <param name="ComparePassword">原始密碼</param>
+        /// <param name="InputPassword">輸入的密碼</param>
+        /// <returns></returns>
+        public bool CheckPassword(string ComparePassword, string InputPassword)
+        {
+            return ComparePassword == InputPassword;
         }
     }
 }

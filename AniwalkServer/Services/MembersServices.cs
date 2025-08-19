@@ -30,8 +30,9 @@ namespace AniwalkServer.Services
         public async Task<Members?> GetMember(string MemberID)
         {
             var Member = await Context.Members
-                       .Include(M => M.Country)
-                       .FirstOrDefaultAsync(M => M.MemberID == MemberID);
+                .Include(M => M.Country)
+                .Include(S => S.MemberStatus).ThenInclude(SC => SC.MemberStatusCode)
+                .FirstOrDefaultAsync(M => M.MemberID == MemberID);
 
             return Member;
         }
