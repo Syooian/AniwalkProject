@@ -203,7 +203,7 @@ namespace AniwalkServer.Controllers
                         }
 
                         var ChangePasswordResult = await LoginServices.ChangePassword(Member.MemberID, FP_DTO.NewPassword);
-                        if (ChangePasswordResult == null)
+                        if (ChangePasswordResult.Type == ResultType.Fail)
                         {
                             Debug.WriteLine(ChangePasswordResult);
                             return NotFound();

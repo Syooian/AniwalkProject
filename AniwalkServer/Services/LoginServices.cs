@@ -19,12 +19,12 @@ namespace AniwalkServer.Services
         /// <param name="MemberID"></param>
         /// <param name="NewPassword">新的密碼</param>
         /// <returns></returns>
-        public async Task<string> ChangePassword(string MemberID, string NewPassword)
+        public async Task<Result> ChangePassword(string MemberID, string NewPassword)
         {
             var Login = await GetLogin(MemberID);
             if (Login == null)
             {
-                return "找不到帳號";
+                return new Result(ResultType.Fail, "找不到帳號");
             }
 
             try
@@ -36,10 +36,10 @@ namespace AniwalkServer.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"ChangePassword Error : {ex.Message}");
-                return "更新密碼時發生錯誤";
+                return new Result(ResultType.Fail, "更新密碼時發生錯誤");
             }
 
-            return "";
+            return new Result();
         }
 
         /// <summary>
