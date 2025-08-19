@@ -23,6 +23,15 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 取所有會員
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Members>> GetMembers()
+        {
+            return await Context.Members.OrderByDescending(C => C.CreatedDate).ToListAsync();
+        }
+
+        /// <summary>
         /// 由MemberID查找使用者
         /// </summary>
         /// <param name="MemberID"></param>
