@@ -40,6 +40,18 @@ namespace AniwalkServer.Controllers
         }
 
         /// <summary>
+        /// 會員列表
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = Shared.Role_Admin)]
+        public async Task<IActionResult> Index()
+        {
+            var Result = await MembersServices.GetMembers();
+
+            return View(Result);
+        }
+
+        /// <summary>
         /// 註冊會員
         /// </summary>
         /// <returns></returns>

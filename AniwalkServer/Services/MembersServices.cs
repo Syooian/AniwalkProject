@@ -23,6 +23,19 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 取所有會員
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<Members>> GetMembers()
+        {
+            return await Context.Members
+                .Include(C => C.Country)
+                .Include(R => R.MemberRole)
+                .Include(S => S.MemberStatus).ThenInclude(SC => SC.MemberStatusCode)
+                .OrderByDescending(C => C.CreatedDate).ToListAsync();
+        }
+
+        /// <summary>
         /// 由MemberID查找使用者
         /// </summary>
         /// <param name="MemberID"></param>
@@ -30,8 +43,9 @@ namespace AniwalkServer.Services
         public async Task<Members?> GetMember(string MemberID)
         {
             var Member = await Context.Members
-                       .Include(M => M.Country)
-                       .FirstOrDefaultAsync(M => M.MemberID == MemberID);
+                .Include(M => M.Country)
+                .Include(S => S.MemberStatus).ThenInclude(SC => SC.MemberStatusCode)
+                .FirstOrDefaultAsync(M => M.MemberID == MemberID);
 
             return Member;
         }
