@@ -70,21 +70,21 @@ namespace AniwalkServer.Admin.Controllers
                 return NotFound();
             }
 
-            var Member = await MembersServices.GetMember(MemberID);
+            var MemberStatus = await MembersServices.GetMemberStatus(MemberID);
 
-            if (Member == null)
+            if (MemberStatus == null)
             {
                 return NotFound();
             }
 
             //SetViewData(members.CountryCode);
 
-            ViewData[ViewDataKeys.MemberStatusCode] = await MembersServices.GetMemberStatusCodeSelect(Member.MemberStatus.StatusCode);
+            ViewData[ViewDataKeys.MemberStatusCode] = await MembersServices.GetMemberStatusCodeSelect(MemberStatus.StatusCode);
 
             //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
-            ViewData["CreatedDate"] = Member.CreatedDate;
+            //ViewData["CreatedDate"] = Member.CreatedDate;
 
-            return View(Member);
+            return View(MemberStatus);
         }
 
         // POST: Members/Edit/5
@@ -93,14 +93,13 @@ namespace AniwalkServer.Admin.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id"><see cref="Members.MemberID"/></param>
         /// <param name="MemberStatus"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("MemberID,StatusCode,Note")] MemberStatus MemberStatus)
+        public async Task<IActionResult> Edit(string MemberID, [Bind("MemberID,StatusCode,Note")] MemberStatus MemberStatus)
         {
-            if (id != MemberStatus.MemberID)
+            if (MemberID != MemberStatus.MemberID)
             {
                 return NotFound();
             }
@@ -111,7 +110,7 @@ namespace AniwalkServer.Admin.Controllers
             {
                 try
                 {
-                    MemberStatus.UpdateDate = DateTime.Now;
+                    MemberStatus.UpdateDate = DateTime.Now;//資料庫不會反應時間，待修
 
                     _context.Update(MemberStatus);
                     await _context.SaveChangesAsync();

@@ -1,4 +1,4 @@
-﻿@model AniwalkServer.Models.Members
+﻿@model AniwalkServer.Models.MemberStatus
 
 @{
     ViewData["Title"] = "編輯會員狀態";
@@ -11,15 +11,15 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="MemberStatus.Note" class="control-label"></label>
-                <input asp-for="MemberStatus.Note" class="form-control" />
-                <span asp-validation-for="MemberStatus.Note" class="text-danger"></span>
+                <label asp-for="Note" class="control-label"></label>
+                <input asp-for="Note" class="form-control" />
+                <span asp-validation-for="Note" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="MemberID" />
             <div class="form-group">
-                <label asp-for="MemberStatus.StatusCode" class="control-label"></label>
-                <select asp-for="MemberStatus.StatusCode" class="form-control" asp-items="ViewBag.MemberStatusCode"></select>
-                <span asp-validation-for="MemberStatus.StatusCode" class="text-danger"></span>
+                <label asp-for="StatusCode" class="control-label"></label>
+                <select asp-for="StatusCode" class="form-control" asp-items="ViewBag.MemberStatusCode"></select>
+                <span asp-validation-for="StatusCode" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

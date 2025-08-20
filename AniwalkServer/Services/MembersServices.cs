@@ -71,6 +71,20 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public async Task<MemberStatus> GetMemberStatus(string MemberID)
+        {
+            var Result = await Context.MemberStatus
+                .Include(SC => SC.MemberStatusCode)
+                .FirstOrDefaultAsync();
+
+            return Result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="StatusCode"></param>
         /// <returns></returns>
         public async Task<SelectList> GetMemberStatusCodeSelect(int? StatusCode = null)
