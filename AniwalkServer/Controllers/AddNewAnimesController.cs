@@ -31,19 +31,6 @@ namespace AniwalkServer.Controllers
             this.AddNewAnimesServices = AddNewAnimesServices;
         }
 
-        // GET: AddNewAnimes
-        /// <summary>
-        /// 檢視新增動畫建議
-        /// </summary>
-        /// <returns></returns>
-        [Authorize(Roles = Shared.Role_Admin)]
-        public async Task<IActionResult> Index()
-        {
-            var Result = await AddNewAnimesServices.GetAddNewAnimes();
-
-            return View(Result);
-        }
-
         // GET: AddNewAnimes/Create
         /// <summary>
         /// 建立新的新增動畫建議
