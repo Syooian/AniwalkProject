@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using AniwalkServer.Data;
 using AniwalkServer.Services;
 
-namespace AniwalkServer.Areas.Admin.Controllers
+namespace AniwalkServer.Admin.Controllers
 {
     /// <summary>
     /// 
