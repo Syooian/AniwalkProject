@@ -25,14 +25,21 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 取所有會員
         /// </summary>
+        /// <param name="Skip"></param>
+        /// <param name="Take"></param>
         /// <returns></returns>
-        public async Task<List<Members>> GetMembers()
+        public async Task<List<Members>> GetMembers(int Skip = 0, int Take = 0)
         {
-            return await Context.Members
+            var Result = Context.Members
                 .Include(C => C.Country)
                 .Include(R => R.MemberRole)
                 .Include(S => S.MemberStatus).ThenInclude(SC => SC.MemberStatusCode)
-                .OrderByDescending(C => C.CreatedDate).ToListAsync();
+                .Skip(Skip);
+
+            if (Take > 0)
+                Result = Result.Take(Take);
+
+            return await Result.OrderByDescending(C => C.CreatedDate).ToListAsync();
         }
 
         /// <summary>

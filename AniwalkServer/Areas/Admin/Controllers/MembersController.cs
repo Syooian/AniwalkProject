@@ -88,25 +88,35 @@ namespace AniwalkServer.Admin.Controllers
         // POST: Members/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"><see cref="Members.MemberID"/></param>
+        /// <param name="MemberStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("MemberID,Name,Email,CreatedDate,CountryCode")] Members members)
+        public async Task<IActionResult> Edit(string id, [Bind("MemberID,StatusCode,Note")] MemberStatus MemberStatus)
         {
-            if (id != members.MemberID)
+            if (id != MemberStatus.MemberID)
             {
                 return NotFound();
             }
+
+            //Console.WriteLine("MemberStatus : " + members.MemberStatus.StatusCode);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(members);
+                    MemberStatus.UpdateDate = DateTime.Now;
+
+                    _context.Update(MemberStatus);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MembersServices.IsMembersExists(members.MemberID))
+                    if (!MembersServices.IsMembersExists(MemberStatus.MemberID))
                     {
                         return NotFound();
                     }
@@ -115,11 +125,12 @@ namespace AniwalkServer.Admin.Controllers
                         throw;
                     }
                 }
-
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(members);
+            Shared.ShowModelState(ModelState);
+
+            return View(MemberStatus);
         }
 
         /// <summary>
