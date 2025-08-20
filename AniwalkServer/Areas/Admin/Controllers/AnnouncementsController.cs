@@ -10,9 +10,9 @@ using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using AniwalkServer.Services;
 
-namespace AniwalkServer.Controllers
+namespace AniwalkServer.Areas.Admin.Controllers
 {
-    [Authorize(Roles = Shared.Role_Admin)]
+    [Area(Shared.Role_Admin), Authorize(Roles = Shared.Role_Admin)]
     public class AnnouncementsController : Controller
     {
         private readonly AniwalkDBContext _context;
