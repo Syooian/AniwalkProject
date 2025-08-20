@@ -16,6 +16,7 @@ namespace AniwalkServer.Admin.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Area(Shared.Role_Admin)]
     [Authorize(Roles = Shared.Role_Admin)]
     public class MembersController : Controller
     {
