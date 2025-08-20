@@ -79,6 +79,8 @@ namespace AniwalkServer.Admin.Controllers
 
             //SetViewData(members.CountryCode);
 
+            ViewData[ViewDataKeys.MemberStatusCode] = await MembersServices.GetMemberStatusCodeSelect(Member.MemberStatus.StatusCode);
+
             //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
             ViewData["CreatedDate"] = Member.CreatedDate;
 

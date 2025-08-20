@@ -73,7 +73,7 @@ namespace AniwalkServer.Services
         /// </summary>
         /// <param name="StatusCode"></param>
         /// <returns></returns>
-        public async Task<SelectList> GetMemberStatusCodeSelect(string? StatusCode = null)
+        public async Task<SelectList> GetMemberStatusCodeSelect(int? StatusCode = null)
         {
             var Result = await Context.MemberStatusCode.OrderBy(C => C.StatusCode).ToListAsync();
 
