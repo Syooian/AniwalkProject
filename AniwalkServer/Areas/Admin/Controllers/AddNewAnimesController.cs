@@ -56,7 +56,6 @@ namespace AniwalkServer.Areas.Admin.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Roles = Shared.Role_Admin)]
         public async Task<IActionResult> Edit(int id)
         {
             var addNewAnime = await AddNewAnimesServices.GetAddNewAnime(id);
@@ -84,7 +83,6 @@ namespace AniwalkServer.Areas.Admin.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Shared.Role_Admin)]
         public async Task<IActionResult> Edit(int id, [Bind("SN,AnimeTitle,AddDate,Status,CloseDate,Note")] AddNewAnime addNewAnime)
         {
             if (id != addNewAnime.SN)
