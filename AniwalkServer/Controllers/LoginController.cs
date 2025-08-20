@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -17,10 +19,23 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
+        readonly LoginServices LoginServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly MembersServices MembersServices;
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="context"></param>
-        public LoginController(AniwalkDBContext context)
+        /// <param name="MembersServices"></param>
+        /// <param name="LoginServices"></param>
+        public LoginController(AniwalkDBContext context, MembersServices MembersServices, LoginServices LoginServices)
         {
             Context = context;
+
+            this.LoginServices = LoginServices;
+            this.MembersServices = MembersServices;
         }
 
         /// <summary>
@@ -46,29 +61,60 @@ namespace AniwalkServer.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(Login Login)
         {
-            var User = Context.Login.FirstOrDefault(u => u.Account == Login.Account && u.Password == Login.Password);
-            if (User != null)
-            {
-                var Member = await Context.Members.FirstOrDefaultAsync(M => M.MemberID == User.MemberID);
-                //var MemberRole = await Context.MemberRoles.FirstOrDefaultAsync(MR => MR.RoleID == Member.RoleID);
+            #region
+            ////先找有沒有此會員
+            //var R = await LoginServices.GetLoginByAccount(Login.Account);
+            //if (R == null)
+            //{
+            //    ViewData["Error"] = "無此帳號";
+            //    return View(Login);
+            //}
 
-                var Claims = new List<Claim>
+            ////確認密碼
+            //var CheckPassword = LoginServices.CheckPassword(R.Password, Login.Password);
+            //if (!CheckPassword)
+            //{
+
+            //}
+            #endregion
+
+            var Result = await LoginServices.GetLogin(Login);
+            if (Result == null)
+            {
+                ViewData["Error"] = "帳號或密碼錯誤，請重新輸入";
+                Debug.WriteLine("Login Result is null");
+                return View(Login);
+            }
+
+            var Member = await MembersServices.GetMember(Result.MemberID);
+            if (Member == null)
+            {
+                ViewData["Error"] = "帳號或密碼錯誤，請重新輸入";
+                Debug.WriteLine("Login Member is null");
+                return View(Login);
+            }
+
+            //檢查會員狀態
+            if (Member.MemberStatus.StatusCode != 0)
+            {
+                ViewData["Error"] = "帳號" + Member.MemberStatus.MemberStatusCode.StatusName;
+                return View(Login);
+            }
+
+            var Claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, Member.Name),
                     new Claim(ClaimTypes.Role, ((RoleEnum)Member.RoleID).ToString()),
                     new Claim(ClaimTypes.NameIdentifier, Member.MemberID)
                 };
 
-                var ClaimsIdentity = new ClaimsIdentity(Claims, AuthenticationScheme);
-                var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
+            var ClaimsIdentity = new ClaimsIdentity(Claims, AuthenticationScheme);
+            var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
 
-                await HttpContext.SignInAsync(AuthenticationScheme, ClaimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
+            await HttpContext.SignInAsync(AuthenticationScheme, ClaimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
 
-                return RedirectToAction("Index", "Home"); // 登入成功後導向到 BooksManage 的 Index 頁面
-            }
+            return RedirectToAction("Index", "Home"); // 登入成功後導向到 BooksManage 的 Index 頁面
 
-            ViewData["Error"] = "帳號或密碼錯誤，請重新輸入";
-            return View(Login);
         }
 
         /// <summary>
