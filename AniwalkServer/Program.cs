@@ -26,15 +26,17 @@ builder.Services.AddDbContext<AniwalkDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
 
 #region 自訂Services
-builder.Services.AddScoped<VisitsServices>();
-builder.Services.AddScoped<PhotoServices>();
-builder.Services.AddScoped<MembersServices>();
 builder.Services.AddScoped<AddNewAnimesServices>();
+builder.Services.AddScoped<AnimesServices>();
 builder.Services.AddScoped<AnnouncementsServices>();
 builder.Services.AddScoped<CommentsServices>();
+builder.Services.AddScoped<CountriesServices>();
 builder.Services.AddScoped<ForgotPasswordServices>();
 builder.Services.AddScoped<LoginServices>();
 builder.Services.AddScoped<MailServices>();
+builder.Services.AddScoped<MembersServices>();
+builder.Services.AddScoped<PhotoServices>();
+builder.Services.AddScoped<VisitsServices>();
 #endregion
 
 //註冊 Cookie Authentication

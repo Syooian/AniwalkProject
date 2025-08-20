@@ -35,20 +35,6 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="VisitsParam"></param>
-        /// <returns></returns>
-        public async Task<List<Visits>> GetVisits(VisitsParam? VisitsParam)
-        {
-            if (VisitsParam == null)
-            {
-                VisitsParam = new VisitsParam();
-            }
-
-            return await GetVisits(VisitsParam.CountryName, VisitsParam.AnimeTitle, VisitsParam.MemberName, VisitsParam.VisitedDate_From, VisitsParam.VisitedDate_To, VisitsParam.SortVisitsPhotos);
-        }
-        /// <summary>
         /// 對到訪紀錄照片做排序
         /// </summary>
         /// <param name="CountryName"></param>
@@ -58,8 +44,11 @@ namespace AniwalkServer.Services
         /// <param name="VisitedDate_To"></param>
         /// <param name="SortVisitsPhotos"></param>
         /// <returns></returns>
-        public async Task<List<Visits>> GetVisits(string? CountryName, string? AnimeTitle, string? MemberName, DateTime? VisitedDate_From, DateTime? VisitedDate_To, bool SortVisitsPhotos = false)
+        public async Task<List<Visits>> GetVisits(VisitsParam? VisitsParam)
         {
+            if (VisitsParam == null)
+                VisitsParam = new VisitsParam();
+
             //直接在資料庫select是完整有東西的，但畫面上卻看不到"到訪國家", "動畫名稱", "會員名稱"
             var SQLQuery = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " +
                 "join Members as M on V.MemberID = M.MemberID " +
@@ -97,27 +86,49 @@ namespace AniwalkServer.Services
              */
 
             #region 篩選條件
-            if (!string.IsNullOrEmpty(CountryName))
+            if (!string.IsNullOrEmpty(VisitsParam.CountryCode))
             {
+                Debug.WriteLine("CountryCode : " + VisitsParam.CountryCode);
+
+                SQLQuery += $"and C.CountryCode = @CountryCode ";
+                SQLPara.Add(new SqlParameter("@CountryCode", VisitsParam.CountryCode));
+            }
+
+            if (!string.IsNullOrEmpty(VisitsParam.CountryName))
+            {
+                Debug.WriteLine("CountryName : " + VisitsParam.CountryName);
+
                 SQLQuery += $"and C.CountryName = @CountryName ";
-                SQLPara.Add(new SqlParameter("@CountryName", CountryName));
+                SQLPara.Add(new SqlParameter("@CountryName", VisitsParam.CountryName));
             }
 
-            if (!string.IsNullOrEmpty(AnimeTitle))
+            if (!string.IsNullOrEmpty(VisitsParam.AnimeID))
             {
+                Debug.WriteLine("AnimeID : " + VisitsParam.AnimeID);
+
+                SQLQuery += $"and A.AnimeID = @AnimeID ";
+                SQLPara.Add(new SqlParameter("@AnimeID", VisitsParam.AnimeID));
+            }
+
+            if (!string.IsNullOrEmpty(VisitsParam.AnimeTitle))
+            {
+                Debug.WriteLine("AnimeTitle : " + VisitsParam.AnimeTitle);
+
                 SQLQuery += $"and A.Title = @AnimeTitle ";
-                SQLPara.Add(new SqlParameter("@AnimeTitle", AnimeTitle));
+                SQLPara.Add(new SqlParameter("@AnimeTitle", VisitsParam.AnimeTitle));
             }
 
-            if (!string.IsNullOrEmpty(MemberName))
+            if (!string.IsNullOrEmpty(VisitsParam.MemberName))
             {
+                Debug.WriteLine("MemberName : " + VisitsParam.MemberName);
+
                 SQLQuery += $"and M.Name = @MemberName ";
-                SQLPara.Add(new SqlParameter("@MemberName", MemberName));
+                SQLPara.Add(new SqlParameter("@MemberName", VisitsParam.MemberName));
             }
 
-            if (VisitedDate_From != null && VisitedDate_To != null)
+            if (VisitsParam.VisitedDate_From != null && VisitsParam.VisitedDate_To != null)
             {
-                //Debug.WriteLine($"VisitedDate_From : {VisitedDate_From}, VisitedDate_To : {VisitedDate_To}");
+                Debug.WriteLine($"VisitedDate_From : {VisitsParam.VisitedDate_From}, VisitedDate_To : {VisitsParam.VisitedDate_To}");
 
                 //SQLQuery += $"and V.VisitedDate between CONVERT(varchar, @VisitedDate_From, 111) and CONVERT(varchar, @VisitedDate_To, 111) ";//用資料庫語法轉換日期格式為yyyy/MM/dd
                 //VisitedDate_From 和 VisitedDate_To 目前是 DateTime 型別，CONVERT(varchar, @VisitedDate_From, 111) 會把參數轉成字串（如 2025/07/29），但 V.VisitedDate 是 datetime 型別，這樣比較會失敗或無法正確查詢。
@@ -125,8 +136,8 @@ namespace AniwalkServer.Services
                 //只比對日期，忽略時間
                 SQLQuery += $"and convert(date, V.VisitedDate) between @VisitedDate_From and @VisitedDate_To ";
 
-                SQLPara.Add(new SqlParameter("@VisitedDate_From", VisitedDate_From));
-                SQLPara.Add(new SqlParameter("@VisitedDate_To", VisitedDate_To));
+                SQLPara.Add(new SqlParameter("@VisitedDate_From", VisitsParam.VisitedDate_From));
+                SQLPara.Add(new SqlParameter("@VisitedDate_To", VisitsParam.VisitedDate_To));
             }
             #endregion
 
