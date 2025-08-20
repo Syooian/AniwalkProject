@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Services
@@ -66,5 +67,18 @@ namespace AniwalkServer.Services
         {
             return await Context.Members.FirstOrDefaultAsync(M => M.Email == Email);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="StatusCode"></param>
+        /// <returns></returns>
+        public async Task<SelectList> GetMemberStatusCodeSelect(string? StatusCode = null)
+        {
+            var Result = await Context.MemberStatusCode.OrderBy(C => C.StatusCode).ToListAsync();
+
+            return new SelectList(Result, nameof(MemberStatusCode.StatusCode), nameof(MemberStatusCode.StatusName), StatusCode);
+        }
+
     }
 }
