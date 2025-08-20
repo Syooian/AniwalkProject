@@ -46,8 +46,10 @@ namespace AniwalkServer.Admin.Controllers
         /// <summary>
         /// 會員列表
         /// </summary>
+        /// <param name="Skip"></param>
+        /// <param name="Take"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int Skip = 0, int Take = 0)
         {
             var Result = await MembersServices.GetMembers();
 
