@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Services
@@ -25,14 +26,21 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 取所有會員
         /// </summary>
+        /// <param name="Skip"></param>
+        /// <param name="Take"></param>
         /// <returns></returns>
-        public async Task<List<Members>> GetMembers()
+        public async Task<List<Members>> GetMembers(int Skip = 0, int Take = 0)
         {
-            return await Context.Members
+            var Result = Context.Members
                 .Include(C => C.Country)
                 .Include(R => R.MemberRole)
                 .Include(S => S.MemberStatus).ThenInclude(SC => SC.MemberStatusCode)
-                .OrderByDescending(C => C.CreatedDate).ToListAsync();
+                .Skip(Skip);
+
+            if (Take > 0)
+                Result = Result.Take(Take);
+
+            return await Result.OrderByDescending(C => C.CreatedDate).ToListAsync();
         }
 
         /// <summary>
@@ -59,5 +67,32 @@ namespace AniwalkServer.Services
         {
             return await Context.Members.FirstOrDefaultAsync(M => M.Email == Email);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public async Task<MemberStatus> GetMemberStatus(string MemberID)
+        {
+            var Result = await Context.MemberStatus
+                .Include(SC => SC.MemberStatusCode)
+                .FirstOrDefaultAsync();
+
+            return Result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="StatusCode"></param>
+        /// <returns></returns>
+        public async Task<SelectList> GetMemberStatusCodeSelect(int? StatusCode = null)
+        {
+            var Result = await Context.MemberStatusCode.OrderBy(C => C.StatusCode).ToListAsync();
+
+            return new SelectList(Result, nameof(MemberStatusCode.StatusCode), nameof(MemberStatusCode.StatusName), StatusCode);
+        }
+
     }
 }

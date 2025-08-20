@@ -55,14 +55,6 @@ namespace AniwalkServer.Controllers
             this.MailServices = MailServices;
         }
 
-        // GET: ForgotPassword
-        [Authorize(Roles = Shared.Role_Admin)]
-        public async Task<IActionResult> Index()
-        {
-            var aniwalkDBContext = _context.ForgotPassword.Include(f => f.Member);
-            return View(await aniwalkDBContext.ToListAsync());
-        }
-
         // GET: ForgotPassword/Details/5
         public async Task<IActionResult> Details(int? id)
         {

@@ -50,6 +50,8 @@ builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCook
     Options.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
 
+builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
 //建立SeedData初始化
@@ -76,8 +78,19 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+#region 路由設定
+// 支援 Area 路由（依角色分區）
 app.MapControllerRoute(
-    name: "default",
+    name: "Areas",
+    pattern: "{area:exists}/{controller=Home}/{action=index}/{id?}");//Exists : 路由約束（Route Constraint），表示「只有當 area 這個區段存在時，這條路由才會被比對」
+
+// Razor Pages 路由
+app.MapRazorPages();
+
+//一般Controller路由
+app.MapControllerRoute(
+    name: "default",//Guest
     pattern: "{controller=Home}/{action=Index}/{id?}");
+#endregion
 
 app.Run();

@@ -16,6 +16,7 @@ namespace AniwalkServer.Admin.Controllers
     /// <summary>
     /// 
     /// </summary>
+    [Area(Shared.Role_Admin)]
     [Authorize(Roles = Shared.Role_Admin)]
     public class MembersController : Controller
     {
@@ -46,8 +47,10 @@ namespace AniwalkServer.Admin.Controllers
         /// <summary>
         /// 會員列表
         /// </summary>
+        /// <param name="Skip"></param>
+        /// <param name="Take"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int Skip = 0, int Take = 0)
         {
             var Result = await MembersServices.GetMembers();
 
@@ -67,43 +70,54 @@ namespace AniwalkServer.Admin.Controllers
                 return NotFound();
             }
 
-            var Member = await MembersServices.GetMember(MemberID);
+            var MemberStatus = await MembersServices.GetMemberStatus(MemberID);
 
-            if (Member == null)
+            if (MemberStatus == null)
             {
                 return NotFound();
             }
 
             //SetViewData(members.CountryCode);
 
-            //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
-            ViewData["CreatedDate"] = Member.CreatedDate;
+            ViewData[ViewDataKeys.MemberStatusCode] = await MembersServices.GetMemberStatusCodeSelect(MemberStatus.StatusCode);
 
-            return View(Member);
+            //帶入此會員的帳號建立時間，避免更新資料時被帶入當下時間
+            //ViewData["CreatedDate"] = Member.CreatedDate;
+
+            return View(MemberStatus);
         }
 
         // POST: Members/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="MemberStatus"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("MemberID,Name,Email,CreatedDate,CountryCode")] Members members)
+        public async Task<IActionResult> Edit(string MemberID, [Bind("MemberID,StatusCode,Note")] MemberStatus MemberStatus)
         {
-            if (id != members.MemberID)
+            if (MemberID != MemberStatus.MemberID)
             {
                 return NotFound();
             }
+
+            //Console.WriteLine("MemberStatus : " + members.MemberStatus.StatusCode);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(members);
+                    MemberStatus.UpdateDate = DateTime.Now;//資料庫不會反應時間，待修
+
+                    _context.Update(MemberStatus);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MembersServices.IsMembersExists(members.MemberID))
+                    if (!MembersServices.IsMembersExists(MemberStatus.MemberID))
                     {
                         return NotFound();
                     }
@@ -112,11 +126,12 @@ namespace AniwalkServer.Admin.Controllers
                         throw;
                     }
                 }
-
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(members);
+            Shared.ShowModelState(ModelState);
+
+            return View(MemberStatus);
         }
 
         /// <summary>

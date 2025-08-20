@@ -1,7 +1,7 @@
 ﻿@{
     if (User.IsInRole(RoleEnum.Admin.ToString()))
     {
-        Layout = "_AdminLayout";
+        Layout = $"~/Areas/{Shared.Role_Admin}/Views/Shared/_Layout.cshtml";
     }
     else if (User.IsInRole(RoleEnum.Member.ToString()))
     {
