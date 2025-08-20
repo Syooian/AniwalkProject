@@ -47,7 +47,7 @@
                     @Html.DisplayFor(modelItem => item.MemberStatus.MemberStatusCode.StatusName)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.MemberID" class="btn btn-primary">編輯</a>
+                    <a asp-action="Edit" asp-route-MemberID="@item.MemberID" class="btn btn-primary">編輯</a>
                 </td>
             </tr>
         }
