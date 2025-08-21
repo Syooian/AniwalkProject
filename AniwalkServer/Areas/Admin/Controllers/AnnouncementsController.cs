@@ -34,7 +34,7 @@ namespace AniwalkServer.Admin.Controllers
         /// <param name="Skip">跳過開頭幾筆紀錄</param>
         /// <param name="Take">取幾筆紀錄</param>
         /// <returns></returns>
-        public async Task<IActionResult> Index(int? Skip, int? Take)
+        public async Task<IActionResult> Index(int Skip = 0, int Take = 0)
         {
             var Result = await AnnouncementsServices.GetAnnouncements(Skip, Take);
 

@@ -1,6 +1,9 @@
-﻿using AniwalkServer.Data;
+﻿using Dapper;
+using System.Data;
+using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace AniwalkServer.Services
 {
@@ -20,19 +23,30 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
-        /// 
+        /// 取公告
+        /// <para>同時取資料和總筆數 (多結果集)</para>
         /// </summary>
         /// <param name="Skip"></param>
         /// <param name="Take"></param>
         /// <returns></returns>
-        public async Task<List<Announcements>> GetAnnouncements(int? Skip, int? Take)
+        public async Task<(int AnnouncementsCount, List<Announcements>)> GetAnnouncements(int Skip = 0, int? Take = 0)
         {
-            var Result = Context.Announcements.OrderByDescending(A => A.CreatedDate);
+            using (var Connection = Context.Database.GetDbConnection())
+            {
+                var Result = await Connection.QueryMultipleAsync(
+                    "Sp_GetAnnouncements",
+                    new { Skip, Take },
+                    commandType: CommandType.StoredProcedure
+                );
 
-            if (Skip != null && Take != null)
-                Result.Skip((int)Skip).Take((int)Take);
+                //總筆數
+                var AnnouncementsCount = Result.ReadAsync<int>().Result.First();
+                var Announcements = Result.ReadAsync<Announcements>().Result.ToList();
 
-            return await Result.ToListAsync();
+                Debug.WriteLine($"總筆數 : {AnnouncementsCount}, 資料筆數 : {Announcements.Count}");
+
+                return (AnnouncementsCount, Announcements);
+            }
         }
 
         /// <summary>
