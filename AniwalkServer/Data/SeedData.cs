@@ -353,12 +353,15 @@ namespace AniwalkServer.Data
                         CreatedDate = DateTime.Now.AddMonths(-1)
                     });
 
-                    context.Announcements.Add(new Announcements()
+                    for (int a = 1; a <= 50; a++)
                     {
-                        Title = "Announcement Test 1",
-                        Content = "This is a test announcement content for testing purposes.",
-                        CreatedDate = DateTime.Now.AddDays(-10)
-                    });
+                        context.Announcements.Add(new Announcements()
+                        {
+                            Title = $"Announcement Test {a}",
+                            Content = $"This is a test announcement {a} content for testing purposes.",
+                            CreatedDate = DateTime.Now.AddDays(a * -1)
+                        });
+                    }
 
                     context.SaveChanges();
                 }
