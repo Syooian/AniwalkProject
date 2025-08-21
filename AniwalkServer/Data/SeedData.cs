@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
+using AniwalkServer.Models;
+using System.Diagnostics;
+using Newtonsoft.Json;
 
-namespace AniwalkServer.Models
+namespace AniwalkServer.Data
 {
     public class SeedData
     {
@@ -14,6 +16,8 @@ namespace AniwalkServer.Models
             using (var context = new AniwalkDBContext(
                 ServiceProvider.GetRequiredService<DbContextOptions<AniwalkDBContext>>()))
             {
+                var SeedDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SeedData");
+
                 #region 新增動畫建議
                 if (!context.AddNewAnimes.Any())
                 {
@@ -34,20 +38,30 @@ namespace AniwalkServer.Models
                     return;   // DB has been seeded
                 }
 
-                var Countries = new Countries[]
+                var Countries = new Countries[] { };
+
+                //載入檔案
                 {
-                    new Countries() { CountryCode = "JPN", CountryName = "日本" },
-                    new Countries() { CountryCode = "GBR", CountryName = "英國" },
-                    new Countries() { CountryCode = "TWN", CountryName = "台灣" },
-                    new Countries() {CountryCode="AFG",CountryName="阿富汗"},
-                    new Countries() {CountryCode="COL",CountryName="哥倫比亞"},
-                    new Countries() {CountryCode="MMR",CountryName="緬甸"},
-                    new Countries() {CountryCode="CAN",CountryName="加拿大"},
-                    new Countries() {CountryCode="CZE",CountryName="捷克"},
-                    new Countries() {CountryCode="FRA",CountryName="法國"},
-                    new Countries() {CountryCode="DEU",CountryName="德國"},
-                    new Countries() {CountryCode="USA",CountryName="美國"}
-                };
+                    var FilePath = Path.Combine(SeedDataPath, "Countries.txt");
+                    if (Directory.Exists(SeedDataPath) && File.Exists(FilePath))
+                    {
+                        var DataStr = File.ReadAllText(FilePath);
+                        Countries = JsonConvert.DeserializeObject<Countries[]>(DataStr);
+
+                        //列出國名長度超出資料表限制的國家
+                        foreach (var C in Countries)
+                        {
+                            if (C.CountryName.Length > 30)
+                            {
+                                Debug.WriteLine(C.CountryName + ", Length : " + C.CountryName.Length);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Countries.txt路徑或檔案不存在");
+                    }
+                }
 
                 context.Countries.AddRange(Countries);
                 #endregion
@@ -165,7 +179,7 @@ namespace AniwalkServer.Models
                     Latitude = 35.725771,
                     Longitude = 140.819210,
                     MemberID = MemberIDs[0],
-                    CountryCode = Countries[0].CountryCode,
+                    CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "JPN").CountryCode,
                     AnimeID = Animes[0].AnimeID,
                     VisitedDate = DateTime.Now.AddDays(-5)
                 });
@@ -176,7 +190,7 @@ namespace AniwalkServer.Models
                     Latitude = 35.706208,
                     Longitude = 140.837881,
                     MemberID = MemberIDs[0],
-                    CountryCode = Countries[0].CountryCode,
+                    CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "JPN").CountryCode,
                     AnimeID = Animes[1].AnimeID,
                     VisitedDate = DateTime.Now.AddDays(-10)
                 });
@@ -187,7 +201,7 @@ namespace AniwalkServer.Models
                     Latitude = 22.684911,
                     Longitude = 120.295731,
                     MemberID = MemberIDs[1],
-                    CountryCode = Countries[2].CountryCode,
+                    CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "TWN").CountryCode,
                     AnimeID = Animes[2].AnimeID,
                     VisitedDate = DateTime.Now.AddDays(-15)
                 });

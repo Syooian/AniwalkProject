@@ -2,7 +2,6 @@
 using AniwalkServer.Controllers;
 using AniwalkServer.Data;
 using AniwalkServer.Filters;
-using AniwalkServer.Models;
 using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
