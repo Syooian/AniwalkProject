@@ -2,7 +2,7 @@
 
 namespace AniwalkServer
 {
-    public class Shared
+    public partial class Shared
     {
         /// <summary>
         /// 訪客角色名稱
@@ -36,22 +36,6 @@ namespace AniwalkServer
                     Debug.WriteLine($"Key : {key}, Errors : {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
                 }
             }
-        }
-
-        /// <summary>
-        /// 預設一頁資料內有多少筆資料
-        /// </summary>
-        public static readonly int[] DefaultPageSize = { 20, 40, 60, 80 };
-
-        /// <summary>
-        /// 取得資料總頁數
-        /// </summary>
-        /// <param name="DataCount">資料總筆數</param>
-        /// <param name="PageSize">一頁資料內有多少筆資料</param>
-        /// <returns></returns>
-        public static int GetPageCount(int DataCount, int PageSize)
-        {
-            return (DataCount + PageSize - 1) / PageSize;
         }
     }
 

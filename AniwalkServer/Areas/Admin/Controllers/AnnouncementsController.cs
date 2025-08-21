@@ -9,6 +9,7 @@ using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using AniwalkServer.Services;
+using System.Diagnostics;
 
 namespace AniwalkServer.Admin.Controllers
 {
@@ -27,16 +28,20 @@ namespace AniwalkServer.Admin.Controllers
             this.AnnouncementsServices = AnnouncementsServices;
         }
 
-        // GET: Announcements
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Skip">跳過開頭幾筆紀錄</param>
-        /// <param name="Take">取幾筆紀錄</param>
+        /// <param name="PageSize"></param>
+        /// <param name="Page"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index(int Skip = 0, int Take = 0)
+        public async Task<IActionResult> Index(int Page = 1, int PageSize = 0)
         {
-            var Result = await AnnouncementsServices.GetAnnouncements(Skip, Take);
+            var Result = await AnnouncementsServices.GetAnnouncements(Page, PageSize);
+
+            if (Result == null)
+            {
+                return NotFound();
+            }
 
             return View(Result);
         }

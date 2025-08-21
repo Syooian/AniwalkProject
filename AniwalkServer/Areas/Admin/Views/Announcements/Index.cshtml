@@ -1,8 +1,6 @@
-﻿@model (int Count, List<Announcements>Data)
+﻿@model AniwalkServer.DTOs.PageDTO<Announcements>
 @{
     ViewData["Title"] = "公告列表";
-
-    int CurrentPage = 1;//當前頁數
 }
 
 <h1>
@@ -54,15 +52,15 @@
     </tbody>
     <tfoot>
         <tr>
-            @if (Model.Count > Shared.DefaultPageSize[0])
+            @if (Model.Data.Count > Shared.DefaultPageSize[0])
             {
-                var PageCount = Shared.GetPageCount(Model.Count, Shared.DefaultPageSize[0]);
+                var PageCount = Shared.GetPageCount(Model.TotalDataCount, Shared.DefaultPageSize[0]);
 
                 <td class="text-center">
                     <nav aria-label="...">
                         <ul class="pagination">
                             <!--上一頁-->
-                            <li class="page-item" @(CurrentPage == 1 ? "disabled" : "")>
+                            <li class="page-item" @(Model.CurrentPage == 1 ? "disabled" : "")>
                                 <a class="page-link" href="#" aria-label="Previous" tabindex="-1">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
@@ -71,14 +69,14 @@
                             @{
                                 for (int a = 1; a <= PageCount; a++)
                                 {
-                                    <li class="page-item @(CurrentPage == a ? "active" : "")" @(CurrentPage == a ? "aria-current=\"page\"" : "")>
+                                    <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
                                         <a class="page-link" href="#">@a</a>
                                     </li>
                                 }
                             }
 
                             <!--下一頁-->
-                            <li class="page-item" @(CurrentPage == PageCount ? "disabled" : "")>
+                            <li class="page-item" @(Model.CurrentPage == PageCount ? "disabled" : "")>
                                 <a class="page-link" href="#" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
