@@ -37,6 +37,17 @@ namespace AniwalkServer
                 }
             }
         }
+
+        /// <summary>
+        /// 取得資料總頁數
+        /// </summary>
+        /// <param name="DataCount">資料總筆數</param>
+        /// <param name="PageSize">一頁資料內有多少筆資料</param>
+        /// <returns></returns>
+        public static int GetPageCount(int DataCount, int PageSize)
+        {
+            return (DataCount + PageSize - 1) / PageSize;
+        }
     }
 
     /// <summary>
