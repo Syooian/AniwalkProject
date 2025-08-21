@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AniwalkServer.Models.Announcements>
+﻿@model (int Count, List<Announcements>Data)
 @{
     ViewData["Title"] = "公告列表";
 }
@@ -15,19 +15,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
+                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Content)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
+                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().CreatedDate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Data)
         {
             <tr>
                 <td>
