@@ -34,7 +34,7 @@ namespace AniwalkServer.Admin.Controllers
         /// <param name="PageSize"></param>
         /// <param name="Page"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index(int Page = 1, int PageSize = 0)
+        public async Task<IActionResult> Index(int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
             var Result = await AnnouncementsServices.GetAnnouncements(Page, PageSize);
 

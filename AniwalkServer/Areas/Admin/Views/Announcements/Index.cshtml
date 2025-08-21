@@ -52,10 +52,9 @@
     </tbody>
     <tfoot>
         <tr>
-            @if (Model.Data.Count > Shared.DefaultPageSize[0])
+            <!--分頁選擇-->
+            @if (Model.PageCount > 1 && Model.TotalDataCount > (int)Model.PageSize)
             {
-                var PageCount = Shared.GetPageCount(Model.TotalDataCount, Shared.DefaultPageSize[0]);
-
                 <td class="text-center">
                     <nav aria-label="...">
                         <ul class="pagination">
@@ -67,7 +66,7 @@
                             </li>
 
                             @{
-                                for (int a = 1; a <= PageCount; a++)
+                                for (int a = 1; a <= Model.PageCount; a++)
                                 {
                                     <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
                                         <a class="page-link" href="#">@a</a>
@@ -76,7 +75,7 @@
                             }
 
                             <!--下一頁-->
-                            <li class="page-item" @(Model.CurrentPage == PageCount ? "disabled" : "")>
+                            <li class="page-item" @(Model.CurrentPage == Model.PageCount ? "disabled" : "")>
                                 <a class="page-link" href="#" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>

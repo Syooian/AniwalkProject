@@ -5,10 +5,6 @@ namespace AniwalkServer
     public partial class Shared
     {
         /// <summary>
-        /// 預設一頁資料內有多少筆資料
-        /// </summary>
-        public static readonly int[] DefaultPageSize = { 20, 40, 60, 80 };
-        /// <summary>
         /// 取得資料總頁數
         /// </summary>
         /// <param name="TotalDataCount">資料總筆數</param>
@@ -16,7 +12,10 @@ namespace AniwalkServer
         /// <returns></returns>
         public static int GetPageCount(int TotalDataCount, int PageSize)
         {
-            return (TotalDataCount + PageSize - 1) / PageSize;
+            if (PageSize == (int)DefaultPageSize.Max)
+                return 1;
+            else
+                return (TotalDataCount + PageSize - 1) / PageSize;
         }
         /// <summary>
         /// 
@@ -28,5 +27,32 @@ namespace AniwalkServer
         {
             return (Page - 1) * PageSize;
         }
+    }
+
+    /// <summary>
+    ///  預設一頁資料內有幾筆資料
+    /// </summary>
+    public enum DefaultPageSize
+    {
+        /// <summary>
+        /// 全部
+        /// </summary>
+        Max = 0,
+        /// <summary>
+        /// 預設一頁資料內有 20 筆資料
+        /// </summary>
+        PageSize_20 = 20,
+        /// <summary>
+        /// 預設一頁資料內有 40 筆資料
+        /// </summary>
+        PageSize_40 = 40,
+        /// <summary>
+        /// 預設一頁資料內有 60 筆資料
+        /// </summary>
+        PageSize_60 = 60,
+        /// <summary>
+        /// 預設一頁資料內有 80 筆資料
+        /// </summary>
+        PageSize_80 = 80
     }
 }

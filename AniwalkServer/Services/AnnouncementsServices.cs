@@ -47,13 +47,12 @@ namespace AniwalkServer.Services
                         commandType: CommandType.StoredProcedure
                     );
 
-                    var DTO = new PageDTO<Announcements>();
-                    //頁碼
-                    DTO.CurrentPage = Page;
-                    //資料總筆數
-                    DTO.TotalDataCount = Result.ReadAsync<int>().Result.First();
-                    //資料
-                    DTO.Data = Result.ReadAsync<Announcements>().Result.ToList();
+                    var DTO = new PageDTO<Announcements>(
+                        Result.ReadAsync<int>().Result.First(),//資料總筆數
+                        Result.ReadAsync<Announcements>().Result.ToList(),//資料
+                        Page,//當前頁碼
+                        PageSize//每頁筆數
+                        );
 
                     Debug.WriteLine($"頁碼 : {Page}, 總筆數 : {DTO.TotalDataCount}, 取得資料筆數 : {DTO.Data.Count}");
 
