@@ -1,0 +1,20 @@
+﻿[
+  {
+    "AnimeID": "0001",
+    "Title": "聖誕之吻SS",
+    "HeaderPhoto": "",
+    "Description": "アマガミSS"
+  },
+  {
+    "AnimeID": "0002",
+    "Title": "K-ON！輕音部",
+    "HeaderPhoto": "",
+    "Description": "けいおん!"
+  },
+  {
+    "AnimeID": "0003",
+    "Title": "信長之槍",
+    "HeaderPhoto": "",
+    "Description": "ノブナガン"
+  }
+]

@@ -2,11 +2,17 @@
 using AniwalkServer.Models;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AniwalkServer.Data
 {
     public class SeedData
     {
+        /// <summary>
+        /// SeedData文字檔的放置路徑
+        /// </summary>
+        static readonly string SeedDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SeedData");
+
         /// <summary>
         /// 
         /// </summary>
@@ -16,8 +22,6 @@ namespace AniwalkServer.Data
             using (var context = new AniwalkDBContext(
                 ServiceProvider.GetRequiredService<DbContextOptions<AniwalkDBContext>>()))
             {
-                var SeedDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SeedData");
-
                 #region 新增動畫建議
                 if (!context.AddNewAnimes.Any())
                 {
@@ -39,27 +43,18 @@ namespace AniwalkServer.Data
                 }
 
                 var Countries = new Countries[] { };
-
                 //載入檔案
                 {
                     var FilePath = Path.Combine(SeedDataPath, "Countries.txt");
-                    if (Directory.Exists(SeedDataPath) && File.Exists(FilePath))
-                    {
-                        var DataStr = File.ReadAllText(FilePath);
-                        Countries = JsonConvert.DeserializeObject<Countries[]>(DataStr);
+                    LoadFile(FilePath, ref Countries);
 
-                        //列出國名長度超出資料表限制的國家
-                        foreach (var C in Countries)
-                        {
-                            if (C.CountryName.Length > 30)
-                            {
-                                Debug.WriteLine(C.CountryName + ", Length : " + C.CountryName.Length);
-                            }
-                        }
-                    }
-                    else
+                    //列出國名長度超出資料表限制的國家
+                    foreach (var C in Countries)
                     {
-                        Debug.WriteLine("Countries.txt路徑或檔案不存在");
+                        if (C.CountryName.Length > 30)
+                        {
+                            Debug.WriteLine(C.CountryName + ", Length : " + C.CountryName.Length);
+                        }
                     }
                 }
 
@@ -72,12 +67,12 @@ namespace AniwalkServer.Data
                     return;   // DB has been seeded
                 }
 
-                var Animes = new Animes[]
+                var Animes = new Animes[] { };
+                //載入檔案
                 {
-                    new Animes() { AnimeID = "0001", Title = "聖誕之吻SS", HeaderPhoto = "0001.jpg", Description = "アマガミSS" },
-                    new Animes() { AnimeID = "0002", Title = "K-ON！輕音部", HeaderPhoto = "0002.jpg", Description = "けいおん!" },
-                    new Animes() { AnimeID = "0003", Title = "信長之槍", HeaderPhoto = "0003.jpg", Description = "ノブナガン" }
-                };
+                    var FilePath = Path.Combine(SeedDataPath, "Animes.txt");
+                    LoadFile(FilePath, ref Animes);
+                }
 
                 context.Animes.AddRange(Animes);
                 #endregion
@@ -373,6 +368,32 @@ namespace AniwalkServer.Data
                 //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT VisitsTags ON");
 
                 context.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// 讀取SeedData資料檔
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="FilePath"></param>
+        /// <param name="Data"></param>
+        static void LoadFile<T>(string FilePath, ref T Data)
+        {
+            if (Directory.Exists(SeedDataPath) && File.Exists(FilePath))
+            {
+                try
+                {
+                    var DataStr = File.ReadAllText(FilePath);
+                    Data = JsonConvert.DeserializeObject<T>(DataStr);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"LoadFile EX : {ex.Message}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"{FilePath} 路徑或檔案不存在");
             }
         }
     }
