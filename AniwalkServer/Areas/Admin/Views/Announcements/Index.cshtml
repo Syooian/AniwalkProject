@@ -50,4 +50,21 @@
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            @if (Model.Count > Shared.DefaultPageSize[0])
+            {
+                var PageCount = Shared.GetPageCount(Model.Count, Shared.DefaultPageSize[0]);
+
+                <td colspan="@PageCount" class="text-center">
+                    @{
+                        for (int a = 1; a <= PageCount; a++)
+                        {
+                            <a>@a</a>
+                        }
+                    }
+                </td>
+            }
+        </tr>
+    </tfoot>
 </table>

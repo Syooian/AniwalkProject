@@ -39,6 +39,11 @@ namespace AniwalkServer
         }
 
         /// <summary>
+        /// 預設一頁資料內有多少筆資料
+        /// </summary>
+        public static readonly int[] DefaultPageSize = { 20, 40, 60, 80 };
+
+        /// <summary>
         /// 取得資料總頁數
         /// </summary>
         /// <param name="DataCount">資料總筆數</param>

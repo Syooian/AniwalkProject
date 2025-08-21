@@ -29,7 +29,7 @@ namespace AniwalkServer.Services
         /// <param name="Skip"></param>
         /// <param name="Take"></param>
         /// <returns></returns>
-        public async Task<(int, List<Announcements>)> GetAnnouncements(int Skip = 0, int? Take = 0)
+        public async Task<(int, List<Announcements>)> GetAnnouncements(int Skip = 0, int Take = 0)
         {
             using (var Connection = Context.Database.GetDbConnection())
             {
