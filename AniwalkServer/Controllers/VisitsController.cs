@@ -79,6 +79,9 @@ namespace AniwalkServer.Controllers
             //Result.OrderByDescending(R => R.CreatedDate);
             #endregion
 
+            if (Result == null)
+                return NotFound();
+
             //var Markers = new List<object>
             //{
             //    new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
@@ -104,7 +107,7 @@ namespace AniwalkServer.Controllers
             {
                 //Debug.WriteLine("Return View");
 
-                return View(Result.ToArray());
+                return View(Result.Data);
             }
         }
 
@@ -120,6 +123,9 @@ namespace AniwalkServer.Controllers
             //    Debug.WriteLine(VisitsParam.ToString());
 
             var Result = await VisitsServices.GetVisits(VisitsParam);
+
+            if (Result == null)
+                return NotFound();
 
             ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
             await SetViewData();

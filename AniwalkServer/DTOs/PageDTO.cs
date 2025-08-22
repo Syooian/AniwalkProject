@@ -1,4 +1,6 @@
-﻿namespace AniwalkServer.DTOs
+﻿using Dapper;
+
+namespace AniwalkServer.DTOs
 {
     public class PageDTO<T>
     {
@@ -34,6 +36,20 @@
         {
             this.TotalDataCount = TotalDataCount;
             this.Data = Data;
+            this.CurrentPage = CurrentPage;
+            PageCount = Shared.GetPageCount(TotalDataCount, PageSize);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Result"></param>
+        /// <param name="CurrentPage"></param>
+        /// <param name="PageSize"></param>
+        public PageDTO(SqlMapper.GridReader Result, int CurrentPage = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
+        {
+            TotalDataCount = Result.Read<int>().First();
+            Data = Result.Read<T>().ToList();
             this.CurrentPage = CurrentPage;
             PageCount = Shared.GetPageCount(TotalDataCount, PageSize);
         }

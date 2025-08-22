@@ -1,9 +1,12 @@
 ﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
 using AniwalkServer.Models;
 using AniwalkServer.QueryParameters;
+using Dapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
@@ -35,16 +38,14 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
-        /// 對到訪紀錄照片做排序
+        /// 取到訪記錄
+        /// <para>同時取資料和總筆數 (多結果集)</para>
         /// </summary>
-        /// <param name="CountryName"></param>
-        /// <param name="AnimeTitle"></param>
-        /// <param name="MemberName"></param>
-        /// <param name="VisitedDate_From"></param>
-        /// <param name="VisitedDate_To"></param>
-        /// <param name="SortVisitsPhotos"></param>
+        /// <param name="VisitsParam"></param>
+        /// <param name="Page"></param>
+        /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<List<Visits>> GetVisits(VisitsParam? VisitsParam)
+        public async Task<PageDTO<Visits>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0)
         {
             if (VisitsParam == null)
                 VisitsParam = new VisitsParam();
@@ -55,7 +56,7 @@ namespace AniwalkServer.Services
                 "join Animes as A on V.AnimeID = A.AnimeID " +
                 "join Countries as C on V.CountryCode = C.CountryCode " +
                 "where 1=1 ";
-            var SQLPara = new List<SqlParameter>();
+            var SQLPara = new DynamicParameters();
 
             //SQLQuery A
             //var SQLQuery = "select * from Visits as V where 1=1 ";
@@ -91,7 +92,7 @@ namespace AniwalkServer.Services
                 Debug.WriteLine("CountryCode : " + VisitsParam.CountryCode);
 
                 SQLQuery += $"and C.CountryCode = @CountryCode ";
-                SQLPara.Add(new SqlParameter("@CountryCode", VisitsParam.CountryCode));
+                SQLPara.Add("@CountryCode", VisitsParam.CountryCode);
             }
 
             if (!string.IsNullOrEmpty(VisitsParam.CountryName))
@@ -99,7 +100,7 @@ namespace AniwalkServer.Services
                 Debug.WriteLine("CountryName : " + VisitsParam.CountryName);
 
                 SQLQuery += $"and C.CountryName = @CountryName ";
-                SQLPara.Add(new SqlParameter("@CountryName", VisitsParam.CountryName));
+                SQLPara.Add("@CountryName", VisitsParam.CountryName);
             }
 
             if (!string.IsNullOrEmpty(VisitsParam.AnimeID))
@@ -107,7 +108,7 @@ namespace AniwalkServer.Services
                 Debug.WriteLine("AnimeID : " + VisitsParam.AnimeID);
 
                 SQLQuery += $"and A.AnimeID = @AnimeID ";
-                SQLPara.Add(new SqlParameter("@AnimeID", VisitsParam.AnimeID));
+                SQLPara.Add("@AnimeID", VisitsParam.AnimeID);
             }
 
             if (!string.IsNullOrEmpty(VisitsParam.AnimeTitle))
@@ -115,7 +116,7 @@ namespace AniwalkServer.Services
                 Debug.WriteLine("AnimeTitle : " + VisitsParam.AnimeTitle);
 
                 SQLQuery += $"and A.Title = @AnimeTitle ";
-                SQLPara.Add(new SqlParameter("@AnimeTitle", VisitsParam.AnimeTitle));
+                SQLPara.Add("@AnimeTitle", VisitsParam.AnimeTitle);
             }
 
             if (!string.IsNullOrEmpty(VisitsParam.MemberName))
@@ -123,7 +124,7 @@ namespace AniwalkServer.Services
                 Debug.WriteLine("MemberName : " + VisitsParam.MemberName);
 
                 SQLQuery += $"and M.Name = @MemberName ";
-                SQLPara.Add(new SqlParameter("@MemberName", VisitsParam.MemberName));
+                SQLPara.Add("@MemberName", VisitsParam.MemberName);
             }
 
             if (VisitsParam.VisitedDate_From != null && VisitsParam.VisitedDate_To != null)
@@ -136,45 +137,100 @@ namespace AniwalkServer.Services
                 //只比對日期，忽略時間
                 SQLQuery += $"and convert(date, V.VisitedDate) between @VisitedDate_From and @VisitedDate_To ";
 
-                SQLPara.Add(new SqlParameter("@VisitedDate_From", VisitsParam.VisitedDate_From));
-                SQLPara.Add(new SqlParameter("@VisitedDate_To", VisitsParam.VisitedDate_To));
+                SQLPara.Add("@VisitedDate_From", VisitsParam.VisitedDate_From);
+                SQLPara.Add("@VisitedDate_To", VisitsParam.VisitedDate_To);
+            }
+            #endregion
+
+            //加入排序
+            SQLQuery += "order by V.CreatedDate desc ";
+
+            #region 加入分頁查詢參數
+            if (PageSize == 0)//帶入0表示選擇全部不篩選
+            {
+                SQLQuery += ";";//補一個結束符號
+            }
+            else
+            {
+                if (Page < 1)//防呆
+                    Page = 1;
+
+                SQLPara.Add("@Skip", Shared.GetSkip(Page, PageSize));
+                SQLPara.Add("@Take", PageSize);
+
+                SQLQuery += "offset @Skip rows fetch next @Take rows only; ";
             }
             #endregion
 
             //依建立日期排序
             //SQLQuery += "order by V.CreatedDate desc;";
 
+            //與查資料總數語句合併
+            var SQL = "select count(*) as 'TotalDataCount' from Visits;" + SQLQuery;
+
+            Debug.WriteLine("SQL : " + SQL);
+
+            try
+            {
+                using (var Connection = Context.Database.GetDbConnection())
+                {
+                    //手動開啟連線
+                    //if (Connection.State != ConnectionState.Open)
+                    //{
+                    //    Debug.WriteLine("手動開啟連線");
+                    //    await Connection.OpenAsync();
+                    //}
+
+                    var Result = await Connection.QueryMultipleAsync(SQL, SQLPara, commandType: CommandType.Text);
+
+                    //接收資料
+                    var DTO = new PageDTO<Visits>(
+                        Result,
+                        Page,//當前頁碼
+                        PageSize//每頁筆數
+                        );
+
+                    return DTO;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetVisits Error : {ex.Message}");
+
+                return null;
+            }
+
             //雖然直接加入include能夠正常顯示"到訪國家", "動畫名稱", "會員名稱"，但因為已經在SQLQuery join了Members, Animes, Countries，因此再加include等於做了重複的事，浪費資源
-            var VisitsDTO = await Context.VisitsDTO.FromSqlRaw(SQLQuery, SQLPara.ToArray())
-                //.Include(V => V.Member)
-                //.Include(V => V.Anime)
-                //.Include(V => V.Country)
-                .OrderByDescending(V => V.CreatedDate)
-                .ToListAsync();
+            //var VisitsDTO = await Context.VisitsDTO.FromSqlRaw(SQLQuery, SQLPara.ToArray())
+            //    //.Include(V => V.Member)
+            //    //.Include(V => V.Anime)
+            //    //.Include(V => V.Country)
+            //    .OrderByDescending(V => V.CreatedDate)
+            //    .ToListAsync();
 
             //將VisitsDTO轉換成Visits
-            var Visits = new List<Visits>();
-            foreach (var Visit in VisitsDTO)
-            {
-                //Debug.WriteLine(Visit.CountryCode);
-                //Debug.WriteLine(Visit.CountryName);
+            //var Visits = new List<Visits>();
+            //foreach (var Visit in VisitsDTO)
+            //{
+            //    //Debug.WriteLine(Visit.CountryCode);
+            //    //Debug.WriteLine(Visit.CountryName);
 
-                Visits.Add(new Visits
-                {
-                    SN = Visit.SN,
-                    MainText = Visit.MainText,
-                    Latitude = Visit.Latitude,
-                    Longitude = Visit.Longitude,
-                    VisitedDate = Visit.VisitedDate,
-                    CreatedDate = Visit.CreatedDate,
-                    MemberID = Visit.MemberID,
-                    Member = new Members { MemberID = Visit.MemberID, Name = Visit.Name },
-                    CountryCode = Visit.CountryCode,
-                    Country = new Countries { CountryCode = Visit.CountryCode, CountryName = Visit.CountryName },
-                    AnimeID = Visit.AnimeID,
-                    Anime = new Animes { AnimeID = Visit.AnimeID, Title = Visit.Title }
-                });
-            }
+            //    Visits.Add(new Visits
+            //    {
+            //        SN = Visit.SN,
+            //        MainText = Visit.MainText,
+            //        Latitude = Visit.Latitude,
+            //        Longitude = Visit.Longitude,
+            //        VisitedDate = Visit.VisitedDate,
+            //        CreatedDate = Visit.CreatedDate,
+            //        MemberID = Visit.MemberID,
+            //        Member = new Members { MemberID = Visit.MemberID, Name = Visit.Name },
+            //        CountryCode = Visit.CountryCode,
+            //        Country = new Countries { CountryCode = Visit.CountryCode, CountryName = Visit.CountryName },
+            //        AnimeID = Visit.AnimeID,
+            //        Anime = new Animes { AnimeID = Visit.AnimeID, Title = Visit.Title }
+            //    });
+            //}
 
             //SQLQuery A搭配這個有效，但無法自訂其他搜索條件
             //var Visits = await Context.Visits.FromSqlRaw(SQLQuery)
@@ -199,7 +255,7 @@ namespace AniwalkServer.Services
             //    }
             //}
 
-            return Visits;
+            //return Visits;
         }
 
         /// <summary>
