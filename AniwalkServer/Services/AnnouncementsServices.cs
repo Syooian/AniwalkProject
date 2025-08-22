@@ -1,6 +1,10 @@
-﻿using AniwalkServer.Data;
+﻿using Dapper;
+using System.Data;
+using AniwalkServer.Data;
 using AniwalkServer.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using AniwalkServer.DTOs;
 
 namespace AniwalkServer.Services
 {
@@ -20,19 +24,53 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
-        /// 
+        /// 取公告
+        /// <para>同時取資料和總筆數 (多結果集)</para>
         /// </summary>
-        /// <param name="Skip"></param>
-        /// <param name="Take"></param>
+        /// <param name="Page"></param>
+        /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<List<Announcements>> GetAnnouncements(int? Skip, int? Take)
+        public async Task<PageDTO<Announcements>> GetAnnouncements(int Page = 1, int PageSize = 0)
         {
-            var Result = Context.Announcements.OrderByDescending(A => A.CreatedDate);
+            //測試，回傳無資料
+            //return new PageDTO<Announcements>(0, new List<Announcements>(), Page, PageSize);
 
-            if (Skip != null && Take != null)
-                Result.Skip((int)Skip).Take((int)Take);
+            if (Page < 1)//防呆
+                Page = 1;
 
-            return await Result.ToListAsync();
+            using (var Connection = Context.Database.GetDbConnection())
+            {
+                //Skip : 跳過開頭幾筆紀錄
+                //Take : 取幾筆紀錄
+
+                Debug.WriteLine($"GetAnnouncements Page : {Page}, PageSize : {PageSize}");
+
+                try
+                {
+                    var Result = await Connection.QueryMultipleAsync(
+                        "Sp_GetAnnouncements",
+                        new { Skip = Shared.GetSkip(Page, PageSize), Take = PageSize },
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    var DTO = new PageDTO<Announcements>(
+                        Result.ReadAsync<int>().Result.First(),//資料總筆數
+                        Result.ReadAsync<Announcements>().Result.ToList(),//資料
+                        Page,//當前頁碼
+                        PageSize//每頁筆數
+                        );
+
+                    Debug.WriteLine($"頁碼 : {Page}, 總筆數 : {DTO.TotalDataCount}, 取得資料筆數 : {DTO.Data.Count}");
+
+                    return DTO;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"GetAnnouncements Error : {ex.Message}");
+
+                    return null;
+                }
+            }
         }
 
         /// <summary>

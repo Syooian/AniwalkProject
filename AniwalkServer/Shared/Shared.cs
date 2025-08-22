@@ -2,7 +2,7 @@
 
 namespace AniwalkServer
 {
-    public class Shared
+    public partial class Shared
     {
         /// <summary>
         /// 訪客角色名稱
