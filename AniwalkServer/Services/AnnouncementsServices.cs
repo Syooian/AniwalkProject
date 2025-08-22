@@ -35,6 +35,9 @@ namespace AniwalkServer.Services
             //測試，回傳無資料
             //return new PageDTO<Announcements>(0, new List<Announcements>(), Page, PageSize);
 
+            if (Page < 1)//防呆
+                Page = 1;
+
             using (var Connection = Context.Database.GetDbConnection())
             {
                 //Skip : 跳過開頭幾筆紀錄
