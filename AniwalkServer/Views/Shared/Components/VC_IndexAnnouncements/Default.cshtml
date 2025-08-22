@@ -1,6 +1,6 @@
 ﻿@model AniwalkServer.DTOs.PageDTO<Announcements>
 
-<div class="text-center">
+<div class="text-center" id="IndexAnnouncements">
     @if (Model.Data.Any())
     {
         <h3>公告</h3>
@@ -32,7 +32,7 @@
                     <ul class="pagination">
                         <!--上一頁-->
                         <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                            <a class="page-link" href="javascript:void(0)" onclick="Reload(@Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
@@ -41,14 +41,14 @@
                             for (int a = 1; a <= Model.PageCount; a++)
                             {
                                 <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
-                                    <a class="page-link" asp-action="Index" asp-route-Page="@a">@a</a>
+                                    <a class="page-link" href="javascript:void(0)" onclick="Reload(@a)">@a</a>
                                 </li>
                             }
                         }
 
                         <!--下一頁-->
                         <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                            <a class="page-link" href="javascript:void(0)" onclick="Reload(@Model.CurrentPage+1)" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
@@ -62,3 +62,11 @@
         <h3>目前沒有公告。</h3>
     }
 </div>
+
+<script>
+    function Reload(Page){
+        var URL=`/Announcements/IndexAnnouncementsPartial?NewPage=${Page}`;
+        //console.log(URL);
+         $("#IndexAnnouncements").load(URL);
+    }
+</script>
