@@ -1,4 +1,5 @@
 ﻿using AniwalkServer.Data;
+using AniwalkServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,25 +7,21 @@ namespace AniwalkServer.ViewComponents
 {
     public class VC_IndexAnnouncements : ViewComponent
     {
-        private readonly AniwalkDBContext Context;
+        readonly AnnouncementsServices AnnouncementsServices;
 
-        public VC_IndexAnnouncements(AniwalkDBContext Context)
+        public VC_IndexAnnouncements(AnnouncementsServices AnnouncementsServices)
         {
-            this.Context = Context;
+            this.AnnouncementsServices = AnnouncementsServices;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Skip">跳過開頭幾筆紀錄</param>
-        /// <param name="Take">取幾筆紀錄</param>
+        /// <param name="Page"></param>
         /// <returns></returns>
-        public async Task<IViewComponentResult> InvokeAsync(int Skip, int Take)
+        public async Task<IViewComponentResult> InvokeAsync(int Page = 1)
         {
-            var Result = await Context.Announcements.OrderByDescending(A => A.CreatedDate)
-                .Skip(Skip)//跳過開頭幾筆紀錄
-                .Take(Take)//取幾筆紀錄
-                .ToListAsync();
+            var Result = await AnnouncementsServices.GetAnnouncements(Page, (int)DefaultPageSize.PageSize_5);
 
             return View(Result);
         }
