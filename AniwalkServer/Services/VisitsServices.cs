@@ -12,20 +12,13 @@ using System.Diagnostics.Metrics;
 
 namespace AniwalkServer.Services
 {
-    public class VisitsServices
+    public class VisitsServices : ServicesBase
     {
         /// <summary>
         /// 
         /// </summary>
-        readonly AniwalkDBContext Context;
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="Context"></param>
-        public VisitsServices(AniwalkDBContext Context)
-        {
-            this.Context = Context;
-        }
+        public VisitsServices(AniwalkDBContext Context) : base(Context) { }
 
         /// <summary>
         /// 到訪紀錄是否存在
