@@ -13,40 +13,52 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().CreatedDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Data)
+        @if (Model.Data.Count > 0)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td class="col-6">
-                    @Html.DisplayFor(modelItem => item.Content)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedDate)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.SN" class="btn btn-primary">編輯</a> |
-                    <a asp-action="Details" asp-route-id="@item.SN" class="btn btn-primary">檢視</a> |
-                    <form asp-action="Delete">
-                        <input type="hidden" value="@item.SN" name="id" />
-                        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" />
-                    </form>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Content)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Data.FirstOrDefault().CreatedDate)
+                </th>
+                <th></th>
+            </tr>
+        }
+    </thead>
+    <tbody>
+        @if (Model.Data.Count > 0)
+        {
+            @foreach (var item in Model.Data)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td class="col-6">
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreatedDate)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.SN" class="btn btn-primary">編輯</a> |
+                        <a asp-action="Details" asp-route-id="@item.SN" class="btn btn-primary">檢視</a> |
+                        <form asp-action="Delete">
+                            <input type="hidden" value="@item.SN" name="id" />
+                            <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" />
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td><h3 class="text-center">無任何公告</h3></td>
             </tr>
         }
     </tbody>

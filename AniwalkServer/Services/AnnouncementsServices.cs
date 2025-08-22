@@ -32,6 +32,9 @@ namespace AniwalkServer.Services
         /// <returns></returns>
         public async Task<PageDTO<Announcements>> GetAnnouncements(int Page = 1, int PageSize = 0)
         {
+            //測試，回傳無資料
+            //return new PageDTO<Announcements>(0, new List<Announcements>(), Page, PageSize);
+
             using (var Connection = Context.Database.GetDbConnection())
             {
                 //Skip : 跳過開頭幾筆紀錄
