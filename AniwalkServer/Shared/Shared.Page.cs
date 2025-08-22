@@ -39,6 +39,10 @@ namespace AniwalkServer
         /// </summary>
         Max = 0,
         /// <summary>
+        /// 預設一頁資料內有 5 筆資料
+        /// </summary>
+        PageSize_5 = 5,
+        /// <summary>
         /// 預設一頁資料內有 20 筆資料
         /// </summary>
         PageSize_20 = 20,
