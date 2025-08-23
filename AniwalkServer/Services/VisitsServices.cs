@@ -163,34 +163,37 @@ namespace AniwalkServer.Services
 
             Debug.WriteLine("SQL : " + SQL);
 
+            var Connection = Context.Database.GetDbConnection();
+
             try
             {
-                using (var Connection = Context.Database.GetDbConnection())
-                {
-                    //手動開啟連線
-                    //if (Connection.State != ConnectionState.Open)
-                    //{
-                    //    Debug.WriteLine("手動開啟連線");
-                    //    await Connection.OpenAsync();
-                    //}
+                //手動開啟連線
+                //if (Connection.State != ConnectionState.Open)
+                //{
+                //    Debug.WriteLine("手動開啟連線");
+                //    await Connection.OpenAsync();
+                //}
 
-                    var Result = await Connection.QueryMultipleAsync(SQL, SQLPara, commandType: CommandType.Text);
+                var Result = await Connection.QueryMultipleAsync(SQL, SQLPara, commandType: CommandType.Text);
 
-                    //接收資料
-                    var DTO = new PageDTO<Visits>(
-                        Result,
-                        Page,//當前頁碼
-                        PageSize//每頁筆數
-                        );
+                //接收資料
+                var DTO = new PageDTO<Visits>(
+                    Result,
+                    Page,//當前頁碼
+                    PageSize//每頁筆數
+                    );
 
-                    return DTO;
-                }
+                return DTO;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"GetVisits Error : {ex.Message}");
 
                 return null;
+            }
+            finally
+            {
+                Connection.Close();
             }
 
             //雖然直接加入include能夠正常顯示"到訪國家", "動畫名稱", "會員名稱"，但因為已經在SQLQuery join了Members, Animes, Countries，因此再加include等於做了重複的事，浪費資源
