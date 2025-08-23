@@ -38,7 +38,7 @@ namespace AniwalkServer.Services
         /// <param name="Page"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<PageDTO<Visits>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0)
+        public async Task<PageDTO<VisitsDTO>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0)
         {
             if (VisitsParam == null)
                 VisitsParam = new VisitsParam();
@@ -177,13 +177,13 @@ namespace AniwalkServer.Services
                 var Result = await Connection.QueryMultipleAsync(SQL, SQLPara, commandType: CommandType.Text);
 
                 //接收資料
-                var DTO = new PageDTO<Visits>(
+                var Data = new PageDTO<VisitsDTO>(
                     Result,
                     Page,//當前頁碼
                     PageSize//每頁筆數
                     );
 
-                return DTO;
+                return Data;
             }
             catch (Exception ex)
             {
