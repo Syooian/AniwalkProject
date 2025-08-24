@@ -4,7 +4,14 @@
     try
     {
         $(document).ready(function () {
-            $('.js-example-basic-single').select2();
+            $('.js-example-basic-single').select2({
+                allowClear: true,//允許清除選擇
+                placeholder: "請輸入關鍵字"
+                // placeholder: {
+                //     text: "請輸入關鍵字",
+                //     id: -1
+                // }
+            });
             console.log("Select2 initialized.");
         });
     }
