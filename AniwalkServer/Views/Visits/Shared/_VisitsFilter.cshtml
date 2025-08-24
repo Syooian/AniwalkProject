@@ -67,6 +67,8 @@ ShowVisitsOnMap.cshtml
         VisitsFiltedSearch();
     }
 
+    ResetFilter();
+
     function VisitsFiltedSearch(){
         let Filters={
             CountryCode: Ipt_CountryCode.value.trim(),//trim()：去除前後空白
