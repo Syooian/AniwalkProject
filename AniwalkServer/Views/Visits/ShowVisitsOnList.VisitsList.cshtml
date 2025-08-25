@@ -83,6 +83,15 @@
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr>
+                <!--分頁選擇-->
+                @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+                {
+
+                }
+            </tr>
+        </tfoot>
     </table>
 }
 else
