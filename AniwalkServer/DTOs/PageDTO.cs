@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace AniwalkServer.DTOs
 {
@@ -94,6 +96,30 @@ namespace AniwalkServer.DTOs
             this.CurrentPage = CurrentPage;
             PageCount = Shared.GetPageCount(TotalDataCount, PageSize);
             this.Filter = Filter;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, string> GetFilterRouteValues()
+        {
+            var FilterDic = new Dictionary<string, string>();
+            if (Filter != null)
+            {
+                foreach (var Item in Filter.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    var Value = Item.GetValue(Filter);
+                    if (Value != null)
+                    {
+                        Debug.WriteLine($"Add To FilterDic {Item.Name}:{Value}");
+
+                        FilterDic[Item.Name] = Value.ToString();
+                    }
+                }
+            }
+
+            return FilterDic;
         }
     }
 }

@@ -120,12 +120,15 @@ namespace AniwalkServer.Controllers
         public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
             //if (VisitsParam != null)
-            //    Debug.WriteLine(VisitsParam.ToString());
+            //    Debug.WriteLine("ShowVisitsOnList 1 Param : " + VisitsParam.ToString());
 
             var Result = await VisitsServices.GetVisits(VisitsParam, Page, PageSize);
 
             if (Result == null)
                 return NotFound();
+
+            //if (Result.Filter != null)
+            //    Debug.WriteLine("ShowVisitsOnList 2 Filter : " + Result.Filter.ToString());
 
             ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
             await SetViewData();
