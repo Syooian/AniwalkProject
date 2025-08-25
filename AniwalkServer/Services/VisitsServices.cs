@@ -45,12 +45,22 @@ namespace AniwalkServer.Services
 
             Debug.WriteLine($"GetVisits Param : {VisitsParam}, Page : {Page}, PageSize : {PageSize}");
 
-            //直接在資料庫select是完整有東西的，但畫面上卻看不到"到訪國家", "動畫名稱", "會員名稱"
-            var SQLQuery = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " +
+            //資料Join
+            var SQLJoin =
                 "join Members as M on V.MemberID = M.MemberID " +
                 "join Animes as A on V.AnimeID = A.AnimeID " +
-                "join Countries as C on V.CountryCode = C.CountryCode " +
-                "where 1=1 ";
+                "join Countries as C on V.CountryCode = C.CountryCode ";
+
+            //總數查詢
+            var SQLCount = "select count(*) ";
+
+            //資料查詢
+            var SQLData = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " + SQLJoin;
+
+            //查詢條件
+            var SQLSelect = "where 1=1 ";
+
+            //查詢條件參數
             var SQLPara = new DynamicParameters();
 
             //SQLQuery A
@@ -86,7 +96,7 @@ namespace AniwalkServer.Services
             {
                 Debug.WriteLine("CountryCode : " + VisitsParam.CountryCode);
 
-                SQLQuery += $"and C.CountryCode = @CountryCode ";
+                SQLSelect += $"and C.CountryCode = @CountryCode ";
                 SQLPara.Add("@CountryCode", VisitsParam.CountryCode);
             }
 
@@ -94,7 +104,7 @@ namespace AniwalkServer.Services
             {
                 Debug.WriteLine("CountryName : " + VisitsParam.CountryName);
 
-                SQLQuery += $"and C.CountryName = @CountryName ";
+                SQLSelect += $"and C.CountryName = @CountryName ";
                 SQLPara.Add("@CountryName", VisitsParam.CountryName);
             }
 
@@ -102,7 +112,7 @@ namespace AniwalkServer.Services
             {
                 Debug.WriteLine("AnimeID : " + VisitsParam.AnimeID);
 
-                SQLQuery += $"and A.AnimeID = @AnimeID ";
+                SQLSelect += $"and A.AnimeID = @AnimeID ";
                 SQLPara.Add("@AnimeID", VisitsParam.AnimeID);
             }
 
@@ -110,7 +120,7 @@ namespace AniwalkServer.Services
             {
                 Debug.WriteLine("AnimeTitle : " + VisitsParam.AnimeTitle);
 
-                SQLQuery += $"and A.Title = @AnimeTitle ";
+                SQLSelect += $"and A.Title = @AnimeTitle ";
                 SQLPara.Add("@AnimeTitle", VisitsParam.AnimeTitle);
             }
 
@@ -118,7 +128,7 @@ namespace AniwalkServer.Services
             {
                 Debug.WriteLine("MemberName : " + VisitsParam.MemberName);
 
-                SQLQuery += $"and M.Name = @MemberName ";
+                SQLSelect += $"and M.Name = @MemberName ";
                 SQLPara.Add("@MemberName", VisitsParam.MemberName);
             }
 
@@ -130,20 +140,23 @@ namespace AniwalkServer.Services
                 //VisitedDate_From 和 VisitedDate_To 目前是 DateTime 型別，CONVERT(varchar, @VisitedDate_From, 111) 會把參數轉成字串（如 2025/07/29），但 V.VisitedDate 是 datetime 型別，這樣比較會失敗或無法正確查詢。
                 //直接用 datetime 型別做比較，不需要 CONVERT
                 //只比對日期，忽略時間
-                SQLQuery += $"and convert(date, V.VisitedDate) between @VisitedDate_From and @VisitedDate_To ";
+                SQLSelect += $"and convert(date, V.VisitedDate) between @VisitedDate_From and @VisitedDate_To ";
 
                 SQLPara.Add("@VisitedDate_From", VisitsParam.VisitedDate_From);
                 SQLPara.Add("@VisitedDate_To", VisitsParam.VisitedDate_To);
             }
             #endregion
 
-            //加入排序
-            SQLQuery += "order by V.CreatedDate desc ";
+            //將資料查詢加入查詢條件和資料排序 (order by 必須在Skip和Take之前)
+            SQLData += SQLSelect + "order by V.CreatedDate desc ";
 
-            #region 加入分頁查詢參數
+            #region 加入數量查詢和分頁查詢參數
             if (PageSize == 0)//帶入0表示選擇全部不篩選
             {
-                SQLQuery += ";";//補一個結束符號
+                SQLData += ";";//補一個結束符號
+
+                //查詢資料總數
+                SQLCount += "from Visits;";
             }
             else
             {
@@ -155,18 +168,22 @@ namespace AniwalkServer.Services
 
                 Debug.WriteLine($"Skip {Shared.GetSkip(Page, PageSize)}, Take : {PageSize}");
 
-                SQLQuery += "offset @Skip rows fetch next @Take rows only; ";
+                SQLData += "offset @Skip rows fetch next @Take rows only; ";
+
+                //查詢資料總數 (加入查詢條件)
+                SQLCount += "from Visits as V " + SQLJoin + SQLSelect;
             }
             #endregion
 
             //依建立日期排序
             //SQLQuery += "order by V.CreatedDate desc;";
 
-            #region 與查資料總數語句合併
-            var SQL = "select count(*) as 'TotalDataCount' from Visits;" + SQLQuery;
-            #endregion
+            //與數量查詢與資料查詢的語句合併
+            //SQL += SQLQuery;
 
-            Debug.WriteLine("SQL : " + SQL);
+            //Debug.WriteLine("SQL : " + SQL);
+            Debug.WriteLine($"SQLCount : {SQLCount}");
+            Debug.WriteLine($"SQLData : {SQLData}");
 
             var Connection = Context.Database.GetDbConnection();
 
@@ -179,7 +196,9 @@ namespace AniwalkServer.Services
                 //    await Connection.OpenAsync();
                 //}
 
-                var Result = await Connection.QueryMultipleAsync(SQL, SQLPara, commandType: CommandType.Text);
+                //SQL的查詢語句需與PageDTO內讀取的順序相同 (先數量再資料)
+
+                var Result = await Connection.QueryMultipleAsync(SQLCount + SQLData, SQLPara, commandType: CommandType.Text);
 
                 //接收資料
                 var Data = new PageDTO<VisitsDTO, VisitsParam>(
