@@ -67,7 +67,7 @@
         <tfoot>
             <tr>
                 <!--分頁選擇-->
-                @if (Model.PageCount > 1 && Model.TotalDataCount > (int)Model.PageSize)
+                @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
                 {
                     <td class="text-center">
                         <nav aria-label="...">

@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace AniwalkServer.Services
 {
@@ -18,6 +19,7 @@ namespace AniwalkServer.Services
         /// <param name="Context"></param>
         protected ServicesBase(AniwalkDBContext Context)
         {
+            Debug.WriteLine($"[{GetType().Name}] Constructor called.");
             this.Context = Context;
         }
     }

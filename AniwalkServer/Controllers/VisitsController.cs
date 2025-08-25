@@ -79,6 +79,9 @@ namespace AniwalkServer.Controllers
             //Result.OrderByDescending(R => R.CreatedDate);
             #endregion
 
+            if (Result == null)
+                return NotFound();
+
             //var Markers = new List<object>
             //{
             //    new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
@@ -98,13 +101,13 @@ namespace AniwalkServer.Controllers
                 //Debug.WriteLine("Return AJAX");
 
                 // 回傳部分視圖（只渲染清單）
-                return Json(Result); // _VisitsList.cshtml 需只渲染清單
+                return Json(Result.Data); // _VisitsList.cshtml 需只渲染清單
             }
             else// 一般頁面載入
             {
                 //Debug.WriteLine("Return View");
 
-                return View(Result.ToArray());
+                return View(Result.Data);
             }
         }
 
@@ -114,12 +117,18 @@ namespace AniwalkServer.Controllers
         /// <param name="VisitsParam"></param>
         /// <returns></returns>
         [AllowAnonymous]//允許所有人檢視
-        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam)
+        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
             //if (VisitsParam != null)
-            //    Debug.WriteLine(VisitsParam.ToString());
+            //    Debug.WriteLine("ShowVisitsOnList 1 Param : " + VisitsParam.ToString());
 
-            var Result = await VisitsServices.GetVisits(VisitsParam);
+            var Result = await VisitsServices.GetVisits(VisitsParam, Page, PageSize);
+
+            if (Result == null)
+                return NotFound();
+
+            //if (Result.Filter != null)
+            //    Debug.WriteLine("ShowVisitsOnList 2 Filter : " + Result.Filter.ToString());
 
             ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
             await SetViewData();
@@ -425,7 +434,7 @@ namespace AniwalkServer.Controllers
         /// </summary>
         public async Task SetViewData()
         {
-            ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
+            ViewData[ViewDataKeys.CountryCode] = await CountriesServices.GetCountriesSelect();
             ViewData[ViewDataKeys.AnimeID] = await AnimesServices.GetAnimesSelect();
             //ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
             //    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);

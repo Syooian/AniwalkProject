@@ -1,47 +1,75 @@
-﻿@model IEnumerable<AniwalkServer.Models.Visits>
+﻿@model PageDTO<VisitsDTO,VisitsParam>
+@using AniwalkServer.QueryParameters
+@using Microsoft.AspNetCore.Mvc.ModelBinding
 @using System.Security.Claims
+@using AniwalkServer.DTOs
+@using System.Diagnostics;
+@inject IModelMetadataProvider MetadataProvider
 @{
     var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    var CountryDisplayName = MetadataProvider.GetMetadataForType(typeof(Visits))
+        .Properties.FirstOrDefault(p => p.Name == nameof(Visits.CountryCode)).DisplayName;
+    var AnimeTitle = MetadataProvider.GetMetadataForType(typeof(Animes))
+        .Properties.FirstOrDefault(P => P.Name == nameof(Animes.Title)).DisplayName;
+    var MemberName = MetadataProvider.GetMetadataForType(typeof(Members))
+        .Properties.FirstOrDefault(P => P.Name == nameof(Members.Name)).DisplayName;
+
+    #region 條件篩選
+    if (Model.Filter != null)
+        Debug.WriteLine("VisitsList Filter : " + Model.Filter);
+    else
+        Debug.WriteLine("VisitsList Filter is null");
+
+    var FilterRouteValues = Model.GetFilterRouteValues();
+    // foreach (var Item in FilterRouteValues)
+    // {
+    //     Debug.WriteLine($"FilterRouteData {Item.Key}:{Item.Value}");
+    // }
+    #endregion
 }
 
-@if (Model.Any())
+@if (Model.Data.Any())
 {
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.CountryCode)
+                    @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().CountryCode)*@
+                    @CountryDisplayName
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Anime.Title)
+                    @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Anime.Title)*@
+                    @AnimeTitle
                 </th>
                 <th>
                     @*@Html.DisplayNameFor(model => model.Longitude)*@
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Member.Name)
+                    @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Member.Name)*@
+                    @MemberName
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.VisitedDate)
+                    @Html.DisplayNameFor(model => model.Data.FirstOrDefault().VisitedDate)
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Data)
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Country.CountryName)
+                        @Html.DisplayFor(modelItem => item.CountryName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Anime.Title)
+                        @Html.DisplayFor(modelItem => item.Title)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.MainText)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Member.Name)
+                        @Html.DisplayFor(modelItem => item.Name)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.VisitedDate)
@@ -70,6 +98,42 @@
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr>
+                <!--分頁選擇-->
+                @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+                {
+                    <td class="text-center">
+                        <nav aria-label="...">
+                            <ul class="pagination">
+                                <!--上一頁-->
+                                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+
+                                @{
+                                    for (int a = 1; a <= Model.PageCount; a++)
+                                    {
+                                        <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
+                                            <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@a">@a</a><!--asp-all-route-data似乎會覆蓋掉asp-route-Page，所以將asp-all-route-data放在最前-->
+                                        </li>
+                                    }
+                                }
+
+                                <!--下一頁-->
+                                <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
+                                    <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </td>
+                }
+            </tr>
+        </tfoot>
     </table>
 }
 else

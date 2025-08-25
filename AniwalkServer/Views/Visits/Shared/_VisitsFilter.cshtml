@@ -1,4 +1,7 @@
 ﻿@using AniwalkServer.Data;
+@*@using AniwalkServer.DTOs
+@using System.Diagnostics;
+@model PageDTO<VisitsDTO>*@
 
 @*
 移動此檔案位置時，需修改下列檔案的呼叫路徑
@@ -37,7 +40,7 @@ ShowVisitsOnMap.cshtml
                 </div>
                 <div>
                     <button type="button" class="btn btn-primary" onclick="VisitsFiltedSearch()">搜尋</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="ResetFilter()">清空</button>
+                    <button type="button" class="btn btn-outline-primary" id="Btn_Reset">清空</button>
                 </div>
             </div>
         </div>
@@ -46,9 +49,17 @@ ShowVisitsOnMap.cshtml
 
 @{
     var AJAXActionKey = ViewData[AniwalkServer.Data.ViewDataKeys.AJAXAction];//Razor變數只會在開頭執行，所以下面要用const去接，不然會找不到
+
+    //Debug.WriteLine(Model == null ? " Model is null" : "Model have value");
 }
 
 <script>
+    //設置清空按鈕的行為
+    document.getElementById("Btn_Reset").addEventListener("click", function(){
+        ResetFilter();
+        VisitsFiltedSearch();
+    });
+
     const AJAXActionKey="@AJAXActionKey";
     const Ipt_CountryCode = document.getElementById("Ipt_CountryCode");
     const Ipt_AnimeID = document.getElementById("Ipt_AnimeID");
@@ -63,9 +74,9 @@ ShowVisitsOnMap.cshtml
         Ipt_MemberName.value="";
         Ipt_VisitedDate_From.value="";
         Ipt_VisitedDate_To.value="";
-
-        VisitsFiltedSearch();
     }
+
+    ResetFilter()
 
     function VisitsFiltedSearch(){
         let Filters={
@@ -80,6 +91,14 @@ ShowVisitsOnMap.cshtml
 
         //用 URLSearchParams 轉換 (不然直接Filters.toString()會印出[object Object]而不是CountryName=xxx&AnimeTitle=yyy&MemberName=zzz&VisitedDate=2025-08-11)
         Filters=new URLSearchParams(Filters);
+
+        @*
+        var Page=null;
+        @if(Model!=null)
+        {
+            Page
+        }
+        *@
 
         var FetchURL=`/Visits/${AJAXActionKey}?${Filters}`;
         //console.log("FetchURL : "+FetchURL);
