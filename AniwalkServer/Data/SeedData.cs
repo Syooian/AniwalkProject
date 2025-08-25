@@ -201,6 +201,21 @@ namespace AniwalkServer.Data
                     VisitedDate = DateTime.Now.AddDays(-15)
                 });
 
+                var Ran = new Random();
+                for (int a = 0; a < 100; a++)
+                {
+                    Visits.Add(new Visits()
+                    {
+                        MainText = $"Test Anime MainText {a + 1}",
+                        Latitude = 20 + (22 - 20) * Ran.NextDouble(),//產生20~22內的隨機數值
+                        Longitude = 120 + (122 - 120) * Ran.NextDouble(),//產生120~122內的隨機數值
+                        MemberID = MemberIDs[Ran.Next(0, MemberIDs.Length)],
+                        CountryCode = Countries[Ran.Next(0, Countries.Length)].CountryCode,
+                        AnimeID = Animes[Ran.Next(0, Animes.Length)].AnimeID,
+                        VisitedDate = DateTime.Now.AddDays((a + 1) * -5)
+                    });
+                }
+
                 context.Visits.AddRange(Visits);
 
                 context.SaveChanges();
