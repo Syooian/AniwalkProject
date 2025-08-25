@@ -67,7 +67,7 @@ ShowVisitsOnMap.cshtml
         VisitsFiltedSearch();
     }
 
-    ResetFilter();
+    //ResetFilter();//不要在這裡呼叫ResetFilter，會造成資料再request一次
 
     function VisitsFiltedSearch(){
         let Filters={
@@ -82,6 +82,8 @@ ShowVisitsOnMap.cshtml
 
         //用 URLSearchParams 轉換 (不然直接Filters.toString()會印出[object Object]而不是CountryName=xxx&AnimeTitle=yyy&MemberName=zzz&VisitedDate=2025-08-11)
         Filters=new URLSearchParams(Filters);
+
+
 
         var FetchURL=`/Visits/${AJAXActionKey}?${Filters}`;
         //console.log("FetchURL : "+FetchURL);
