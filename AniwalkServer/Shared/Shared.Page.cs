@@ -37,7 +37,7 @@ namespace AniwalkServer
         /// <returns></returns>
         public static bool CheckShowPage(int PageCount, int TotalDataCount, int PageSize)
         {
-            Debug.WriteLine($"CheckShowPage PageCount : {PageCount}, TotalDataCount : {TotalDataCount}, PageSize : {PageSize}");
+            //Debug.WriteLine($"CheckShowPage PageCount : {PageCount}, TotalDataCount : {TotalDataCount}, PageSize : {PageSize}");
 
             if (PageCount > 1 && TotalDataCount > PageSize)
                 return true;

@@ -117,12 +117,12 @@ namespace AniwalkServer.Controllers
         /// <param name="VisitsParam"></param>
         /// <returns></returns>
         [AllowAnonymous]//允許所有人檢視
-        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam)
+        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
             //if (VisitsParam != null)
             //    Debug.WriteLine(VisitsParam.ToString());
 
-            var Result = await VisitsServices.GetVisits(VisitsParam);
+            var Result = await VisitsServices.GetVisits(VisitsParam, Page, PageSize);
 
             if (Result == null)
                 return NotFound();
