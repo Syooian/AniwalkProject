@@ -38,10 +38,12 @@ namespace AniwalkServer.Services
         /// <param name="Page"></param>
         /// <param name="PageSize"></param>
         /// <returns></returns>
-        public async Task<PageDTO<VisitsDTO>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0)
+        public async Task<PageDTO<VisitsDTO, VisitsParam>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0)
         {
             if (VisitsParam == null)
                 VisitsParam = new VisitsParam();
+
+            Debug.WriteLine($"GetVisits Param : {VisitsParam}, Page : {Page}, PageSize : {PageSize}");
 
             //直接在資料庫select是完整有東西的，但畫面上卻看不到"到訪國家", "動畫名稱", "會員名稱"
             var SQLQuery = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " +
@@ -151,6 +153,8 @@ namespace AniwalkServer.Services
                 SQLPara.Add("@Skip", Shared.GetSkip(Page, PageSize));
                 SQLPara.Add("@Take", PageSize);
 
+                Debug.WriteLine($"Skip {Shared.GetSkip(Page, PageSize)}, Take : {PageSize}");
+
                 SQLQuery += "offset @Skip rows fetch next @Take rows only; ";
             }
             #endregion
@@ -158,8 +162,9 @@ namespace AniwalkServer.Services
             //依建立日期排序
             //SQLQuery += "order by V.CreatedDate desc;";
 
-            //與查資料總數語句合併
+            #region 與查資料總數語句合併
             var SQL = "select count(*) as 'TotalDataCount' from Visits;" + SQLQuery;
+            #endregion
 
             Debug.WriteLine("SQL : " + SQL);
 
@@ -177,11 +182,12 @@ namespace AniwalkServer.Services
                 var Result = await Connection.QueryMultipleAsync(SQL, SQLPara, commandType: CommandType.Text);
 
                 //接收資料
-                var Data = new PageDTO<VisitsDTO>(
+                var Data = new PageDTO<VisitsDTO, VisitsParam>(
                     Result,
                     Page,//當前頁碼
-                    PageSize//每頁筆數
-                    );
+                    PageSize,//每頁筆數
+                    VisitsParam//篩選參數
+                );
 
                 return Data;
             }
