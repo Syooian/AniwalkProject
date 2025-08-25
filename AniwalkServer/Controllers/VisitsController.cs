@@ -101,7 +101,7 @@ namespace AniwalkServer.Controllers
                 //Debug.WriteLine("Return AJAX");
 
                 // 回傳部分視圖（只渲染清單）
-                return Json(Result); // _VisitsList.cshtml 需只渲染清單
+                return Json(Result.Data); // _VisitsList.cshtml 需只渲染清單
             }
             else// 一般頁面載入
             {
