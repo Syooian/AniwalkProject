@@ -40,7 +40,7 @@ ShowVisitsOnMap.cshtml
                 </div>
                 <div>
                     <button type="button" class="btn btn-primary" onclick="VisitsFiltedSearch()">搜尋</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="ResetFilter()">清空</button>
+                    <button type="button" class="btn btn-outline-primary" id="Btn_Reset">清空</button>
                 </div>
             </div>
         </div>
@@ -49,11 +49,17 @@ ShowVisitsOnMap.cshtml
 
 @{
     var AJAXActionKey = ViewData[AniwalkServer.Data.ViewDataKeys.AJAXAction];//Razor變數只會在開頭執行，所以下面要用const去接，不然會找不到
-    
+
     //Debug.WriteLine(Model == null ? " Model is null" : "Model have value");
 }
 
 <script>
+    //設置清空按鈕的行為
+    document.getElementById("Btn_Reset").addEventListener("click", function(){
+        ResetFilter();
+        VisitsFiltedSearch();
+    });
+
     const AJAXActionKey="@AJAXActionKey";
     const Ipt_CountryCode = document.getElementById("Ipt_CountryCode");
     const Ipt_AnimeID = document.getElementById("Ipt_AnimeID");
@@ -68,11 +74,9 @@ ShowVisitsOnMap.cshtml
         Ipt_MemberName.value="";
         Ipt_VisitedDate_From.value="";
         Ipt_VisitedDate_To.value="";
-
-        VisitsFiltedSearch();
     }
 
-    //ResetFilter();//不要在這裡呼叫ResetFilter，會造成資料再request一次
+    ResetFilter()
 
     function VisitsFiltedSearch(){
         let Filters={
