@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Comments>
+@using System.Diagnostics;
 @{
     Layout = null;
 }
@@ -12,42 +13,56 @@
     <div class="border border-1 rounded p-3 bg-secondary">
         @foreach (var Comment in Model)
         {
-            <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
-                <p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>
-                <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
-                <p class="text-end">
-                    @Html.DisplayFor(ModelItem => Comment.Member.Name) 發表於 @Html.DisplayFor(ModelItem => Comment.CommentDate)
-                    <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
-                        回覆
-                    </button>
-                </p>
-                @if (Comment.Replies.Count > 0)
-                {
-                    <hr />
-                    <div style="padding-left: 20px">
-                        @foreach (var Reply in Comment.Replies)
-                        {
-                            <p>@Html.DisplayFor(Item => Reply.ReplyID)</p>
-                            @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
+            if (Comment.DeleteDate == null)
+            {
+                <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
+                    <p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>
+                    <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
+                    <p class="text-end">
+                        @Html.DisplayFor(ModelItem => Comment.Member.Name) 發表於 @Html.DisplayFor(ModelItem => Comment.CommentDate)
+                        <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
+                            回覆
+                        </button>
+                    </p>
+                    @if (Comment.Replies.Count > 0)
+                    {
+                        <hr />
+                        <div style="padding-left: 20px">
+                            @foreach (var Reply in Comment.Replies)
                             {
-                                <p>回覆 @Html.DisplayFor(Item => Reply.ParentReply.Member.Name)</p>
+                                if (Reply.DeleteDate == null)
+                                {
+                                    <p>@Html.DisplayFor(Item => Reply.ReplyID)</p>
+                                    @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
+                                    {
+                                        <p>回覆 @Html.DisplayFor(Item => Reply.ParentReply.Member.Name)</p>
+                                    }
+                                    else//回覆給評論
+                                    {
+                                        <p>回覆 @Html.DisplayFor(Item => Reply.Comment.Member.Name)</p>
+                                    }
+                                    <p>@Html.DisplayFor(Item => Reply.ReplyContent)</p>
+                                    <p class="text-end">
+                                        @Html.DisplayFor(Item => Reply.Member.Name) 發表於 @Html.DisplayFor(Item => Reply.ReplyDate)
+                                        <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
+                                            回覆
+                                        </button>
+                                    </p>
+                                    <hr />
+                                }
+                                else
+                                {
+                                    Debug.WriteLine($"Reply {Reply.ReplyID} 刪除於 {Reply.DeleteDate}");
+                                }
                             }
-                            else//回覆給評論
-                            {
-                                <p>回覆 @Html.DisplayFor(Item => Reply.Comment.Member.Name)</p>
-                            }
-                            <p>@Html.DisplayFor(Item => Reply.ReplyContent)</p>
-                            <p class="text-end">
-                                @Html.DisplayFor(Item => Reply.Member.Name) 發表於 @Html.DisplayFor(Item => Reply.ReplyDate)
-                                <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
-                                    回覆
-                                </button>
-                            </p>
-                            <hr />
-                        }
-                    </div>
-                }
-            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                Debug.WriteLine($"Comment {Comment.CommentID} 刪除於 {Comment.DeleteDate}");
+            }
         }
     </div>
 }
