@@ -16,7 +16,13 @@
             if (Comment.DeleteDate == null)
             {
                 <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
-                    <p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>
+                    @*<p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>*@
+                    <p class="text-end">
+                        <button type="button" class="rounded-circle border-0 box-shadow">
+                            <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
+                        </button>
+                    </p>
+
                     <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
                     <p class="text-end">
                         @Html.DisplayFor(ModelItem => Comment.Member.Name) 發表於 @Html.DisplayFor(ModelItem => Comment.CommentDate)
@@ -32,7 +38,13 @@
                             {
                                 if (Reply.DeleteDate == null)
                                 {
-                                    <p>@Html.DisplayFor(Item => Reply.ReplyID)</p>
+                                    @*<p>@Html.DisplayFor(Item => Reply.ReplyID)</p>*@
+                                    <p class="text-end">
+                                        <button type="button" class="rounded-circle border-0 box-shadow">
+                                            <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
+                                        </button>
+                                    </p>
+
                                     @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
                                     {
                                         <p>回覆 @Html.DisplayFor(Item => Reply.ParentReply.Member.Name)</p>
