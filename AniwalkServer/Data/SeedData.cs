@@ -202,6 +202,7 @@ namespace AniwalkServer.Data
                 });
 
                 var Ran = new Random();
+
                 for (int a = 0; a < 100; a++)
                 {
                     Visits.Add(new Visits()
@@ -214,6 +215,27 @@ namespace AniwalkServer.Data
                         AnimeID = Animes[Ran.Next(0, Animes.Length)].AnimeID,
                         VisitedDate = DateTime.Now.AddDays((a + 1) * -5)
                     });
+                }
+
+                //載入檔案
+                {
+                    var VisitsLoad = new List<Visits>();
+                    var FilePath = Path.Combine(SeedDataPath, "Visits.txt");
+                    LoadFile(FilePath, ref VisitsLoad);
+
+                    for (int a = 0; a < VisitsLoad.Count; a++)
+                    {
+                        Visits.Add(new Visits()
+                        {
+                            MainText = VisitsLoad[a].MainText,
+                            Latitude = 20 + (22 - 20) * Ran.NextDouble(),//產生20~22內的隨機數值
+                            Longitude = 120 + (122 - 120) * Ran.NextDouble(),//產生120~122內的隨機數值
+                            MemberID = MemberIDs[Ran.Next(0, MemberIDs.Length)],
+                            CountryCode = Countries[Ran.Next(0, Countries.Length)].CountryCode,
+                            AnimeID = Animes[Ran.Next(0, Animes.Length)].AnimeID,
+                            VisitedDate = DateTime.Now.AddDays((a + 1) * -5)
+                        });
+                    }
                 }
 
                 context.Visits.AddRange(Visits);
