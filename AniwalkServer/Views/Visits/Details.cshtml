@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.MainText)
             </dt>
             <dd class="col-sm-9">
-                @Html.Raw(Model.MainText.Replace("\r\n", "<br>"))
+                @Html.Raw(Shared.ConvertNewLineToBr(Model.MainText))
             </dd>
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.Latitude)

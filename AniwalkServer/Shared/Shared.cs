@@ -56,6 +56,21 @@ namespace AniwalkServer
 
             return "";
         }
+
+        /// <summary>
+        /// 轉換斷行符號
+        /// </summary>
+        /// <param name="Msg"></param>
+        /// <returns></returns>
+        public static string ConvertNewLineToBr(string Msg)
+        {
+            if (!string.IsNullOrEmpty(Msg))
+            {
+                return Msg.Replace("\r\n", "<br>");
+            }
+
+            return "";
+        }
     }
 
     /// <summary>
