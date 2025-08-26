@@ -37,6 +37,25 @@ namespace AniwalkServer
                 }
             }
         }
+
+        /// <summary>
+        /// 截斷文字
+        /// </summary>
+        /// <param name="Msg">文字內容</param>
+        /// <param name="LimitLength">限制長度</param>
+        /// <returns></returns>
+        public static string TruncateText(string Msg, int LimitLength)
+        {
+            if (!string.IsNullOrEmpty(Msg))
+            {
+                if (Msg.Length > LimitLength)
+                    return Msg.Substring(0, LimitLength) + "......";
+                else
+                    return Msg;
+            }
+
+            return "";
+        }
     }
 
     /// <summary>
