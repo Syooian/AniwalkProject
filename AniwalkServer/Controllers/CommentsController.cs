@@ -144,20 +144,20 @@ namespace AniwalkServer.Controllers
         /// 刪除評論
         /// </summary>
         /// <param name="VisitSN"></param>
-        /// <param name="CommentID"></param>
+        /// <param name="ID"></param>
         /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string CommentID)
+        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string ID)
         {
             //Debug.WriteLine("DeleteComment : " + CommentID);
 
-            if (string.IsNullOrEmpty(CommentID))
+            if (string.IsNullOrEmpty(ID))
             {
                 return NotFound();
             }
 
-            var Result = await CommentsServices.DeleteComment(CommentID);
+            var Result = await CommentsServices.DeleteComment(ID);
             if (Result.Type == ResultType.Fail)
             {
                 return NotFound();

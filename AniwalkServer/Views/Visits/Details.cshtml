@@ -228,14 +228,14 @@
 
             $.ajax({
                 type: "POST",
-                url: `/${Controller}/Delete/${ID}`,
+                url: `/${Controller}/Delete`,
                 success:function(){
                     //更新底下回覆留言區
                     UpdateList();
                 },
                 data:{
                     VisitSN: '@Model.SN',
-                    CommentID: ID,
+                    ID: ID,
                     __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()//Anti-Forgery Token
                 },
                 error:function(xhr, status, error){

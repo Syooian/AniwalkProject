@@ -139,16 +139,16 @@ namespace AniwalkServer.Controllers
         /// 刪除回覆
         /// </summary>
         /// <param name="VisitSN"></param>
-        /// <param name="ReplyID"></param>
+        /// <param name="ID"></param>
         /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string ReplyID)
+        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string ID)
         {
-            if (string.IsNullOrEmpty(ReplyID))
+            if (string.IsNullOrEmpty(ID))
                 return NotFound();
 
-            var Result = await RepliesServices.DeleteReply(ReplyID);
+            var Result = await RepliesServices.DeleteReply(ID);
             if (Result.Type == ResultType.Fail)
                 return NotFound();
 
