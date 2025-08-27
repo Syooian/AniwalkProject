@@ -211,13 +211,7 @@
                     data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    $('#ContentList').load('/Visits/GetContentsByViewComponent?VisitSN=@(Model.SN)');
-
-                    //將表單重新載入（也可在送出表單後重新產生GUID）
-                    // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
-                    //     $.validator.unobtrusive.parse($('#CommentForm'));
-                    // });
-                    LoadAddContentForm(Controller);
+                    UpdateList();
 
                     //關閉彈出框
                     Modal.hide();
@@ -226,6 +220,11 @@
                     console.error("新增評論\回覆錯誤", error);
                 }
             });
+        }
+
+        //更新底下回覆留言區
+        function UpdateList(){
+            $('#ContentList').load('/Visits/GetContentsByViewComponent?VisitSN=@(Model.SN)');
         }
     </script>
 }
