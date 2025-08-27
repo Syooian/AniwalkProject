@@ -1,5 +1,8 @@
-﻿<p class="text-end">
-    <button type="button" class="rounded-circle border-0 box-shadow">
-        <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
-    </button>
-</p>
+﻿@if (User.IsInRole(Shared.Role_Member))
+{
+    <p class="text-end">
+        <button type="button" class="rounded-circle border-0 box-shadow">
+            <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
+        </button>
+    </p>
+}
