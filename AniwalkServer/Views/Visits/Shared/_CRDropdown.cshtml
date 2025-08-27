@@ -10,7 +10,10 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="@ID">
             <li>
-                <button class="dropdown-item" onclick="DeleteContent('@Model.Controller', '@Model.ID')">刪除</button>
+                <button class="dropdown-item"><img src="~/lib/bootstrap/Icon/flag.svg"/> 檢舉</button>
+            </li>
+            <li>
+                <button class="dropdown-item" onclick="DeleteContent('@Model.Controller', '@Model.ID')"><img src="~/lib/bootstrap/Icon/x-octagon.svg" /> 刪除</button>
             </li>
         </ul>
     </div>
