@@ -226,6 +226,10 @@
         function DeleteContent(Controller, ID){
             //console.log($`DeleteContent : Controller : ${Controller}, ID : ${ID}`);
 
+            if(!confirm('確定刪除？')){
+                return;
+            }
+
             $.ajax({
                 type: "POST",
                 url: `/${Controller}/Delete`,
