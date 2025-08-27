@@ -141,10 +141,10 @@
         const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
 
         //驗證是否登入
-        function CheckAuthorization(Action, CommentID="", ParentReplyID=""){
-            console.log("CheckAuthorization Action : "+Action+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+        function CheckAuthorization(Controller, CommentID="", ParentReplyID=""){
+            console.log("CheckAuthorization Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
-            fetch('/'+Action+'/Create', {
+            fetch('/'+Controller+'/Create', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
@@ -160,7 +160,7 @@
                     //     留言
                     // </button>
 
-                    LoadAddContentForm(Action, CommentID, ParentReplyID);
+                    LoadAddContentForm(Controller, CommentID, ParentReplyID);
 
                     //已登入
                     Modal.show();
@@ -170,10 +170,10 @@
             });
         }
 
-        function LoadAddContentForm(Action, CommentID="", ParentReplyID=""){
-            console.log("LoadAddContentForm Action : "+Action+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+        function LoadAddContentForm(Controller, CommentID="", ParentReplyID=""){
+            console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
-            var URL='/'+Action+'/Create?VisitSN=@Model.SN';
+            var URL='/'+Controller+'/Create?VisitSN=@Model.SN';
             if(CommentID != "")//回覆給評論
                 URL+='&CommentID='+CommentID;
 
@@ -196,8 +196,8 @@
         //LoadAddContentForm();
 
         //使用Ajax達成新增回覆留言
-        function AddContent(Action){
-            console.log("AddContent : "+Action);
+        function AddContent(Controller){
+            console.log("AddContent : "+Controller);
 
             //2.5.17判斷表單是否驗證通過
                 if(!$('#AddContentForm form').valid()){
@@ -207,17 +207,17 @@
 
             $.ajax({
                 type:"POST",
-                url:"/"+Action+"/Create",//Controller/Action
+                url:"/"+Controller+"/Create",//Controller/Action
                     data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    $('#ContentList').load('/'+Action+'/GetContentsByViewComponent?VisitSN=@(Model.SN)');
+                    $('#ContentList').load('/'+Controller+'/GetContentsByViewComponent?VisitSN=@(Model.SN)');
 
                     //將表單重新載入（也可在送出表單後重新產生GUID）
                     // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
                     //     $.validator.unobtrusive.parse($('#CommentForm'));
                     // });
-                    LoadAddContentForm(Action);
+                    LoadAddContentForm(Controller);
 
                     //關閉彈出框
                     Modal.hide();
