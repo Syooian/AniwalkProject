@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AniwalkServer.Services
 {
-    public class CommentsServices
+    public class RepliesServices
     {
         /// <summary>
         /// 
@@ -14,7 +14,7 @@ namespace AniwalkServer.Services
         /// 
         /// </summary>
         /// <param name="Context"></param>
-        public CommentsServices(AniwalkDBContext Context)
+        public RepliesServices(AniwalkDBContext Context)
         {
             this.Context = Context;
         }
@@ -22,27 +22,27 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="CommentID"></param>
+        /// <param name="ReplyID"></param>
         /// <returns></returns>
-        public async Task<Comments> GetComment(string CommentID)
+        public async Task<Replies> GetReply(string ReplyID)
         {
-            return await Context.Comments.FindAsync(CommentID);
+            return await Context.Replies.FindAsync(ReplyID);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="CommentID"></param>
+        /// <param name="ReplyID"></param>
         /// <returns></returns>
-        public async Task<Result> DeleteComment(string CommentID)
+        public async Task<Result> DeleteReply(string ReplyID)
         {
-            var Comment = await GetComment(CommentID);
-            if (Comment == null)
+            var Reply = await GetReply(ReplyID);
+            if (Reply == null)
                 return new Result(ResultType.Fail, "Not Found");
 
-            Comment.DeleteDate = DateTime.Now;
+            Reply.DeleteDate = DateTime.Now;
 
-            Context.Update(Comment);
+            Context.Update(Reply);
             await Context.SaveChangesAsync();
 
             return new Result();
@@ -53,9 +53,9 @@ namespace AniwalkServer.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool IsCommentsExists(string id)
+        public bool IsReplyExists(string id)
         {
-            return Context.Comments.Any(e => e.CommentID == id);
+            return Context.Replies.Any(e => e.ReplyID == id);
         }
     }
 }

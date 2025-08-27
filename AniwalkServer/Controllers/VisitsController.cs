@@ -400,6 +400,19 @@ namespace AniwalkServer.Controllers
         //}
 
         /// <summary>
+        /// 取得回覆留言資料
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetContentsByViewComponent(int VisitSN)
+        {
+            Debug.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
+
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
+        }
+
+        /// <summary>
         /// 刪除到訪紀錄
         /// </summary>
         /// <param name="VisitSN"></param>
