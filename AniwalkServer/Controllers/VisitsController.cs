@@ -122,7 +122,7 @@ namespace AniwalkServer.Controllers
             //if (VisitsParam != null)
             //    Debug.WriteLine("ShowVisitsOnList 1 Param : " + VisitsParam.ToString());
 
-            var Result = await VisitsServices.GetVisits(VisitsParam, Page, PageSize);
+            var Result = await VisitsServices.GetVisits(VisitsParam, Page, PageSize, (User.IsInRole(Shared.Role_Admin) ? true : false));
 
             if (Result == null)
                 return NotFound();

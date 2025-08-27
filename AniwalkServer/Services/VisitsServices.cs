@@ -56,7 +56,7 @@ namespace AniwalkServer.Services
             var SQLCount = "select count(*) ";
 
             //資料查詢
-            var SQLData = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " + SQLJoin;
+            var SQLData = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate, V.DeleteDate from Visits as V " + SQLJoin;
 
             //查詢條件
             string SQLSelect;

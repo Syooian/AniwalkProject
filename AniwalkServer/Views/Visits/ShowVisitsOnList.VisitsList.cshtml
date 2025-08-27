@@ -58,7 +58,7 @@
         <tbody>
             @foreach (var item in Model.Data)
             {
-                <tr>
+                <tr class="@(item.DeleteDate != null ? "bg-warning" : "")">
                     <td>
                         @Html.DisplayFor(modelItem => item.CountryName)
                     </td>
