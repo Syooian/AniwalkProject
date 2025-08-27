@@ -18,8 +18,8 @@
             if (Comment.DeleteDate == null)
             {
                 <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
-                    @*<p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>*@
-                    @await Html.PartialAsync(CRDropdownPath)
+                    <p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>
+                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Comments", ID = Comment.CommentID })
 
                     <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
                     <p class="text-end">
@@ -37,7 +37,7 @@
                                 if (Reply.DeleteDate == null)
                                 {
                                     @*<p>@Html.DisplayFor(Item => Reply.ReplyID)</p>*@
-                                    @await Html.PartialAsync(CRDropdownPath)
+                                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Replies", ID = Reply.ReplyID })
 
                                     @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
                                     {

@@ -142,7 +142,7 @@
 
         //驗證是否登入
         function CheckAuthorization(Controller, CommentID="", ParentReplyID=""){
-            console.log("CheckAuthorization Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+            //console.log("CheckAuthorization Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
             fetch('/'+Controller+'/Create', {
                 method: 'GET',
@@ -180,7 +180,7 @@
             if(ParentReplyID!="")//回覆給回覆
                 URL+='&ParentReplyID='+ParentReplyID;
 
-            console.log($`LoadAddContentForm Controller : ${Controller}, CommentID : ${CommentID}, ParentReplyID : ${ParentReplyID}`);
+            //console.log($`LoadAddContentForm Controller : ${Controller}, CommentID : ${CommentID}, ParentReplyID : ${ParentReplyID}`);
             //評論：/Comments/Create?VisitSN=1
             //回覆評論：/Replies/Create?VisitSN=1&CommentID=43fe5ee2-fee3-447e-8204-02ace0443665
             //回覆回覆：/Replies/Create?VisitSN=1&CommentID=ec7e6d63-a129-4c3b-b524-f42eaa18f37d&ParentReplyID=037009b8-383b-4f79-bd6c-b4beb9f20ff4
@@ -195,9 +195,9 @@
 
         //LoadAddContentForm();
 
-        //使用Ajax達成新增回覆留言
+        //使用Ajax達成新增回覆\留言
         function AddContent(Controller){
-            console.log("AddContent : "+Controller);
+            //console.log("AddContent : "+Controller);
 
             //2.5.17判斷表單是否驗證通過
                 if(!$('#AddContentForm form').valid()){
@@ -208,7 +208,7 @@
             $.ajax({
                 type:"POST",
                 url:"/"+Controller+"/Create",//Controller/Action
-                    data:$('#AddContentForm form').serialize(),
+                data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
                     UpdateList();
@@ -217,7 +217,29 @@
                     Modal.hide();
                 },
                 error:function(xhr, status, error){
-                    console.error("新增評論\回覆錯誤", error);
+                    console.error("新增評論or回覆錯誤", error);
+                }
+            });
+        }
+
+        //使用Ajax達成刪除回覆\留言
+        function DeleteContent(Controller, ID){
+            //console.log($`DeleteContent : Controller : ${Controller}, ID : ${ID}`);
+
+            $.ajax({
+                type: "POST",
+                url: `/${Controller}/Delete/${ID}`,
+                success:function(){
+                    //更新底下回覆留言區
+                    UpdateList();
+                },
+                data:{
+                    VisitSN: '@Model.SN',
+                    CommentID: ID,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()//Anti-Forgery Token
+                },
+                error:function(xhr, status, error){
+                    console.error("刪除評論or回覆錯誤", error);
                 }
             });
         }

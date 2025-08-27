@@ -11,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AniwalkServer.Data;
 using AniwalkServer.Services;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
@@ -139,20 +140,19 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 刪除回覆
         /// </summary>
+        /// <param name="VisitSN"></param>
         /// <param name="CommentID"></param>
         /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string CommentID)
+        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string CommentID)
         {
+            //Debug.WriteLine("DeleteComment : " + CommentID);
+
             if (CommentID == null)
             {
                 return NotFound();
             }
-
-            var Comment = await CommentsServices.GetComment(CommentID);
-            if (Comment == null)
-                return NotFound();
 
             var Result = await CommentsServices.DeleteComment(CommentID);
             if (Result.Type == ResultType.Fail)
@@ -162,7 +162,7 @@ namespace AniwalkServer.Controllers
 
             await _context.SaveChangesAsync();
 
-            return ViewComponent("VC_Comment", new { VisitSN = Comment.Visit.SN });
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
     }
 }

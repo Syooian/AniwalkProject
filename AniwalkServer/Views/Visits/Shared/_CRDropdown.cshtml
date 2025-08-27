@@ -9,7 +9,9 @@
             <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
         </button>
         <ul class="dropdown-menu" aria-labelledby="@ID">
-            <li><a class="dropdown-item" href="#">刪除</a></li>
+            <li>
+                <button class="dropdown-item" onclick="DeleteContent('@Model.Controller', '@Model.ID')">刪除</button>
+            </li>
         </ul>
     </div>
 }
