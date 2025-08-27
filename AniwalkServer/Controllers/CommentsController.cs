@@ -138,7 +138,7 @@ namespace AniwalkServer.Controllers
 
         // POST: Comments/Delete/5
         /// <summary>
-        /// 刪除回覆
+        /// 刪除評論
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <param name="CommentID"></param>

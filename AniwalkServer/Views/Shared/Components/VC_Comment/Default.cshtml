@@ -1,9 +1,12 @@
 ﻿@model IEnumerable<Comments>
 @using System.Diagnostics;
+@using System.Security.Claims
 @{
     Layout = null;
 
     const string CRDropdownPath = "~/Views/Visits/Shared/_CRDropdown.cshtml";
+
+    var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
 }
 
 @{
@@ -19,7 +22,7 @@
             {
                 <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
                     <p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>
-                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Comments", ID = Comment.CommentID })
+                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Comments", ID = Comment.CommentID, MemberID = MemberID, PostMemberID = Comment.MemberID })
 
                     <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
                     <p class="text-end">
@@ -37,7 +40,7 @@
                                 if (Reply.DeleteDate == null)
                                 {
                                     @*<p>@Html.DisplayFor(Item => Reply.ReplyID)</p>*@
-                                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Replies", ID = Reply.ReplyID })
+                                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Replies", ID = Reply.ReplyID, MemberID = MemberID, PostMemberID = Reply.MemberID })
 
                                     @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
                                     {
