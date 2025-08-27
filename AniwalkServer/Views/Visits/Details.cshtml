@@ -150,11 +150,11 @@
                     'Accept': 'application/json'
                 }
             }).then(Response=>{
-                if(Response.redirected){
+                if(Response.redirected){//沒有登入的情況下被強制導回到登入畫面
                     //如果伺服器返回重定向，跳轉到登入頁面
                     window.location.href = Response.url;
                 }
-                else
+                else//已登入狀態
                 {
                     //  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
                     //     留言
@@ -162,7 +162,6 @@
 
                     LoadAddContentForm(Controller, CommentID, ParentReplyID);
 
-                    //已登入
                     Modal.show();
                 }
             }).catch(Error=>{
@@ -170,8 +169,9 @@
             });
         }
 
+        //載入回覆留言表單
         function LoadAddContentForm(Controller, CommentID="", ParentReplyID=""){
-            console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+            //console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
             var URL='/'+Controller+'/Create?VisitSN=@Model.SN';
             if(CommentID != "")//回覆給評論
@@ -180,7 +180,7 @@
             if(ParentReplyID!="")//回覆給回覆
                 URL+='&ParentReplyID='+ParentReplyID;
 
-            console.log(URL);
+            console.log($`LoadAddContentForm Controller : ${Controller}, CommentID : ${CommentID}, ParentReplyID : ${ParentReplyID}`);
             //評論：/Comments/Create?VisitSN=1
             //回覆評論：/Replies/Create?VisitSN=1&CommentID=43fe5ee2-fee3-447e-8204-02ace0443665
             //回覆回覆：/Replies/Create?VisitSN=1&CommentID=ec7e6d63-a129-4c3b-b524-f42eaa18f37d&ParentReplyID=037009b8-383b-4f79-bd6c-b4beb9f20ff4
@@ -211,7 +211,7 @@
                     data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    $('#ContentList').load('/'+Controller+'/GetContentsByViewComponent?VisitSN=@(Model.SN)');
+                    $('#ContentList').load('/Visits/GetContentsByViewComponent?VisitSN=@(Model.SN)');
 
                     //將表單重新載入（也可在送出表單後重新產生GUID）
                     // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){

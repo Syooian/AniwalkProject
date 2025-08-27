@@ -64,18 +64,6 @@ namespace AniwalkServer.Controllers
             return Json(replies);
         }
 
-        /// <summary>
-        /// 取得回覆留言資料
-        /// </summary>
-        /// <param name="VisitSN"></param>
-        /// <returns></returns>
-        public IActionResult GetContentsByViewComponent(int VisitSN)
-        {
-            Console.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
-
-            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
-        }
-
         // GET: Replies/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
