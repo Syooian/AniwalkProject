@@ -336,5 +336,24 @@ namespace AniwalkServer.Services
 
             return Visit;
         }
+
+        /// <summary>
+        /// 刪除到訪紀錄
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public async Task<Result> DeleteVisit(int VisitSN)
+        {
+            var Visit = await GetVisit(VisitSN);
+            if (Visit == null)
+                return new Result(ResultType.Fail, "Not Found");
+
+            Visit.DeleteDate = DateTime.Now;
+
+            Context.Update(Visit);
+            await Context.SaveChangesAsync();
+
+            return new Result();
+        }
     }
 }

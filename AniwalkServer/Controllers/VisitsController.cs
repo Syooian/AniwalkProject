@@ -421,22 +421,18 @@ namespace AniwalkServer.Controllers
         {
             //Console.WriteLine($"Delete VisitSN : {VisitSN}");
 
-            //var Visit = await Context.Visits
-            //    .Include(V => V.VisitsPhotos)
-            //    .FirstOrDefaultAsync(V => V.SN == VisitSN);
-            var Visit = await VisitsServices.GetVisit(VisitSN);
-
-            if (Visit == null)
-            {
-                Console.WriteLine($"VisitSN {VisitSN} not found");
+            if (VisitSN < 0)
                 return NotFound();
-            }
+
+            var Result = await VisitsServices.DeleteVisit(VisitSN);
+            if (Result.Type == ResultType.Fail)
+                return NotFound();
 
             //刪除到訪紀錄照片
-            PhotoServices.DeletePhoto(Visit);
+            //PhotoServices.DeletePhoto(Visit);
 
-            Context.Visits.Remove(Visit);
-            await Context.SaveChangesAsync();
+            //Context.Visits.Remove(Visit);
+            //await Context.SaveChangesAsync();
 
             //SetGoogleMapsApiKey();
             return RedirectToAction(nameof(ShowVisitsOnList));
