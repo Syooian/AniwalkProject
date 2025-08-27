@@ -1,8 +1,15 @@
-﻿@if (User.IsInRole(Shared.Role_Member))
+﻿@{
+    var ID = Guid.NewGuid().ToString();
+}
+
+@if (User.IsInRole(Shared.Role_Member))
 {
-    <p class="text-end">
-        <button type="button" class="rounded-circle border-0 box-shadow">
+    <div class="dropdown text-end">
+        <button type="button" class="rounded-circle border-0 box-shadow" id="@ID" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
         </button>
-    </p>
+        <ul class="dropdown-menu" aria-labelledby="@ID">
+            <li><a class="dropdown-item" href="#">刪除</a></li>
+        </ul>
+    </div>
 }
