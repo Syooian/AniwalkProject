@@ -147,46 +147,34 @@ namespace AniwalkServer.Controllers
             return View(comments);
         }
 
-        // GET: Comments/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var comments = await _context.Comments
-                .Include(c => c.Member)
-                //.Include(c => c.ParentComment)
-                .Include(c => c.Visit)
-                .FirstOrDefaultAsync(m => m.CommentID == id);
-            if (comments == null)
-            {
-                return NotFound();
-            }
-
-            return View(comments);
-        }
-
         // POST: Comments/Delete/5
+        /// <summary>
+        /// 刪除回覆
+        /// </summary>
+        /// <param name="CommentID"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string CommentID)
         {
-            if (id == null)
+            if (CommentID == null)
             {
                 return NotFound();
             }
 
-            var comments = await CommentsServices.GetComment(id);
+            var Comment = await CommentsServices.GetComment(CommentID);
+            if (Comment == null)
+                return NotFound();
 
-            if (comments != null)
+            var Result = await CommentsServices.DeleteComment(CommentID);
+            if (Result.Type == ResultType.Fail)
             {
-                _context.Comments.Remove(comments);
+                return NotFound();
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return ViewComponent("VC_Comment", new { VisitSN = Comment.Visit.SN });
         }
     }
 }
