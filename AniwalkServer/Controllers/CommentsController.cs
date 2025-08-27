@@ -18,6 +18,9 @@ namespace AniwalkServer.Controllers
     [Authorize(Roles = Shared.Role_Member)]
     public class CommentsController : Controller
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly AniwalkDBContext _context;
         /// <summary>
         /// 
@@ -149,7 +152,7 @@ namespace AniwalkServer.Controllers
         {
             //Debug.WriteLine("DeleteComment : " + CommentID);
 
-            if (CommentID == null)
+            if (string.IsNullOrEmpty(CommentID))
             {
                 return NotFound();
             }

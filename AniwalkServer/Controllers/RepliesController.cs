@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
+using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,11 +15,23 @@ namespace AniwalkServer.Controllers
     [Authorize(Roles = Shared.Role_Member)]
     public class RepliesController : Controller
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly AniwalkDBContext _context;
-
-        public RepliesController(AniwalkDBContext context)
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly RepliesServices RepliesServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="RepliesServices"></param>
+        public RepliesController(AniwalkDBContext context, RepliesServices RepliesServices)
         {
             _context = context;
+            this.RepliesServices = RepliesServices;
         }
 
         // GET: Replies/Details/5
@@ -104,7 +117,7 @@ namespace AniwalkServer.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RepliesExists(replies.ReplyID))
+                    if (!RepliesServices.IsReplyExists(replies.ReplyID))
                     {
                         return NotFound();
                     }
@@ -121,45 +134,27 @@ namespace AniwalkServer.Controllers
             return View(replies);
         }
 
-        // GET: Replies/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var replies = await _context.Replies
-                .Include(r => r.Comment)
-                .Include(r => r.Member)
-                .Include(r => r.ParentReply)
-                .FirstOrDefaultAsync(m => m.ReplyID == id);
-            if (replies == null)
-            {
-                return NotFound();
-            }
-
-            return View(replies);
-        }
-
         // POST: Replies/Delete/5
+        /// <summary>
+        /// 刪除回覆
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <param name="ReplyID"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string ReplyID)
         {
-            var replies = await _context.Replies.FindAsync(id);
-            if (replies != null)
-            {
-                _context.Replies.Remove(replies);
-            }
+            if (string.IsNullOrEmpty(ReplyID))
+                return NotFound();
+
+            var Result = await RepliesServices.DeleteReply(ReplyID);
+            if (Result.Type == ResultType.Fail)
+                return NotFound();
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
-        private bool RepliesExists(string id)
-        {
-            return _context.Replies.Any(e => e.ReplyID == id);
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
     }
 }
