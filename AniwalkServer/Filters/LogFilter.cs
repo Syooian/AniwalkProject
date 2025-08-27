@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using System.Diagnostics;
 
 namespace AniwalkServer.Filters
 {
@@ -43,9 +44,16 @@ namespace AniwalkServer.Filters
             }
 
             //寫檔
-            using (StreamWriter writer = new StreamWriter(Path.Combine(LogFilePath, File), true))
+            try
             {
-                writer.WriteLine(logMessage);
+                using (StreamWriter writer = new StreamWriter(Path.Combine(LogFilePath, File), true))
+                {
+                    writer.WriteLine(logMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("LogFilter ex : " + ex.Message);
             }
         }
     }
