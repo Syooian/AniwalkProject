@@ -2,6 +2,8 @@
 @using System.Diagnostics;
 @{
     Layout = null;
+
+    const string CRDropdownPath = "Shared/_CRDropdown";
 }
 
 @{
@@ -17,11 +19,7 @@
             {
                 <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
                     @*<p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>*@
-                    <p class="text-end">
-                        <button type="button" class="rounded-circle border-0 box-shadow">
-                            <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
-                        </button>
-                    </p>
+                    @await Html.PartialAsync(CRDropdownPath)
 
                     <p>@Html.DisplayFor(ModelItem => Comment.CommentContent)</p>
                     <p class="text-end">
@@ -39,11 +37,7 @@
                                 if (Reply.DeleteDate == null)
                                 {
                                     @*<p>@Html.DisplayFor(Item => Reply.ReplyID)</p>*@
-                                    <p class="text-end">
-                                        <button type="button" class="rounded-circle border-0 box-shadow">
-                                            <img src="~/lib/bootstrap/Icon/three-dots-vertical.svg" />
-                                        </button>
-                                    </p>
+                                    @await Html.PartialAsync(CRDropdownPath)
 
                                     @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
                                     {
