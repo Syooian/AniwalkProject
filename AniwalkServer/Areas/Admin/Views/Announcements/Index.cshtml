@@ -11,8 +11,8 @@
 <p>
     <a asp-action="Create" class="btn btn-outline-primary">新增公告</a>
 </p>
-<!--vh 是「視窗高度」的單位，70vh 代表 70% 的瀏覽器高度。-->
-<div style="max-height:70vh; overflow-y:auto;">
+
+<div class="ListVerticalScrollBar">
     <table class="table">
         <thead>
             @if (Model.Data.Count > 0)
@@ -67,7 +67,7 @@
         <tfoot>
             <tr>
                 <!--分頁選擇-->
-                @if (Model.PageCount > 1 && Model.TotalDataCount > (int)Model.PageSize)
+                @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
                 {
                     <td class="text-center">
                         <nav aria-label="...">

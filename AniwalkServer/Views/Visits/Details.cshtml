@@ -1,10 +1,19 @@
 ﻿@model AniwalkServer.Models.Visits
-
+@using Newtonsoft.Json
 @using System.Security.Claims
+@using System.Diagnostics
+@using AniwalkServer.Data
 @{
     ViewData["Title"] = "詳細檢視";
 
     var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    string MapData;
+    if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
+        MapData = JsonConvert.SerializeObject(Data);
+    else
+        MapData = "";//從清單檢視進來會有空值的情況 (沒有地圖資料)
+    //Debug.WriteLine("MapData : " + MapData);
 }
 
 <h1>
@@ -14,12 +23,12 @@
 <hr />
 <div>
     <div class="d-flex justify-content-between align-items-start">
-        <dl class="row col-5">
+        <dl class="row col-7">
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.MainText)
             </dt>
             <dd class="col-sm-9">
-                @Html.Raw(Model.MainText.Replace("\r\n", "<br>"))
+                @Html.Raw(Shared.ConvertNewLineToBr(Model.MainText))
             </dd>
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.Latitude)
@@ -65,31 +74,30 @@
              style="width:500px; height:500px"></div>
     </div>
 </div>
+<!--按鈕區-->
 <div>
-    <!--彈出評論留言框的按鈕 -->
-    <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
-        評論
-    </button>
-    <a>|</a>
-    @if (MemberID == Model.MemberID)
-    {
-        <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
+    <form asp-action="Delete">
+        <input type="hidden" value="@Model?.SN" name="VisitSN" />
+        <!--彈出評論留言框的按鈕 -->
+        <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
+            評論
+        </button>
         <a>|</a>
-        <form asp-action="Delete">
-            <input type="hidden" value="@Model?.SN" name="VisitSN" />
+        <!--刪除按鈕 (限發表人或管理員)-->
+        @if (MemberID == Model.MemberID || User.IsInRole(Shared.Role_Admin))
+        {
             <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
-        </form>
-        <a>|</a>
-    }
-    else if (User.IsInRole(RoleEnum.Admin.ToString()))
-    {
-        <form asp-action="Delete">
-            <input type="hidden" value="@Model?.SN" name="VisitSN" />
-            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
-        </form>
-        <a>|</a>
-    }
-    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary btn-sm">返回列表</a>
+            <a>|</a>
+        }
+        <!--編輯按鈕 (限發表人)-->
+        @if (MemberID == Model.MemberID)
+        {
+            <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
+            <a>|</a>
+        }
+        <!--返回按鈕-->
+        <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary btn-sm" asp-route-MapDataParam="@Uri.EscapeDataString(MapData)">返回列表</a><!--須將Json字串轉換為URL對應格式-->
+    </form>
 </div>
 
 @if (Model.VisitsPhotos.Count > 0)
@@ -141,28 +149,27 @@
         const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
 
         //驗證是否登入
-        function CheckAuthorization(Action, CommentID="", ParentReplyID=""){
-            console.log("CheckAuthorization Action : "+Action+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+        function CheckAuthorization(Controller, CommentID="", ParentReplyID=""){
+            //console.log("CheckAuthorization Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
-            fetch('/'+Action+'/Create', {
+            fetch('/'+Controller+'/Create', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
                 }
             }).then(Response=>{
-                if(Response.redirected){
+                if(Response.redirected){//沒有登入的情況下被強制導回到登入畫面
                     //如果伺服器返回重定向，跳轉到登入頁面
                     window.location.href = Response.url;
                 }
-                else
+                else//已登入狀態
                 {
                     //  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
                     //     留言
                     // </button>
 
-                    LoadAddContentForm(Action, CommentID, ParentReplyID);
+                    LoadAddContentForm(Controller, CommentID, ParentReplyID);
 
-                    //已登入
                     Modal.show();
                 }
             }).catch(Error=>{
@@ -170,17 +177,18 @@
             });
         }
 
-        function LoadAddContentForm(Action, CommentID="", ParentReplyID=""){
-            console.log("LoadAddContentForm Action : "+Action+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+        //載入回覆留言表單
+        function LoadAddContentForm(Controller, CommentID="", ParentReplyID=""){
+            //console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
-            var URL='/'+Action+'/Create?VisitSN=@Model.SN';
+            var URL='/'+Controller+'/Create?VisitSN=@Model.SN';
             if(CommentID != "")//回覆給評論
                 URL+='&CommentID='+CommentID;
 
             if(ParentReplyID!="")//回覆給回覆
                 URL+='&ParentReplyID='+ParentReplyID;
 
-            console.log(URL);
+            //console.log($`LoadAddContentForm Controller : ${Controller}, CommentID : ${CommentID}, ParentReplyID : ${ParentReplyID}`);
             //評論：/Comments/Create?VisitSN=1
             //回覆評論：/Replies/Create?VisitSN=1&CommentID=43fe5ee2-fee3-447e-8204-02ace0443665
             //回覆回覆：/Replies/Create?VisitSN=1&CommentID=ec7e6d63-a129-4c3b-b524-f42eaa18f37d&ParentReplyID=037009b8-383b-4f79-bd6c-b4beb9f20ff4
@@ -195,9 +203,9 @@
 
         //LoadAddContentForm();
 
-        //使用Ajax達成新增回覆留言
-        function AddContent(Action){
-            console.log("AddContent : "+Action);
+        //使用Ajax達成新增回覆\留言
+        function AddContent(Controller){
+            //console.log("AddContent : "+Controller);
 
             //2.5.17判斷表單是否驗證通過
                 if(!$('#AddContentForm form').valid()){
@@ -207,25 +215,50 @@
 
             $.ajax({
                 type:"POST",
-                url:"/"+Action+"/Create",//Controller/Action
-                    data:$('#AddContentForm form').serialize(),
+                url:"/"+Controller+"/Create",//Controller/Action
+                data:$('#AddContentForm form').serialize(),
                 success:function(){
                     //更新底下回覆留言區
-                    $('#ContentList').load('/'+Action+'/GetContentsByViewComponent?VisitSN=@(Model.SN)');
-
-                    //將表單重新載入（也可在送出表單後重新產生GUID）
-                    // $('#CommentForm').load('/ReBooks/Create?ID=@(Model.SN)',function(){
-                    //     $.validator.unobtrusive.parse($('#CommentForm'));
-                    // });
-                    LoadAddContentForm(Action);
+                    UpdateList();
 
                     //關閉彈出框
                     Modal.hide();
                 },
                 error:function(xhr, status, error){
-                    console.error("新增評論\回覆錯誤", error);
+                    console.error("新增評論or回覆錯誤", error);
                 }
             });
+        }
+
+        //使用Ajax達成刪除回覆\留言
+        function DeleteContent(Controller, ID){
+            //console.log($`DeleteContent : Controller : ${Controller}, ID : ${ID}`);
+
+            if(!confirm('確定刪除？')){
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: `/${Controller}/Delete`,
+                success:function(){
+                    //更新底下回覆留言區
+                    UpdateList();
+                },
+                data:{
+                    VisitSN: '@Model.SN',
+                    ID: ID,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()//Anti-Forgery Token
+                },
+                error:function(xhr, status, error){
+                    console.error("刪除評論or回覆錯誤", error);
+                }
+            });
+        }
+
+        //更新底下回覆留言區
+        function UpdateList(){
+            $('#ContentList').load('/Visits/GetContentsByViewComponent?VisitSN=@(Model.SN)');
         }
     </script>
 }

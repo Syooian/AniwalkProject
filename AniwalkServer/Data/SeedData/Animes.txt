@@ -16,5 +16,317 @@
     "Title": "信長之槍",
     "HeaderPhoto": "",
     "Description": "ノブナガン"
+  },
+  {
+    "AnimeID": "0004",
+    "Title": "涼宮春日的憂鬱",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0005",
+    "Title": "悠悠哉哉少女日和",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0006",
+    "Title": "CLANNAD",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0007",
+    "Title": "寒蟬鳴泣之時",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0008",
+    "Title": "未聞花名",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0009",
+    "Title": "花開物語",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0010",
+    "Title": "神樣中學生",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0011",
+    "Title": "灌籃高手",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0012",
+    "Title": "Tari Tari",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0013",
+    "Title": "本田小狼與我",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0014",
+    "Title": "搖曳露營",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0015",
+    "Title": "中二病也想談戀愛",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0016",
+    "Title": "Kanon",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0017",
+    "Title": "AIR",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0018",
+    "Title": "排球少年",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0019",
+    "Title": "藥師少女的獨語",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0020",
+    "Title": "黑執事",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0021",
+    "Title": "賽馬娘",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0022",
+    "Title": "靈異教師神眉",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0023",
+    "Title": "膽大黨",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0024",
+    "Title": "強襲魔女",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0025",
+    "Title": "戀上換裝娃娃",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0026",
+    "Title": "怪獸8號",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0027",
+    "Title": "一拳超人",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0028",
+    "Title": "夏目友人帳",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0029",
+    "Title": "為美好的世界獻上祝福！",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0030",
+    "Title": "黃金神威",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0031",
+    "Title": "名偵探柯南",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0032",
+    "Title": "小林家的龍女僕",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0033",
+    "Title": "蠟筆小新",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0034",
+    "Title": "鏈鋸人",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0035",
+    "Title": "少女與戰車",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0036",
+    "Title": "迷宮飯",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0037",
+    "Title": "福星小子",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0038",
+    "Title": "光之美少女",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0039",
+    "Title": "偶像大師",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0040",
+    "Title": "不時輕聲地以俄語遮羞的鄰座艾莉同學",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0041",
+    "Title": "擅長逃跑的殿下",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0042",
+    "Title": "魔導少年",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0043",
+    "Title": "鹿乃子乃子乃子虎視眈眈",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0044",
+    "Title": "敗北女角太多了！",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0045",
+    "Title": "Love Live!",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0046",
+    "Title": "輝夜姬想讓人告白",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0047",
+    "Title": "機動戰士鋼彈",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0048",
+    "Title": "我推的孩子",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0049",
+    "Title": "百姓貴族",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0050",
+    "Title": "出租女友",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0051",
+    "Title": "葬送的芙莉蓮",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0052",
+    "Title": "新世紀福音戰士",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0053",
+    "Title": "魯邦三世",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0054",
+    "Title": "明日同學的水手服",
+    "HeaderPhoto": "",
+    "Description": ""
+  },
+  {
+    "AnimeID": "0055",
+    "Title": "派對咖孔明",
+    "HeaderPhoto": "",
+    "Description": ""
   }
 ]

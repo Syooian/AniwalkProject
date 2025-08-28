@@ -27,6 +27,23 @@ namespace AniwalkServer
         {
             return (Page - 1) * PageSize;
         }
+
+        /// <summary>
+        /// 檢查是否顯示頁數選擇
+        /// </summary>
+        /// <param name="PageCount"></param>
+        /// <param name="TotalDataCount"></param>
+        /// <param name="PageSize"></param>
+        /// <returns></returns>
+        public static bool CheckShowPage(int PageCount, int TotalDataCount, int PageSize)
+        {
+            //Debug.WriteLine($"CheckShowPage PageCount : {PageCount}, TotalDataCount : {TotalDataCount}, PageSize : {PageSize}");
+
+            if (PageCount > 1 && TotalDataCount > PageSize)
+                return true;
+            else
+                return false;
+        }
     }
 
     /// <summary>

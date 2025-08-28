@@ -35,6 +35,7 @@ builder.Services.AddScoped<LoginServices>();
 builder.Services.AddScoped<MailServices>();
 builder.Services.AddScoped<MembersServices>();
 builder.Services.AddScoped<PhotoServices>();
+builder.Services.AddScoped<RepliesServices>();
 builder.Services.AddScoped<VisitsServices>();
 #endregion
 

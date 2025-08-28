@@ -11,12 +11,16 @@ using System.Net;
 using System.Threading.Tasks;
 using AniwalkServer.Data;
 using AniwalkServer.Services;
+using System.Diagnostics;
 
 namespace AniwalkServer.Controllers
 {
     [Authorize(Roles = Shared.Role_Member)]
     public class CommentsController : Controller
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly AniwalkDBContext _context;
         /// <summary>
         /// 
@@ -74,18 +78,6 @@ namespace AniwalkServer.Controllers
             //Shared.ShowModelState(ModelState);
 
             return Json(comments);
-        }
-
-        /// <summary>
-        /// 取得回覆留言資料
-        /// </summary>
-        /// <param name="VisitSN"></param>
-        /// <returns></returns>
-        public IActionResult GetContentsByViewComponent(int VisitSN)
-        {
-            Console.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
-
-            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
 
         // GET: Comments/Edit/5
@@ -147,46 +139,33 @@ namespace AniwalkServer.Controllers
             return View(comments);
         }
 
-        // GET: Comments/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var comments = await _context.Comments
-                .Include(c => c.Member)
-                //.Include(c => c.ParentComment)
-                .Include(c => c.Visit)
-                .FirstOrDefaultAsync(m => m.CommentID == id);
-            if (comments == null)
-            {
-                return NotFound();
-            }
-
-            return View(comments);
-        }
-
         // POST: Comments/Delete/5
+        /// <summary>
+        /// 刪除評論
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int VisitSN, string ID)
         {
-            if (id == null)
+            //Debug.WriteLine("DeleteComment : " + CommentID);
+
+            if (string.IsNullOrEmpty(ID))
             {
                 return NotFound();
             }
 
-            var comments = await CommentsServices.GetComment(id);
-
-            if (comments != null)
+            var Result = await CommentsServices.DeleteComment(ID);
+            if (Result.Type == ResultType.Fail)
             {
-                _context.Comments.Remove(comments);
+                return NotFound();
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
         }
     }
 }
