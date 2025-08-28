@@ -4,12 +4,14 @@
     {
         /// <summary>
         /// 地圖寬
+        /// <para>需含單位 (e.g. px, vw, vh...etc)</para>
         /// </summary>
-        public int MapWidth { get; set; }
+        public string MapWidth { get; set; }
         /// <summary>
         /// 地圖高
+        /// <para>需含單位 (e.g. px, vw, vh...etc)</para>
         /// </summary>
-        public int MapHeight { get; set; }
+        public string MapHeight { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -22,5 +24,9 @@
         /// 地圖中心點
         /// </summary>
         public double MapCenterLongitude { get; set; } = 120.3088710110155;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Zoom { get; set; } = 10;
     }
 }
