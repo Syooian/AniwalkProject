@@ -180,10 +180,10 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                var UploadMsg = await UploadPhoto(Visit, false, VisitPhotos);
-                if (UploadMsg != "")
+                var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, false, VisitPhotos, GetMemberID);
+                if (UploadPhotoResult.Type == ResultType.Fail)
                 {
-                    ViewData["PhotoError"] = UploadMsg;
+                    ViewData["PhotoError"] = UploadPhotoResult.Message;
                     return View(Visit);
                 }
 
@@ -300,10 +300,10 @@ namespace AniwalkServer.Controllers
                 //}
                 #endregion
 
-                var UploadPhotoMsg = await UploadPhoto(Visit, true, VisitPhotos);
-                if (UploadPhotoMsg != "")
+                var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, true, VisitPhotos, GetMemberID);
+                if (UploadPhotoResult.Type == ResultType.Fail)
                 {
-                    ViewData["PhotoError"] = UploadPhotoMsg;
+                    ViewData["PhotoError"] = UploadPhotoResult.Message;
                     return View(Visit);
                 }
 
@@ -488,233 +488,6 @@ namespace AniwalkServer.Controllers
                     Debug.WriteLine($"修改圖片資料");
                     Original.Description = PhotoData.Description;
                     Context.Update(Original);
-                }
-            }
-
-            return await Task.FromResult("");
-        }
-
-        /// <summary>
-        /// 到訪紀錄照片有變動
-        /// </summary>
-        /// <param name="Visit">到訪記錄</param>
-        /// <param name="VisitPhotos">圖片資料</param>
-        /// <param name="DeletePhoto">上傳的圖片</param>
-        /// <returns></returns>
-        /// 修正 Task<string> 回傳型別，將所有 return "字串" 改為 return Task.FromResult("字串")
-        //async Task<string> OnVisitPhotoChanged(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
-        //{
-        //    if (VisitPhotos == null || VisitPhotos.Count == 0)
-        //    {
-        //        Debug.WriteLine("沒有上傳變動");
-        //        return await Task.FromResult("");
-        //    }
-
-        //    #region 檢查是否有上傳圖片
-        //    if (VisitPhotos != null)
-        //    {
-        //        Debug.WriteLine("圖片資料數量 : " + VisitPhotos.Count());
-
-        //        try
-        //        {
-        //            for (int a = 0; a < VisitPhotosList.Count(); a++)
-        //            {
-        //                //檢查是否有圖片要上傳
-        //                Debug.WriteLine($"{VisitPhotosList[a].PhotoID} 圖片 : {(VisitPhotosList[a].UploadFile == null ? null : VisitPhotosList[a].UploadFile.FileName)}");
-        //                if (VisitPhotosList[a].UploadFile != null && VisitPhotosList[a].UploadFile.Length != 0)
-        //                {
-        //                    //檢查檔案類型
-        //                    switch (VisitPhotosList[a].UploadFile.ContentType)
-        //                    {
-        //                        case "image/gif":
-        //                        case "image/bmp":
-        //                        case "image/jpg":
-        //                        case "image/jpeg":
-        //                        case "image/png":
-        //                        case "image/jfif":
-        //                            break;
-        //                        default:
-        //                            return await Task.FromResult("有不支援的圖片類型");
-        //                    }
-
-        //                    //上傳路徑
-        //                    var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID);
-        //                    Debug.WriteLine($"UploadPath : {UploadPath}");
-        //                    //檢查上傳路徑
-        //                    if (!Directory.Exists(UploadPath))
-        //                        Directory.CreateDirectory(UploadPath);
-        //                    //上傳
-        //                    using (FileStream FS = new FileStream(Path.Combine(UploadPath, VisitPhotosList[a].PhotoID + VisitPhotosList[a].PhotoType), FileMode.Create))
-        //                    {
-        //                        VisitPhotosList[a].UploadFile.CopyTo(FS);
-        //                    }
-
-        //                    //Context.VisitsPhotos.Add(new VisitsPhotos
-        //                    //{
-        //                    //    PhotoID = VisitPhotosList[a].PhotoID,
-        //                    //    PhotoType = VisitPhotosList[a].PhotoType,
-        //                    //    Description = VisitPhotosList[a].Description,
-        //                    //    MemberID = GetMemberID,
-        //                    //    SN = Visit.SN
-        //                    //});
-
-        //                    //IsModified = true;
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Debug.WriteLine($"Error uploading photos : {ex.Message}");
-        //            return await Task.FromResult("上傳失敗1");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Debug.WriteLine("沒有圖片資料");
-        //    }
-        //    #endregion
-
-        //    #region 檢查是否有刪除圖片
-
-        //    #endregion
-
-
-        //    //等待一次增加新圖片資料到資料庫
-        //    //if (IsModified)
-        //    //    await Context.SaveChangesAsync();
-
-        //    #region 更新資料庫
-        //    //if (Visit.VisitsPhotos == null)
-        //    //{
-        //    //    Debug.WriteLine($"New Visit.VisitsPhotos");
-        //    //    Visit.VisitsPhotos = new List<VisitsPhotos>();
-        //    //}
-        //    //else
-        //    //{
-        //    //    Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
-        //    //}
-
-        //    //foreach (var VP in VisitPhotos)
-        //    //{
-        //    //    //找出有無和原圖片資料相同
-        //    //    var V = Visit.VisitsPhotos.FindIndex(R => R.PhotoID == VP.PhotoID);
-
-        //    //    if (V == -1)//無相同資料，直接插入新的
-        //    //    {
-        //    //        Debug.WriteLine($"新增圖片資料");
-
-        //    //        Visit.VisitsPhotos.Add(new VisitsPhotos
-        //    //        {
-        //    //            PhotoID = VP.PhotoID,
-        //    //            PhotoType = VP.PhotoType,
-        //    //            Description = VP.Description,
-        //    //            MemberID = GetMemberID,
-        //    //            SN = Visit.SN
-        //    //        });
-        //    //    }
-        //    //    else//有相同資料，用修改的 (也只有圖片說明會更改)
-        //    //    {
-        //    //        Debug.WriteLine($"修改圖片資料");
-
-        //    //        Visit.VisitsPhotos[V].Description = VP.Description;
-        //    //    }
-        //    //}
-
-        //    //追蹤問題??? 樂觀並發控制???
-
-        //    //-----------------------------------------------------------------------------------------------------
-
-        //    foreach (var VP in VisitPhotosList)
-        //    {
-        //        //找出有無和原圖片資料相同
-        //        var Original = await Context.VisitsPhotos.FirstOrDefaultAsync(V => V.PhotoID == VP.PhotoID);
-        //        if (Original == null)//無相同資料，直接插入新的
-        //        {
-        //            Debug.WriteLine($"新增圖片資料");
-        //            Context.VisitsPhotos.Add(new VisitsPhotos()
-        //            {
-        //                PhotoID = VP.PhotoID,
-        //                PhotoType = VP.PhotoType,
-        //                Description = VP.Description,
-        //                MemberID = Visit.MemberID,
-        //                SN = Visit.SN
-        //            });
-        //        }
-        //        else if (Original.Description != VP.Description)//有相同資料，用修改的 (也只有圖片說明會更改)
-        //        {
-        //            Debug.WriteLine($"修改圖片資料");
-        //            Original.Description = VP.Description;
-        //            Context.Update(Original);
-        //        }
-        //    }
-
-        //    await Context.SaveChangesAsync();
-        //    #endregion
-
-        //    return await Task.FromResult("");
-        //}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Visit"></param>
-        /// <param name="VisitPhotos"></param>
-        /// <returns></returns>
-        async Task<string> UploadPhoto(Visits Visit, bool SetDBFirst, List<VisitsPhotosDTO>? VisitPhotos)
-        {
-            if (VisitPhotos == null || VisitPhotos.Count == 0)
-            {
-                Debug.WriteLine("沒有上傳圖片");
-                return await Task.FromResult("");
-            }
-
-            var UploadPhotos = VisitPhotos.FindAll(VP => VP.UploadFile != null && VP.UploadFile.Length != 0);
-            foreach (var Photo in UploadPhotos)
-            {
-                //檢查檔案類型
-                switch (Photo.UploadFile.ContentType)
-                {
-                    case "image/gif":
-                    case "image/bmp":
-                    case "image/jpg":
-                    case "image/jpeg":
-                    case "image/png":
-                    case "image/jfif":
-                        break;
-                    default:
-                        return await Task.FromResult("有不支援的圖片類型");
-                }
-
-                try
-                {
-                    //上傳路徑
-                    var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID);
-                    Debug.WriteLine($"UploadPath : {UploadPath}");
-                    //檢查上傳路徑
-                    if (!Directory.Exists(UploadPath))
-                        Directory.CreateDirectory(UploadPath);
-                    //上傳
-                    using (FileStream FS = new FileStream(Path.Combine(UploadPath, Photo.PhotoID + Photo.PhotoType), FileMode.Create))
-                    {
-                        Photo.UploadFile.CopyTo(FS);
-                    }
-
-                    if (SetDBFirst)
-                    {
-                        Context.Add(new VisitsPhotos()
-                        {
-                            PhotoID = Photo.PhotoID,
-                            PhotoType = Photo.PhotoType,
-                            Description = Photo.Description,
-                            MemberID = GetMemberID,
-                            SN = Visit.SN
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error uploading photos : {ex.Message}");
-                    return await Task.FromResult("上傳失敗1");
                 }
             }
 

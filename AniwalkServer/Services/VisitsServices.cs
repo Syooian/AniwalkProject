@@ -360,5 +360,73 @@ namespace AniwalkServer.Services
 
             return new Result();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Visit"></param>
+        /// <param name="SetDBFirst"></param>
+        /// <param name="VisitPhotos"></param>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public async Task<Result> UploadPhoto(Visits Visit, bool SetDBFirst, List<VisitsPhotosDTO>? VisitPhotos, string MemberID)
+        {
+            if (VisitPhotos == null || VisitPhotos.Count == 0)
+            {
+                return new Result(ResultType.Fail, "沒有上傳圖片");
+            }
+
+            var UploadPhotos = VisitPhotos.FindAll(VP => VP.UploadFile != null && VP.UploadFile.Length != 0);
+            foreach (var Photo in UploadPhotos)
+            {
+                //檢查檔案類型
+                switch (Photo.UploadFile.ContentType)
+                {
+                    case "image/gif":
+                    case "image/bmp":
+                    case "image/jpg":
+                    case "image/jpeg":
+                    case "image/png":
+                    case "image/jfif":
+                        break;
+                    default:
+                        return new Result(ResultType.Fail, "有不支援的圖片類型");
+                }
+
+                try
+                {
+                    //上傳路徑
+                    var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, MemberID);
+                    //Debug.WriteLine($"UploadPath : {UploadPath}");
+                    //檢查上傳路徑
+                    if (!Directory.Exists(UploadPath))
+                        Directory.CreateDirectory(UploadPath);
+                    //上傳
+                    using (FileStream FS = new FileStream(Path.Combine(UploadPath, Photo.PhotoID + Photo.PhotoType), FileMode.Create))
+                    {
+                        await Photo.UploadFile.CopyToAsync(FS);
+                    }
+
+                    if (SetDBFirst)
+                    {
+                        Context.Add(new VisitsPhotos()
+                        {
+                            PhotoID = Photo.PhotoID,
+                            PhotoType = Photo.PhotoType,
+                            Description = Photo.Description,
+                            MemberID = MemberID,
+                            SN = Visit.SN
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"UploadPhoto ex : {ex.Message}");
+                    return new Result(ResultType.Fail, "上傳失敗");
+                }
+            }
+
+            return new Result();
+        }
     }
 }
