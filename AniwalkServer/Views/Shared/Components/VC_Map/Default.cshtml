@@ -1,44 +1,47 @@
-﻿<div id="Gmap"
-     style="width:500px; height:500px"></div>
+﻿@using AniwalkServer.DTOs;
+@model IEnumerable<VisitsDTO>
+
+<div id="Gmap"
+     style="width:@(ViewBag.MapData.MapWidth); height:@(ViewBag.MapData.MapHeight)"></div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
 <script>
-    var Marker;
+    //紀錄選取的到訪記錄的SN，用作跳轉至詳細檢視
+    let SelectedVisitSN;
 
-    console.log("VC Default");
+    //地圖物件
+    let map;
 
     function InitMap(){
         //console.log("Initing GoogleMap");
         print("Initing GoogleMap");
 
          // 建立地圖
-        const map = new google.maps.Map(document.getElementById("Gmap"), {
-            center: { lat:@ViewBag.MapCenterLatitude, lng: @ViewBag.MapCenterLongitude },//設定地圖中心點
-            zoom: 10,
+        map = new google.maps.Map(document.getElementById("Gmap"), {
+            center: { lat:@ViewBag.MapData.MapCenterLatitude, lng: @ViewBag.MapData.MapCenterLongitude },//設定地圖中心點
+            zoom: @ViewBag.MapData.Zoom,
             mapId: "DEMO_MAP_ID"
         });
 
-        // 監聽地圖的點擊事件
-        // map.addListener("click", (Event) => {
-        //     const Lat = Event.latLng.lat();
-        //     const Lng = Event.latLng.lng();
+        //先將Model的東西轉到JS (C#和JS物件無法互相放置)
+        var MarkerData=[];
 
-        //     // 將座標填入表單欄位
-        //     document.querySelector("input[name='Latitude']").value = Lat;
-        //     document.querySelector("input[name='Longitude']").value = Lng;
+        //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
+        @foreach (var Visit in Model)
+        {
+            //添加Marker的屬性
+            <text>MarkerData.push({
+                latitude:@Visit.Latitude,
+                longitude:@Visit.Longitude,
+                member:{
+                    name: '@Visit.Name'
+                },
+                sn:@Visit.SN
+            });</text>
+        }
 
-        //     //移除地圖上舊有Marker
-        //     if (Marker) {
-        //         Marker.setMap(null);
-        //     }
-
-        //     //在地圖上建立新Marker
-        //     Marker = new google.maps.marker.AdvancedMarkerElement({
-        //         position: { lat: Lat, lng: Lng },
-        //         map: map,
-        //         title: "新增到訪紀錄"
-        //     });
-        // });
+        //再將轉出來的東西帶給地圖物件
+        SetMarkers(MarkerData);
     }
 
     window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它

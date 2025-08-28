@@ -7,6 +7,7 @@ using AniwalkServer.Data;
 using AniwalkServer.Services;
 using System.Diagnostics;
 using AniwalkServer.QueryParameters;
+using AniwalkServer.DTOs;
 
 namespace AniwalkServer.ViewComponents
 {
@@ -41,27 +42,28 @@ namespace AniwalkServer.ViewComponents
         /// 
         /// </summary>
         /// <param name="MapDataParam"></param>
+        /// <param name="Model"></param>
         /// <returns></returns>
-        public async Task<IViewComponentResult> InvokeAsync(MapDataParam MapDataParam)
+        public async Task<IViewComponentResult> InvokeAsync(MapDataParam MapDataParam, List<VisitsDTO> Model)
         {
             Debug.WriteLine($"Invoke VC_Map 1");
 
             SetMapData(MapDataParam);
 
-            var VM = new VM_Visits
-            {
-                //Where : 帶入條件
+            //var VM = new VM_Visits
+            //{
+            //    //Where : 帶入條件
 
-                Countries = await Context.Countries.ToListAsync(),
-                Animes = await Context.Animes.ToListAsync(),
-                Members = await Context.Members.ToListAsync(),
-                Visits = await Context.Visits.OrderByDescending(V => V.CreatedDate).ToListAsync()
-                //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
-            };
+            //    Countries = await Context.Countries.ToListAsync(),
+            //    Animes = await Context.Animes.ToListAsync(),
+            //    Members = await Context.Members.ToListAsync(),
+            //    Visits = await Context.Visits.OrderByDescending(V => V.CreatedDate).ToListAsync()
+            //    //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
+            //};
 
             //Console.WriteLine("Return");
 
-            return View(VM);
+            return View(Model);
         }
 
         /// <summary>
