@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 @using System.Security.Claims
 @using AniwalkServer.DTOs
+@using AniwalkServer.Data;
 @using System.Diagnostics;
 @inject IModelMetadataProvider MetadataProvider
 @{
@@ -43,7 +44,8 @@
                         @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Anime.Title)*@
                         @AnimeTitle
                     </th>
-                    <th class="col-3"><!--主文簡略-->
+                    <th class="col-3">
+                        <!--主文簡略-->
                         @*@Html.DisplayNameFor(model => model.Longitude)*@
                     </th>
                     <th>
@@ -91,7 +93,7 @@
                                     <a>|</a>
                                 }
                                 <!--詳細檢視按鈕-->
-                                <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
+                                <a asp-action="Details" asp-route-VisitSN="@item.SN" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-info btn-sm">詳細檢視</a>
                             </form>
                         </td>
                     </tr>

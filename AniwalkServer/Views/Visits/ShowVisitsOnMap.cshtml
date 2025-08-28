@@ -100,7 +100,7 @@
         }
         //console.log(MapData);
 
-        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}&MapDataParam=${encodeURIComponent(JSON.stringify(MapData))}&@ViewDataKeys.AJAXAction=ShowVisitsOnMap`;//JSON 字串包含 {、}、" 等特殊字元，直接放在網址會造成問題，所以要用encodeURIComponent去轉，否則瀏覽器或伺服器可能無法正確解析。
+        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}&MapDataParam=${encodeURIComponent(JSON.stringify(MapData))}&LastAction=ShowVisitsOnMap`;//JSON 字串包含 {、}、" 等特殊字元，直接放在網址會造成問題，所以要用encodeURIComponent去轉，否則瀏覽器或伺服器可能無法正確解析。
     });
 
     //紀錄所有已生成的Marker

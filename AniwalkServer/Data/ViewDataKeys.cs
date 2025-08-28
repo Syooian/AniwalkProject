@@ -2,6 +2,9 @@
 {
     public static class ViewDataKeys
     {
+        /// <summary>
+        /// 上一個Action是什麼
+        /// </summary>
         public const string AJAXAction = "AJAXAction";
         public const string AnimeID = "AnimeID";
         public const string CountryCode = "CountryCode";

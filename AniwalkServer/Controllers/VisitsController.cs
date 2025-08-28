@@ -378,9 +378,10 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="VisitSN"></param>
         /// <param name="MapDataParam"></param>
+        /// <param name="LastAction">上一個Action</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Details(int VisitSN, string? MapDataParam)
+        public async Task<IActionResult> Details(int VisitSN, string? MapDataParam, string? LastAction)
         {
             var Visit = await VisitsServices.GetVisit(VisitSN, true);
 
@@ -402,6 +403,8 @@ namespace AniwalkServer.Controllers
 
                 ViewData[ViewDataKeys.MapData] = MapData;
             }
+
+            ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
 
             //SetViewData();
 
