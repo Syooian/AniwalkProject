@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -64,9 +65,10 @@ namespace AniwalkServer.Controllers
         /// 從地圖瀏覽到訪紀錄
         /// </summary>
         /// <param name="VisitsParam"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam)
+        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam, MapDataParam? MapDataParam)
         {
             SetGoogleMapsApiKey();
 
@@ -82,6 +84,11 @@ namespace AniwalkServer.Controllers
             if (Result == null)
                 return NotFound();
 
+            if (MapDataParam != null)
+            {
+                Debug.WriteLine("ShowVisitsOnMap MapData : " + MapDataParam);
+            }
+
             //var Markers = new List<object>
             //{
             //    new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
@@ -92,7 +99,7 @@ namespace AniwalkServer.Controllers
 
             //ViewBag.Markers = Markers;
 
-            ViewData["AJAXAction"] = nameof(ShowVisitsOnMap);
+            ViewData[ViewDataKeys.AJAXAction] = nameof(ShowVisitsOnMap);
             await SetViewData();
 
             // 判斷是否為 AJAX 請求
@@ -130,7 +137,7 @@ namespace AniwalkServer.Controllers
             //if (Result.Filter != null)
             //    Debug.WriteLine("ShowVisitsOnList 2 Filter : " + Result.Filter.ToString());
 
-            ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
+            ViewData[ViewDataKeys.AJAXAction] = nameof(ShowVisitsOnList);
             await SetViewData();
 
             // 判斷是否為 AJAX 請求
@@ -370,8 +377,10 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Details(int VisitSN)
+        [HttpGet]
+        public async Task<IActionResult> Details(int VisitSN, string? MapDataParam)
         {
             var Visit = await VisitsServices.GetVisit(VisitSN, true);
 
@@ -383,6 +392,16 @@ namespace AniwalkServer.Controllers
             }
 
             SetGoogleMapsApiKey();
+
+            if (!string.IsNullOrEmpty(MapDataParam))
+            {
+                //Debug.WriteLine(MapDataParam);
+
+                var MapData = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
+                Debug.WriteLine("Details MapData : " + MapData);
+
+                ViewData[ViewDataKeys.MapData] = MapData;
+            }
 
             //SetViewData();
 

@@ -1,4 +1,5 @@
 ﻿@using AniwalkServer.DTOs;
+@using AniwalkServer.Data;
 @model IEnumerable<VisitsDTO>
 
 @{
@@ -71,15 +72,15 @@
         //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
         @foreach (var Visit in Model)
         {
-                //添加Marker的屬性
-                    <text>MarkerData.push({
-                    latitude:@Visit.Latitude,
-                    longitude:@Visit.Longitude,
-                    member:{
-                            name: '@Visit.Name'
-                    },
-                    sn:@Visit.SN
-                });</text>
+            //添加Marker的屬性
+            <text>MarkerData.push({
+                latitude:@Visit.Latitude,
+                longitude:@Visit.Longitude,
+                member:{
+                        name: '@Visit.Name'
+                },
+                sn:@Visit.SN
+            });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
@@ -90,7 +91,16 @@
 
     //在Modal下的按鈕增加監聽，按下後前往到訪紀錄詳細檢視畫面
     document.querySelector('#ToDetails').addEventListener('click',(E)=>{
-        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}`;
+        //紀錄目前的座標和Zoom
+        const Center=map.getCenter();
+        const MapData={
+            MapCenterLatitude: Center.lat(),
+            MapCenterLongitude: Center.lng(),
+            Zoom: map.getZoom()
+        }
+        //console.log(MapData);
+
+        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}&MapDataParam=${encodeURIComponent(JSON.stringify(MapData))}&@ViewDataKeys.AJAXAction=ShowVisitsOnMap`;//JSON 字串包含 {、}、" 等特殊字元，直接放在網址會造成問題，所以要用encodeURIComponent去轉，否則瀏覽器或伺服器可能無法正確解析。
     });
 
     //紀錄所有已生成的Marker
