@@ -48,6 +48,11 @@ namespace AniwalkServer.Models
         /// </summary>
         [HiddenInput]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        /// <summary>
+        /// 刪除日期
+        /// </summary>
+        [Display(Name = "刪除日期")]
+        public DateTime? DeleteDate { get; set; }
 
         #region 外鍵關聯
         /// <summary>

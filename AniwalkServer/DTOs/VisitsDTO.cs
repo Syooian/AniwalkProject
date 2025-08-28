@@ -30,5 +30,9 @@
         /// <see cref="AniwalkServer.Models.Animes.Title"/>
         /// </summary>
         public string Title { get; set; } = null!;
+        /// <summary>
+        /// 刪除日期
+        /// </summary>
+        public DateTime? DeleteDate { get; set; }
     }
 }

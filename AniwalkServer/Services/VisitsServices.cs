@@ -37,8 +37,9 @@ namespace AniwalkServer.Services
         /// <param name="VisitsParam"></param>
         /// <param name="Page"></param>
         /// <param name="PageSize"></param>
+        /// <param name="IncludeDeleted">是否包含已標記為刪除的資料</param>
         /// <returns></returns>
-        public async Task<PageDTO<VisitsDTO, VisitsParam>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0)
+        public async Task<PageDTO<VisitsDTO, VisitsParam>> GetVisits(VisitsParam? VisitsParam, int Page = 1, int PageSize = 0, bool IncludeDeleted = false)
         {
             if (VisitsParam == null)
                 VisitsParam = new VisitsParam();
@@ -55,10 +56,14 @@ namespace AniwalkServer.Services
             var SQLCount = "select count(*) ";
 
             //資料查詢
-            var SQLData = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate from Visits as V " + SQLJoin;
+            var SQLData = "select V.SN, V.Latitude, V.Longitude, V.MemberID, C.CountryCode, C.CountryName, A.AnimeID, A.Title, V.MainText, M.Name, V.VisitedDate, V.CreatedDate, V.DeleteDate from Visits as V " + SQLJoin;
 
             //查詢條件
-            var SQLSelect = "where 1=1 ";
+            string SQLSelect;
+            if (IncludeDeleted)
+                SQLSelect = "where 1=1 ";
+            else
+                SQLSelect = "where V.DeleteDate is null ";
 
             //查詢條件參數
             var SQLPara = new DynamicParameters();
@@ -335,6 +340,25 @@ namespace AniwalkServer.Services
             }
 
             return Visit;
+        }
+
+        /// <summary>
+        /// 刪除到訪紀錄
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        public async Task<Result> DeleteVisit(int VisitSN)
+        {
+            var Visit = await GetVisit(VisitSN);
+            if (Visit == null)
+                return new Result(ResultType.Fail, "Not Found");
+
+            Visit.DeleteDate = DateTime.Now;
+
+            Context.Update(Visit);
+            await Context.SaveChangesAsync();
+
+            return new Result();
         }
     }
 }
