@@ -1,0 +1,326 @@
+﻿@model AniwalkServer.Models.Visits
+
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "詳細檢視";
+
+    var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+<h1>
+    @ViewData["Title"]
+</h1>
+
+<hr />
+<div>
+    <div class="d-flex justify-content-between align-items-start">
+        <dl class="row col-7">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.MainText)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.Raw(Shared.ConvertNewLineToBr(Model.MainText))
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Latitude)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Latitude)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Longitude)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Longitude)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.VisitedDate)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.VisitedDate)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Member.Name)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Member.Name)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Country.CountryName)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Country.CountryName)
+            </dd>
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Anime.Title)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Anime.Title)
+            </dd>
+        </dl>
+        @*   @{
+            await Component.InvokeAsync("VC_Map");
+        } *@
+        <div id="Gmap"
+             style="width:500px; height:500px"></div>
+    </div>
+</div>
+<!--按鈕區-->
+<div>
+    <form asp-action="Delete">
+        <input type="hidden" value="@Model?.SN" name="VisitSN" />
+        <!--彈出評論留言框的按鈕 -->
+        <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
+            評論
+        </button>
+        <a>|</a>
+        <!--刪除按鈕 (限發表人或管理員)-->
+        @if (MemberID == Model.MemberID || User.IsInRole(Shared.Role_Admin))
+        {
+            <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+            <a>|</a>
+        }
+        <!--編輯按鈕 (限發表人)-->
+        @if (MemberID == Model.MemberID)
+        {
+            <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
+            <a>|</a>
+        }
+        <!--返回按鈕-->
+        <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary btn-sm">返回列表</a>
+    </form>
+</div>
+
+@if (Model.VisitsPhotos.Count > 0)
+{
+    <hr />
+    <div class="row justify-content-center">
+        @foreach (var Photo in Model.VisitsPhotos)
+        {
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+                <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
+                <div class="card-body">
+                    <!--h5 class="card-title">Card title</h5>-->
+                    <p class="card-text">
+                        @Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
+                    </p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LargePhotoModal">檢視大圖</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!--留言框Modal-->
+<div class="modal fade" id="CommentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">想說些什麼？</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @* //嵌入回覆留言表單 *@
+                <div id="AddContentForm" class="bg-light p-2 rounded">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--留言框Modal-->
+<!--留言框Script-->
+@section Scripts {
+    @*前端驗證套件*@
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        //抓彈出框
+        const Modal=new bootstrap.Modal(document.getElementById('CommentModal'));
+
+        //驗證是否登入
+        function CheckAuthorization(Controller, CommentID="", ParentReplyID=""){
+            //console.log("CheckAuthorization Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+
+            fetch('/'+Controller+'/Create', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(Response=>{
+                if(Response.redirected){//沒有登入的情況下被強制導回到登入畫面
+                    //如果伺服器返回重定向，跳轉到登入頁面
+                    window.location.href = Response.url;
+                }
+                else//已登入狀態
+                {
+                    //  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#CommentModal">
+                    //     留言
+                    // </button>
+
+                    LoadAddContentForm(Controller, CommentID, ParentReplyID);
+
+                    Modal.show();
+                }
+            }).catch(Error=>{
+                console.log('Error : ', Error);
+            });
+        }
+
+        //載入回覆留言表單
+        function LoadAddContentForm(Controller, CommentID="", ParentReplyID=""){
+            //console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
+
+            var URL='/'+Controller+'/Create?VisitSN=@Model.SN';
+            if(CommentID != "")//回覆給評論
+                URL+='&CommentID='+CommentID;
+
+            if(ParentReplyID!="")//回覆給回覆
+                URL+='&ParentReplyID='+ParentReplyID;
+
+            //console.log($`LoadAddContentForm Controller : ${Controller}, CommentID : ${CommentID}, ParentReplyID : ${ParentReplyID}`);
+            //評論：/Comments/Create?VisitSN=1
+            //回覆評論：/Replies/Create?VisitSN=1&CommentID=43fe5ee2-fee3-447e-8204-02ace0443665
+            //回覆回覆：/Replies/Create?VisitSN=1&CommentID=ec7e6d63-a129-4c3b-b524-f42eaa18f37d&ParentReplyID=037009b8-383b-4f79-bd6c-b4beb9f20ff4
+
+            //使用Callback function重新綁定 unobtrusive validation
+            $('#AddContentForm').load(URL, function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                    $.validator.unobtrusive.parse($('#AddContentForm'));
+            });
+        }
+
+        //LoadAddContentForm();
+
+        //使用Ajax達成新增回覆\留言
+        function AddContent(Controller){
+            //console.log("AddContent : "+Controller);
+
+            //2.5.17判斷表單是否驗證通過
+                if(!$('#AddContentForm form').valid()){
+                //驗證失敗，不送出表單
+                return;
+            }
+
+            $.ajax({
+                type:"POST",
+                url:"/"+Controller+"/Create",//Controller/Action
+                data:$('#AddContentForm form').serialize(),
+                success:function(){
+                    //更新底下回覆留言區
+                    UpdateList();
+
+                    //關閉彈出框
+                    Modal.hide();
+                },
+                error:function(xhr, status, error){
+                    console.error("新增評論or回覆錯誤", error);
+                }
+            });
+        }
+
+        //使用Ajax達成刪除回覆\留言
+        function DeleteContent(Controller, ID){
+            //console.log($`DeleteContent : Controller : ${Controller}, ID : ${ID}`);
+
+            if(!confirm('確定刪除？')){
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: `/${Controller}/Delete`,
+                success:function(){
+                    //更新底下回覆留言區
+                    UpdateList();
+                },
+                data:{
+                    VisitSN: '@Model.SN',
+                    ID: ID,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()//Anti-Forgery Token
+                },
+                error:function(xhr, status, error){
+                    console.error("刪除評論or回覆錯誤", error);
+                }
+            });
+        }
+
+        //更新底下回覆留言區
+        function UpdateList(){
+            $('#ContentList').load('/Visits/GetContentsByViewComponent?VisitSN=@(Model.SN)');
+        }
+    </script>
+}
+<!--留言框Script-->
+<hr />
+
+<!--所有評論&回覆-->
+<div id="ContentList">
+    @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
+</div>
+<!--所有回覆-->
+@* <div id="RepliesList">
+    @await Component.InvokeAsync("VC_Comment", new { VisitSN = Model.SN, IsChange = false })
+</div> *@
+
+<script src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.GoogleMapsApiKey&callback=InitMap&libraries=marker&v=weekly" defer></script>
+<script>
+    var Marker;
+
+    function InitMap(){
+        console.log("Initing GoogleMap");
+
+        // 設定地圖中心點
+        const center = { lat: @Model.Latitude, lng: @Model.Longitude };
+
+         // 建立地圖
+        const map = new google.maps.Map(document.getElementById("Gmap"), {
+            center: center,
+            zoom: 10,
+            mapId: "DEMO_MAP_ID"
+        });
+
+        Marker = new google.maps.marker.AdvancedMarkerElement({
+            position: center,
+            map: map,
+            title: "新增到訪紀錄"
+        });
+    }
+
+    window.InitMap = InitMap; // 將 InitMap 函數暴露給全域作用域，以便 Google Maps API 可以調用它
+</script>
+
+<!--===================================檢視大圖===================================-->
+<div class="modal fade" id="LargePhotoModal" tabindex="-1" aria-labelledby="LargePhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!--Carousel-->
+                <div id="PhotosCarousel" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner" style="height:500px">
+                        @for (int a = 0; a < Model.VisitsPhotos.Count; a++)
+                        {
+                            <div class="carousel-item @(a == 0 ? "active" : "")">
+                                <img class="d-block w-100 h-100" style="object-fit: contain" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Model.VisitsPhotos[a].PhotoID}{Model.VisitsPhotos[a].PhotoType}")" />
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#PhotosCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#PhotosCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--===================================檢視大圖===================================-->

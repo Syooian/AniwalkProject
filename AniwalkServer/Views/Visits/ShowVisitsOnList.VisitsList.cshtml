@@ -1,0 +1,142 @@
+﻿@model PageDTO<VisitsDTO,VisitsParam>
+@using AniwalkServer.QueryParameters
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@using System.Security.Claims
+@using AniwalkServer.DTOs
+@using System.Diagnostics;
+@inject IModelMetadataProvider MetadataProvider
+@{
+    var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    var CountryDisplayName = MetadataProvider.GetMetadataForType(typeof(Visits))
+        .Properties.FirstOrDefault(p => p.Name == nameof(Visits.CountryCode)).DisplayName;
+    var AnimeTitle = MetadataProvider.GetMetadataForType(typeof(Animes))
+        .Properties.FirstOrDefault(P => P.Name == nameof(Animes.Title)).DisplayName;
+    var MemberName = MetadataProvider.GetMetadataForType(typeof(Members))
+        .Properties.FirstOrDefault(P => P.Name == nameof(Members.Name)).DisplayName;
+
+    #region 條件篩選
+    if (Model.Filter != null)
+        Debug.WriteLine("VisitsList Filter : " + Model.Filter);
+    else
+        Debug.WriteLine("VisitsList Filter is null");
+
+    var FilterRouteValues = Model.GetFilterRouteValues();
+    // foreach (var Item in FilterRouteValues)
+    // {
+    //     Debug.WriteLine($"FilterRouteData {Item.Key}:{Item.Value}");
+    // }
+    #endregion
+}
+
+@if (Model.Data.Any())
+{
+    <div class="ListVerticalScrollBar">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-1">
+                        @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().CountryCode)*@
+                        @CountryDisplayName
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Anime.Title)*@
+                        @AnimeTitle
+                    </th>
+                    <th class="col-3"><!--主文簡略-->
+                        @*@Html.DisplayNameFor(model => model.Longitude)*@
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Member.Name)*@
+                        @MemberName
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().VisitedDate)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Data)
+                {
+                    <tr class="@(item.DeleteDate != null ? "bg-warning" : "")">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Shared.TruncateText(item.MainText, 70)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VisitedDate)
+                        </td>
+                        <td>
+                            <form asp-action="Delete">
+                                <input type="hidden" value="@item.SN" name="VisitSN" />
+                                <!--刪除按鈕 (限發表人或管理員)-->
+                                @if (MemberID == item.MemberID || User.IsInRole(Shared.Role_Admin))
+                                {
+                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('確定要刪除此到訪記錄嗎?')" />
+                                    <a>|</a>
+                                }
+                                <!--編輯按鈕 (限發表人)-->
+                                @if (MemberID == item.MemberID)
+                                {
+                                    <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
+                                    <a>|</a>
+                                }
+                                <!--詳細檢視按鈕-->
+                                <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <!--分頁選擇-->
+                    @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+                    {
+                        <td class="text-center">
+                            <nav aria-label="...">
+                                <ul class="pagination">
+                                    <!--上一頁-->
+                                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                                        <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    @{
+                                        for (int a = 1; a <= Model.PageCount; a++)
+                                        {
+                                            <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
+                                                <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@a">@a</a><!--asp-all-route-data似乎會覆蓋掉asp-route-Page，所以將asp-all-route-data放在最前-->
+                                            </li>
+                                        }
+                                    }
+
+                                    <!--下一頁-->
+                                    <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
+                                        <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </td>
+                    }
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+else
+{
+    <h3 class="text-center">無任何到訪記錄，等你來分享!!!</h3>
+}

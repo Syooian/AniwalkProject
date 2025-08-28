@@ -1,0 +1,21 @@
+﻿@*@model IEnumerable<AniwalkServer.Models.Visits>*@
+
+@if (User.IsInRole(RoleEnum.Member.ToString()))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">新增到訪紀錄</a>
+    </p>
+}
+<!--篩選條件-->
+@await Html.PartialAsync("~/Views/Visits/Shared/_VisitsFilter.cshtml")
+<hr />
+
+<!--到訪記錄列表-->
+<div id="VisitsListContainer">
+    @await Html.PartialAsync("ShowVisitsOnList.VisitsList")
+</div>
+
+@section Scripts {
+    <!--呼叫Select2初始化-->
+    @await Html.PartialAsync("_Select2")
+}

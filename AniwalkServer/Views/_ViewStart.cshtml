@@ -1,3 +1,14 @@
 ﻿@{
-    Layout = "_Layout";
+    if (User.IsInRole(RoleEnum.Admin.ToString()))
+    {
+        Layout = $"~/Areas/{Shared.Role_Admin}/Views/Shared/_Layout.cshtml";
+    }
+    else if (User.IsInRole(RoleEnum.Member.ToString()))
+    {
+        Layout = "_MemberLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
 }

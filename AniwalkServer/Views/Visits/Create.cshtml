@@ -1,0 +1,98 @@
+﻿@model AniwalkServer.Models.Visits
+
+@{
+    ViewData["FormAction"] = "Create";
+}
+
+<h4>新增到訪紀錄</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" id="DataForm" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MainText" class="control-label"></label>
+                <textarea asp-for="MainText" class="form-control" rows="10"></textarea>
+                <span asp-validation-for="MainText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Latitude" class="control-label"></label>
+                <input asp-for="Latitude" class="form-control" readonly />
+                <span asp-validation-for="Latitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Longitude" class="control-label"></label>
+                <input asp-for="Longitude" class="form-control" readonly />
+                <span asp-validation-for="Longitude" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="MemberID" class="control-label"></label>*@
+                <input asp-for="MemberID" class="form-control" value="@ViewBag.MemberID" hidden />
+            </div>
+            <div class="form-group">
+                <label asp-for="CountryCode" class="control-label"></label>
+                <select asp-for="CountryCode" class="form-control js-example-basic-single" id="Ipt_CountryCode">
+                    @foreach (var Item in ViewBag.CountryCode)
+                    {
+                        <option value="@Item.Value">@Item.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="CountryCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AnimeID" class="control-label"></label>
+                <select asp-for="AnimeID" class="form-control js-example-basic-single" id="Ipt_AnimeID">
+                    @foreach (var Item in ViewBag.AnimeID)
+                    {
+                        <option value="@Item.Value">@Item.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="AnimeID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VisitedDate" class="control-label"></label>
+                <input asp-for="VisitedDate" class="form-control" />
+                <span asp-validation-for="VisitedDate" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <input type="file" name="PhotoUpload" class="form-control" accept=".jpg,.jpeg,.png,.jfif,.bmp,.gif" multiple id="PhotoSelecter" hidden onchange="OnPhotoChange(this)" /><!--所有圖片類型：image/*-->
+                <span class="text-danger">@ViewData["PhotoError"]</span>
+            </div>*@
+            <div class="form-group" id="PhotoForm">
+                @*<label asp-for="Photo" class="control-label"></label>*@
+                @*<span asp-validation-for="Photo" class="text-danger"></span>*@
+                @* <label asp-for="VisitsPhotos" class="control-label"></label>
+                <input asp-for="VisitsPhotos" class="form-control" />
+                <span asp-validation-for="VisitsPhotos" class="text-danger"></span> *@
+            </div>
+            <div class="form-group">
+                @*<input type="submit" value="新增" class="btn btn-primary" />*@
+                <input type="button" value="新增" class="btn btn-primary" onclick="SendForm()" />
+            </div>
+        </form>
+    </div>
+    @await Html.PartialAsync("_SharedMap", new { EnableClick = true })
+</div>
+
+<div>
+    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
+</div>
+
+<hr />
+
+@*照片*@
+@await Html.PartialAsync("_PhotoContainer")
+@*照片*@
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @await Html.PartialAsync("_Select2");
+}
+
+<script>
+    document.getElementById("Ipt_CountryCode").value="";
+    document.getElementById("Ipt_AnimeID").value="";
+</script>

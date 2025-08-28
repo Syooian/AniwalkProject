@@ -1,0 +1,74 @@
+﻿@*給地圖檢視中點下地圖標記後彈出的簡易版到訪紀錄*@
+
+@model Visits
+@{
+    Layout = null;
+
+    bool IsFirst = true;
+}
+
+@* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+
+@{
+    //Console.WriteLine($"Rendering Comments View Component {Model.Count()}");
+}
+
+@*使用Bootstrap的Carousel*@
+@*data-bs-interval="1"：控制捲動速度*@
+<div id="PhotosCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div>
+            <a>
+                @if (Model.MainText.Length > 100)
+                {
+                    @Html.Raw(Model.MainText.Substring(0, 100) + "......")
+                }
+                else
+                {
+                    @Model.MainText
+                }
+            </a>
+        </div>
+        @foreach (var Item in Model.VisitsPhotos)
+        {
+            <div class="carousel-item @(IsFirst ? "active" : "")">
+                <img class="d-block w-100" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Item.PhotoID}{Item.PhotoType}")" alt="@Item.Description">
+                <div class="carousel-caption d-none d-md-block">
+                    <p>
+                        @Html.Raw(Shared.ConvertNewLineToBr(Item.Description))
+                    </p>
+                </div>
+            </div>
+
+            IsFirst = false;
+        }
+    </div>
+    @if (Model.VisitsPhotos.Count > 0)
+    {
+        <button class="carousel-control-prev" type="button" data-bs-target="#PhotosCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#PhotosCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    }
+</div>
+
+@* <script>
+    console.log("Carousel Go 1");
+
+    var myCarousel = document.querySelector('#PhotosCarousel');
+    var carousel = new bootstrap.Carousel(myCarousel, {
+        interval: 1000, // 自動切換間隔（毫秒）
+        wrap: true,      // 是否循環播放
+        ride:'carousel',
+        pause: 'false'
+    });
+
+    console.log("Carousel Go 2");
+</script> *@

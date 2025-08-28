@@ -1,3 +1,6 @@
 [submodule "AniwalkClient_Android"]
 	path = AniwalkClient_Android
 	url = https://github.com/Syooian/AniwalkClient_Android.git
+[submodule "需求分析"]
+	path = 需求分析
+	url = https://github.com/Syooian/RequirementsAnalysis_UCD.git

@@ -1,0 +1,133 @@
+﻿using AniwalkServer.Data;
+using AniwalkServer.Models;
+using AniwalkServer.Models.ForgotPassword;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+
+namespace AniwalkServer.Services
+{
+    public class ForgotPasswordServices : ServicesBase
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        public ForgotPasswordServices(AniwalkDBContext Context) : base(Context) { }
+
+        /// <summary>
+        /// 查找忘記密碼表單是否已過期
+        /// </summary>
+        /// <param name="FP"></param>
+        /// <returns></returns>
+        public async Task<bool> IsForgotPasswordExpired(ForgotPassword FP)
+        {
+            try
+            {
+                //判斷是否已過期
+                if (FP != null && DateTime.Now < FP.VerifyCodeExpiryDate)
+                {
+                    return false; // 驗證碼未過期
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetForgotPassword Error : {ex.Message}");
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 新增忘記密碼表單
+        /// </summary>
+        /// <param name="Member"></param>
+        /// <returns></returns>
+        public async Task<Result> CreateForgotPassword(Members Member)
+        {
+            try
+            {
+                //取隨機數 (5位數補0)
+                var RanVerifyCode = new Random().Next(99999).ToString("D5");
+
+                var Form = new ForgotPassword()
+                {
+                    MemberID = Member.MemberID,// 設置外鍵
+                    Member = Member,// 設置導航屬性
+                    VerifyCode = RanVerifyCode,
+                    VerifyCodeExpiryDate = DateTime.Now.AddMinutes(5),//驗證碼到期時限為5分鐘後
+                    CreatedDate = DateTime.Now
+                };
+
+                Context.Add(Form);
+                await Context.SaveChangesAsync();
+
+                return new Result(Message: RanVerifyCode);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetForgotPassword Error : {ex.Message}");
+                return new Result(ResultType.Fail, "GetForgotPassword Error");
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VerifyCode"></param>
+        /// <returns></returns>
+        public async Task<ForgotPassword> GetForgotPasswordByVerifyCode(string VerifyCode)
+        {
+            var Result = await Context.ForgotPassword
+                .Where(M => M.VerifyCode == VerifyCode)
+                .OrderByDescending(M => M.CreatedDate)
+                .FirstOrDefaultAsync();
+
+            return Result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public async Task<ForgotPassword> GetForgotPasswordByMemberID(string MemberID)
+        {
+            var Result = await Context.ForgotPassword
+                .Where(M => M.MemberID == MemberID)
+                .OrderByDescending(M => M.CreatedDate)
+                .FirstOrDefaultAsync();
+
+            return Result;
+        }
+
+        /// <summary>
+        /// 發送驗證碼到會員的信箱
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
+        public async Task<string> SendVerifyCodeToMember(string Email)
+        {
+            return "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="VerifyCode"></param>
+        /// <returns></returns>
+        public async Task<bool> IsForgotPasswordExists(string VerifyCode)
+        {
+            return await Context.ForgotPassword.AnyAsync(V => V.VerifyCode == VerifyCode);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool IsForgotPasswordExists(int id)
+        {
+            return Context.ForgotPassword.Any(e => e.SN == id);
+        }
+    }
+}

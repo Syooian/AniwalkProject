@@ -1,0 +1,144 @@
+﻿@using AniwalkServer.Data;
+@*@using AniwalkServer.DTOs
+@using System.Diagnostics;
+@model PageDTO<VisitsDTO>*@
+
+@*
+移動此檔案位置時，需修改下列檔案的呼叫路徑
+@await Html.PartialAsync("~/Views/Visits/Shared/_VisitsFilter.cshtml")
+
+ShowVisitsOnList.cshtml
+ShowVisitsOnMap.cshtml
+ *@
+
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                搜尋篩選條件
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body row">
+                <div>
+                    到訪國家：<select id="Ipt_CountryCode" placeholder="請輸入國家名稱" class="js-example-basic-single">
+                        @foreach (var Item in ViewBag.CountryCode)
+                        {
+                            <option value="@Item.Value">@Item.Text</option>
+                        }
+                    </select>
+                    動畫：<select id="Ipt_AnimeID" placeholder="請輸入動畫標題" class="js-example-basic-single">
+                        @foreach (var Item in ViewBag.AnimeID)
+                        {
+                            <option value="@Item.Value">@Item.Text</option>
+                        }
+                    </select>
+                    發表會員：<input id="Ipt_MemberName" placeholder="請輸入會員名字" />
+                </div>
+                <div>
+                    到訪日期：從<input id="Ipt_VisitedDate_From" type="date" />至<input id="Ipt_VisitedDate_To" type="date" />
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="VisitsFiltedSearch()">搜尋</button>
+                    <button type="button" class="btn btn-outline-primary" id="Btn_Reset">清空</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    var AJAXActionKey = ViewData[AniwalkServer.Data.ViewDataKeys.AJAXAction];//Razor變數只會在開頭執行，所以下面要用const去接，不然會找不到
+
+    //Debug.WriteLine(Model == null ? " Model is null" : "Model have value");
+}
+
+<script>
+    //設置清空按鈕的行為
+    document.getElementById("Btn_Reset").addEventListener("click", function(){
+        ResetFilter();
+        VisitsFiltedSearch();
+    });
+
+    const AJAXActionKey="@AJAXActionKey";
+    const Ipt_CountryCode = document.getElementById("Ipt_CountryCode");
+    const Ipt_AnimeID = document.getElementById("Ipt_AnimeID");
+    const Ipt_MemberName = document.getElementById("Ipt_MemberName");
+    const Ipt_VisitedDate_From = document.getElementById("Ipt_VisitedDate_From");
+    const Ipt_VisitedDate_To = document.getElementById("Ipt_VisitedDate_To");
+
+    //清空篩選條件
+    function ResetFilter(){
+        Ipt_CountryCode.value="";
+        Ipt_AnimeID.value="";
+        Ipt_MemberName.value="";
+        Ipt_VisitedDate_From.value="";
+        Ipt_VisitedDate_To.value="";
+    }
+
+    ResetFilter()
+
+    function VisitsFiltedSearch(){
+        let Filters={
+            CountryCode: Ipt_CountryCode.value.trim(),//trim()：去除前後空白
+            AnimeID: Ipt_AnimeID.value.trim(),
+            MemberName: Ipt_MemberName.value.trim(),
+            VisitedDate_From: Ipt_VisitedDate_From.value,
+            VisitedDate_To: Ipt_VisitedDate_To.value
+        };
+
+        //console.log(`Filting CountryCode : ${Filters.CountryCode}, AnimeID : ${Filters.AnimeID}, MemberName : ${Filters.MemberName}, VisitedDate : ${Filters.VisitedDate}`);
+
+        //用 URLSearchParams 轉換 (不然直接Filters.toString()會印出[object Object]而不是CountryName=xxx&AnimeTitle=yyy&MemberName=zzz&VisitedDate=2025-08-11)
+        Filters=new URLSearchParams(Filters);
+
+        @*
+        var Page=null;
+        @if(Model!=null)
+        {
+            Page
+        }
+        *@
+
+        var FetchURL=`/Visits/${AJAXActionKey}?${Filters}`;
+        //console.log("FetchURL : "+FetchURL);
+        fetch(FetchURL, {
+            method: 'get',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(Response=>Response.text())
+        .then(Html=>{
+            //console.log(Html);
+
+            //這種作法將來需要統一
+            switch(AJAXActionKey){
+                case "ShowVisitsOnList":{
+                    try{
+                        document.getElementById("VisitsListContainer").innerHTML = Html;
+                    }
+                    catch(Error){
+                        console.error("VisitsFilter Error 1 : "+Error);
+                    }
+                    break;
+                }
+                case "ShowVisitsOnMap":{
+                    try{
+                        //將Html Json文字轉成物件
+                        let FiltedVisits=JSON.parse(Html);
+                        //console.log("FiltedVisits : "+FiltedVisits);
+
+                        SetMarkers(FiltedVisits);
+                    }
+                    catch(Error){
+                        console.error("VisitsFilter Error 2 : "+Error);
+                    }
+                    break;
+                }
+                default:{
+                    console.error(`VisitsFilter 未預期的AJAXActionKey : ${AJAXActionKey}`)
+                    break;
+                }
+            }
+        });
+    }
+</script>

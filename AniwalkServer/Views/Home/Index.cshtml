@@ -3,3 +3,7 @@
 }
 
 <h1>Welcome to Aniwalk</h1>
+
+<!-- #region 公告 -->
+@await Component.InvokeAsync("VC_IndexAnnouncements", new { Skip = 0, Take = 999 })
+<!-- #endregion -->

@@ -1,0 +1,77 @@
+﻿@model AniwalkServer.Models.Members
+
+@{
+    ViewData["Title"] = "註冊會員";
+}
+
+<h1>註冊會員</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                @*<label asp-for="MemberID" class="control-label"></label>*@
+                <input asp-for="MemberID" class="form-control" value="0000000000" />
+                @*<span asp-validation-for="MemberID" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            @*       <div class="form-group">
+                <label asp-for="CreatedDate" class="control-label"></label>
+                <input asp-for="CreatedDate" class="form-control" />
+                <span asp-validation-for="CreatedDate" class="text-danger"></span>
+            </div> *@
+            <div class="form-group">
+                <label asp-for="CountryCode" class="control-label"></label>
+                <select asp-for="CountryCode" class="form-control js-example-basic-single" id="Ipt_CountryCode" @*asp-items="ViewBag.CountryCode"*@>
+                    @foreach (var Item in ViewBag.CountryCode)
+                    {
+                        <option value="@Item.Value">@Item.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="CountryCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Login.MemberID" class="form-control" value="0000000000" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Login.Account" class="control-label"></label>
+                <input asp-for="Login.Account" class="form-control" />
+                <span asp-validation-for="Login.Account" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Login.Password" class="control-label"></label>
+                <input asp-for="Login.Password" class="form-control" />
+                <span asp-validation-for="Login.Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="送出" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <span class="text-danger">@ViewData["Error"]</span>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    @await Html.PartialAsync("_Select2");
+}
+
+<script>
+    document.getElementById("Ipt_CountryCode").value="";
+</script>

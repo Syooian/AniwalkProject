@@ -5,14 +5,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AniwalkServer</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/AniwalkServer.styles.css" asp-append-version="true" />
-</head>
+@{
+    //共用Head
+    await Html.RenderPartialAsync("_SharedLayout.Head");
+}
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -34,9 +30,14 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Visits" asp-action="ShowVisitsOnList">清單檢視</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="AddNewAnimes" asp-action="Create">填寫新增動畫建議</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <a class="nav-link text-light text-end btn btn-primary" asp-area="" asp-controller="Members" asp-action="Create">註冊</a> |
+                    <a class="nav-link text-light text-end btn btn-primary" asp-area="" asp-controller="Login" asp-action="Login">登入</a>
                 </div>
             </div>
         </nav>
@@ -62,6 +63,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @{
+        //共用Scripts
+        await Html.RenderPartialAsync("_SharedLayout.Scripts");
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
