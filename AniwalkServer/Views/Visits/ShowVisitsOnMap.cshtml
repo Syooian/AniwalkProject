@@ -1,9 +1,16 @@
 ﻿@using AniwalkServer.DTOs;
 @using AniwalkServer.Data;
+@using System.Diagnostics;
 @model IEnumerable<VisitsDTO>
 
 @{
     ViewData["Title"] = "地圖檢視";
+
+    string MapData = ViewData[ViewDataKeys.MapData].ToString();
+    // string MapData="";
+    // if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
+    //     MapData = Data.ToString();
+    //Debug.WriteLine("MMD : " + MapData);
 }
 
 @* @using System.Text.Json

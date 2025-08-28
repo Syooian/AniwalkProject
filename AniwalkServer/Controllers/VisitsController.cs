@@ -68,7 +68,8 @@ namespace AniwalkServer.Controllers
         /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam, MapDataParam? MapDataParam)
+        [HttpGet]//補上HttpGet，不然會報錯 (多個EndPoint錯誤)
+        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam, string? MapDataParam)
         {
             SetGoogleMapsApiKey();
 
@@ -84,9 +85,15 @@ namespace AniwalkServer.Controllers
             if (Result == null)
                 return NotFound();
 
-            if (MapDataParam != null)
+            if (!string.IsNullOrEmpty(MapDataParam))
             {
-                Debug.WriteLine("ShowVisitsOnMap MapData : " + MapDataParam);
+                //Debug.WriteLine("ShowVisitsOnMap MapData : " + MapDataParam);
+                //ViewData[ViewDataKeys.MapData] = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);//因為在View丟值過來時因為是帶在網頁上，需經過一次URL格式的轉換避免出錯，因此再次塞給View時需轉換回來才會是正確的Json格式
+            }
+            else
+            {
+                ViewData[ViewDataKeys.MapData] = JsonConvert.SerializeObject(new MapDataParam());
             }
 
             //var Markers = new List<object>
@@ -399,7 +406,7 @@ namespace AniwalkServer.Controllers
                 //Debug.WriteLine(MapDataParam);
 
                 var MapData = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
-                Debug.WriteLine("Details MapData : " + MapData);
+                //Debug.WriteLine("Details MapData : " + MapData);
 
                 ViewData[ViewDataKeys.MapData] = MapData;
             }
