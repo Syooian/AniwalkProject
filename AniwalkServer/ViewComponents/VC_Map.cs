@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
+using System.Diagnostics;
+using AniwalkServer.QueryParameters;
 
 namespace AniwalkServer.ViewComponents
 {
@@ -17,30 +20,33 @@ namespace AniwalkServer.ViewComponents
         /// 
         /// </summary>
         private readonly IConfiguration Configuration;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly VisitsServices VisitsServices;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="Context"></param>
         /// <param name="Configuration"></param>
-        public VC_Map(AniwalkDBContext Context, IConfiguration Configuration)
+        public VC_Map(AniwalkDBContext Context, IConfiguration Configuration, VisitsServices VisitsServices)
         {
             this.Context = Context;
             this.Configuration = Configuration;
+            this.VisitsServices = VisitsServices;
         }
 
         /// <summary>
-        /// 預設地圖中心
+        /// 
         /// </summary>
-        const double DefaultMapCenterLatitude = 22.593469753520136;
-        const double DefaultMapCenterLongitude = 120.3088710110155;
-
-
-        public async Task<IViewComponentResult> InvokeAsync()
+        /// <param name="MapDataParam"></param>
+        /// <returns></returns>
+        public async Task<IViewComponentResult> InvokeAsync(MapDataParam MapDataParam)
         {
-            Console.WriteLine($"Invoke VC_Map 1");
+            Debug.WriteLine($"Invoke VC_Map 1");
 
-            SetMapData(DefaultMapCenterLatitude, DefaultMapCenterLongitude);
+            SetMapData(MapDataParam);
 
             var VM = new VM_Visits
             {
@@ -53,7 +59,7 @@ namespace AniwalkServer.ViewComponents
                 //Students = string.IsNullOrEmpty(id) ? Context.tStudent.ToList() : Context.tStudent.Where(S => S.DeptID == id).ToList()
             };
 
-            Console.WriteLine("Return");
+            //Console.WriteLine("Return");
 
             return View(VM);
         }
@@ -87,19 +93,27 @@ namespace AniwalkServer.ViewComponents
         /// <summary>
         /// 設定地圖資料
         /// </summary>
-        /// <param name="MapCenterLatitude"></param>
-        /// <param name="MapCenterLongitude"></param>
-        void SetMapData(double? MapCenterLatitude = null, double? MapCenterLongitude = null)
+        /// <param name="MapDataParam"></param>
+        void SetMapData(MapDataParam MapDataParam)
         {
             //設定Google Maps API金鑰
-            ViewBag.GoogleMapsApiKey = Configuration["GoogleMapAPIKey"];
+            SetGoogleMapsApiKey();
 
             //Console.WriteLine($"Key : {Configuration["GoogleMapAPIKey"]}");
 
-            ViewBag.MapCenterLatitude = MapCenterLatitude == null ? DefaultMapCenterLatitude : MapCenterLatitude;
-            ViewBag.MapCenterLongitude = MapCenterLongitude == null ? DefaultMapCenterLongitude : MapCenterLongitude;
+            //ViewBag.MapCenterLatitude = MapCenterLatitude;
+            //ViewBag.MapCenterLongitude = MapCenterLongitude;
+            ViewBag.MapData = MapDataParam;
 
-            Console.WriteLine($"MapCenterLatitude: {ViewBag.MapCenterLatitude}, MapCenterLongitude: {ViewBag.MapCenterLongitude}");
+            //Debug.WriteLine($"MapCenterLatitude: {ViewBag.MapCenterLatitude}, MapCenterLongitude: {ViewBag.MapCenterLongitude}");
+        }
+
+        /// <summary>
+        /// 設定Google Maps API金鑰
+        /// </summary>
+        void SetGoogleMapsApiKey()
+        {
+            ViewBag.GoogleMapsApiKey = Configuration["GoogleMapAPIKey"];
         }
     }
 }
