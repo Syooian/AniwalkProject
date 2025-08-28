@@ -31,110 +31,112 @@
 
 @if (Model.Data.Any())
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().CountryCode)*@
-                    @CountryDisplayName
-                </th>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Anime.Title)*@
-                    @AnimeTitle
-                </th>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Longitude)*@
-                </th>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Member.Name)*@
-                    @MemberName
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Data.FirstOrDefault().VisitedDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Data)
-            {
-                <tr class="@(item.DeleteDate != null ? "bg-warning" : "")">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CountryName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                        @Shared.TruncateText(item.MainText, 70)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.VisitedDate)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
-                        @if (MemberID == item.MemberID)
-                        {
-                            <a>|</a>
-                            <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
-                            <a>|</a>
-                            <form asp-action="Delete">
-                                <input type="hidden" value="@item.SN" name="VisitSN" />
-                                <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
-                            </form>
-                        }
-                        else if (User.IsInRole(RoleEnum.Admin.ToString()))
-                        {
-                            <a>|</a>
-                            <form asp-action="Delete">
-                                <input type="hidden" value="@item.SN" name="VisitSN" />
-                                <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
-                            </form>
-                        }
-                    </td>
+    <div class="ListVerticalScrollBar">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().CountryCode)*@
+                        @CountryDisplayName
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Anime.Title)*@
+                        @AnimeTitle
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.Longitude)*@
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Member.Name)*@
+                        @MemberName
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().VisitedDate)
+                    </th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <!--分頁選擇-->
-                @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Data)
                 {
-                    <td class="text-center">
-                        <nav aria-label="...">
-                            <ul class="pagination">
-                                <!--上一頁-->
-                                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-
-                                @{
-                                    for (int a = 1; a <= Model.PageCount; a++)
-                                    {
-                                        <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
-                                            <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@a">@a</a><!--asp-all-route-data似乎會覆蓋掉asp-route-Page，所以將asp-all-route-data放在最前-->
-                                        </li>
-                                    }
-                                }
-
-                                <!--下一頁-->
-                                <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
-                                    <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </td>
+                    <tr class="@(item.DeleteDate != null ? "bg-warning" : "")">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CountryName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Shared.TruncateText(item.MainText, 70)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VisitedDate)
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
+                            @if (MemberID == item.MemberID)
+                            {
+                                <a>|</a>
+                                <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
+                                <a>|</a>
+                                <form asp-action="Delete">
+                                    <input type="hidden" value="@item.SN" name="VisitSN" />
+                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                                </form>
+                            }
+                            else if (User.IsInRole(RoleEnum.Admin.ToString()))
+                            {
+                                <a>|</a>
+                                <form asp-action="Delete">
+                                    <input type="hidden" value="@item.SN" name="VisitSN" />
+                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
+                                </form>
+                            }
+                        </td>
+                    </tr>
                 }
-            </tr>
-        </tfoot>
-    </table>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <!--分頁選擇-->
+                    @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+                    {
+                        <td class="text-center">
+                            <nav aria-label="...">
+                                <ul class="pagination">
+                                    <!--上一頁-->
+                                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                                        <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    @{
+                                        for (int a = 1; a <= Model.PageCount; a++)
+                                        {
+                                            <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
+                                                <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@a">@a</a><!--asp-all-route-data似乎會覆蓋掉asp-route-Page，所以將asp-all-route-data放在最前-->
+                                            </li>
+                                        }
+                                    }
+
+                                    <!--下一頁-->
+                                    <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
+                                        <a class="page-link" asp-action="ShowVisitsOnList" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </td>
+                    }
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 }
 else
 {
