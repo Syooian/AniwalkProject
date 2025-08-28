@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "地圖檢視";
 
-    string MapData = ViewData[ViewDataKeys.MapData].ToString();
+    //string MapData = ViewData[ViewDataKeys.MapData].ToString();
     // string MapData="";
     // if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
     //     MapData = Data.ToString();
@@ -63,13 +63,16 @@
     function InitMap(){
         //console.log("Initing GoogleMap");
 
+        //ViewData傳遞過來的地圖資料
+        const MapData=JSON.parse('@Html.Raw(ViewData[ViewDataKeys.MapData])');//在 Razor 中，Html.Raw 的作用是防止 Razor 自動對輸出的內容進行 HTML 編碼。這在處理 JSON 字串或其他需要直接嵌入到 HTML 或 JavaScript 的內容時非常重要。
+       
         // 設定地圖中心點
-        const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
+        //const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
 
          // 建立地圖
         map = new google.maps.Map(document.getElementById("Gmap"), {
-            center: center,
-            zoom: 10,
+            center: {lat: MapData.MapCenterLatitude, lng: MapData.MapCenterLongitude},//地圖中心點
+            zoom: MapData.Zoom,
             mapId: "DEMO_MAP_ID"
         });
 
@@ -79,15 +82,15 @@
         //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
         @foreach (var Visit in Model)
         {
-            //添加Marker的屬性
-            <text>MarkerData.push({
-                latitude:@Visit.Latitude,
-                longitude:@Visit.Longitude,
-                member:{
-                        name: '@Visit.Name'
-                },
-                sn:@Visit.SN
-            });</text>
+                //添加Marker的屬性
+                <text>MarkerData.push({
+                    latitude:@Visit.Latitude,
+                    longitude:@Visit.Longitude,
+                    member:{
+                            name: '@Visit.Name'
+                    },
+                    sn:@Visit.SN
+                });</text>
         }
 
         //再將轉出來的東西帶給地圖物件
