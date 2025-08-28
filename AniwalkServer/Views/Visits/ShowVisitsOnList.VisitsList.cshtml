@@ -35,7 +35,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>
+                    <th class="col-1">
                         @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().CountryCode)*@
                         @CountryDisplayName
                     </th>
@@ -43,7 +43,7 @@
                         @*@Html.DisplayNameFor(model => model.Data.FirstOrDefault().Anime.Title)*@
                         @AnimeTitle
                     </th>
-                    <th>
+                    <th class="col-3"><!--主文簡略-->
                         @*@Html.DisplayNameFor(model => model.Longitude)*@
                     </th>
                     <th>
@@ -76,25 +76,23 @@
                             @Html.DisplayFor(modelItem => item.VisitedDate)
                         </td>
                         <td>
-                            <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
-                            @if (MemberID == item.MemberID)
-                            {
-                                <a>|</a>
-                                <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
-                                <a>|</a>
-                                <form asp-action="Delete">
-                                    <input type="hidden" value="@item.SN" name="VisitSN" />
-                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
-                                </form>
-                            }
-                            else if (User.IsInRole(RoleEnum.Admin.ToString()))
-                            {
-                                <a>|</a>
-                                <form asp-action="Delete">
-                                    <input type="hidden" value="@item.SN" name="VisitSN" />
-                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('您確定要刪除此筆資料嗎?')" />
-                                </form>
-                            }
+                            <form asp-action="Delete">
+                                <input type="hidden" value="@item.SN" name="VisitSN" />
+                                <!--刪除按鈕 (限發表人或管理員)-->
+                                @if (MemberID == item.MemberID || User.IsInRole(Shared.Role_Admin))
+                                {
+                                    <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('確定要刪除此到訪記錄嗎?')" />
+                                    <a>|</a>
+                                }
+                                <!--編輯按鈕 (限發表人)-->
+                                @if (MemberID == item.MemberID)
+                                {
+                                    <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
+                                    <a>|</a>
+                                }
+                                <!--詳細檢視按鈕-->
+                                <a asp-action="Details" asp-route-VisitSN="@item.SN" class="btn btn-info btn-sm">詳細檢視</a>
+                            </form>
                         </td>
                     </tr>
                 }
