@@ -61,11 +61,11 @@
     let map;
 
     function InitMap(){
-        //console.log("Initing GoogleMap");
+        console.log("Initing GoogleMap");
 
         //ViewData傳遞過來的地圖資料
         const MapData=JSON.parse('@Html.Raw(ViewData[ViewDataKeys.MapData])');//在 Razor 中，Html.Raw 的作用是防止 Razor 自動對輸出的內容進行 HTML 編碼。這在處理 JSON 字串或其他需要直接嵌入到 HTML 或 JavaScript 的內容時非常重要。
-       
+
         // 設定地圖中心點
         //const center = { lat: 22.593469753520136, lng: 120.3088710110155 };
 
@@ -82,15 +82,25 @@
         //將後端 Razor Pages 的 Model 資料轉換成 JavaScript 中的物件，並將其加入到 Markers 陣列中，以便在 Google Maps 上顯示標記 (Markers)。
         @foreach (var Visit in Model)
         {
-                //添加Marker的屬性
-                <text>MarkerData.push({
-                    latitude:@Visit.Latitude,
-                    longitude:@Visit.Longitude,
-                    member:{
-                            name: '@Visit.Name'
-                    },
-                    sn:@Visit.SN
-                });</text>
+            //添加Marker的屬性
+            <text>
+            MarkerData.push({
+                latitude:@Visit.Latitude,
+                longitude:@Visit.Longitude,
+                name: '@Visit.Name',
+                sn:@Visit.SN
+            });
+            </text>
+            /*
+            <text> 的用途
+                1.	避免產生多餘的 HTML 標籤
+                    •	在 Razor 中，如果直接輸出文字或程式碼片段，Razor 可能會將它們包裹在 HTML 標籤中（例如 <p> 或 <div>）。
+                    •	使用 <text> 可以避免這種情況，確保輸出的是純文字或程式碼片段。
+                2.	用於嵌入 JavaScript 或其他程式碼
+                    •	當需要在 Razor 中嵌入 JavaScript 或其他程式碼時，<text> 可以用來包裹程式碼，避免 Razor 將其解釋為 HTML。
+                3.	用於控制輸出格式
+                    •	在某些情況下，<text> 可以用來控制輸出的格式，確保程式碼片段的輸出不會被 Razor 自動包裹或修改。
+            */
         }
 
         //再將轉出來的東西帶給地圖物件
@@ -118,7 +128,7 @@
 
     //設置地圖上的點
     function SetMarkers(MarkerData){
-        console.log("SetMarkers Count : "+MarkerData.length);
+        //console.log("SetMarkers Count : "+MarkerData.length);
 
         //清空map上已有的Marker
         for(let a=0;a<Markers.length;a++){
@@ -128,6 +138,8 @@
 
         for(let i = 0; i < MarkerData.length; i++)
         {
+            //console.log(`SN : ${MarkerData[i].sn}, Name : ${MarkerData[i].member.name}`);
+
               const Marker=new google.maps.marker.AdvancedMarkerElement({
                 position: {
                     lat: Number(MarkerData[i].latitude),
@@ -160,7 +172,7 @@
                 });
 
                 //console.log(`Marker clicked: ${Markers[i].MemberName}`);
-                document.querySelector('#SimpleDetailTitle').innerText =MarkerData[i].member.name;
+                document.querySelector('#SimpleDetailTitle').innerText =MarkerData[i].name;
 
                 // 顯示模態框
                 const modal = new bootstrap.Modal(document.getElementById('SimpleDetailModalCenter'));
