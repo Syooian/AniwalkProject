@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Data;
+using AniwalkServer.Models;
+using AniwalkServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
-using AniwalkServer.Models;
-using Microsoft.AspNetCore.Authorization;
-using AniwalkServer.Services;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Admin.Controllers
 {
@@ -43,11 +44,19 @@ namespace AniwalkServer.Admin.Controllers
                 return NotFound();
             }
 
+            ViewData[ViewDataKeys.LastPage] = Page;
+
             return View(Result);
         }
 
         // GET: Announcements/Details/5
-        public async Task<IActionResult> Details(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="LastPage"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Details(int id, int LastPage)
         {
             var announcements = await AnnouncementsServices.GetAnnouncement(id);
 
@@ -55,6 +64,8 @@ namespace AniwalkServer.Admin.Controllers
             {
                 return NotFound();
             }
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(announcements);
         }
@@ -85,7 +96,8 @@ namespace AniwalkServer.Admin.Controllers
         }
 
         // GET: Announcements/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id, int LastPage)
         {
             var announcements = await AnnouncementsServices.GetAnnouncement(id);
 
@@ -93,6 +105,8 @@ namespace AniwalkServer.Admin.Controllers
             {
                 return NotFound();
             }
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(announcements);
         }
@@ -102,7 +116,7 @@ namespace AniwalkServer.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SN,Title,Content")] Announcements announcements)
+        public async Task<IActionResult> Edit(int id, [Bind("SN,Title,Content")] Announcements announcements, int LastPage)
         {
             if (id != announcements.SN)
             {
@@ -127,8 +141,12 @@ namespace AniwalkServer.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Index), new { Page = LastPage });
             }
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
+
             return View(announcements);
         }
 

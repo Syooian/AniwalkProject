@@ -1,4 +1,5 @@
-﻿@model AniwalkServer.DTOs.PageDTO<Announcements>
+﻿@using AniwalkServer.Data
+@model AniwalkServer.DTOs.PageDTO<Announcements>
 @{
     ViewData["Title"] = "公告列表";
 }
@@ -47,8 +48,8 @@
                             @Html.DisplayFor(modelItem => item.CreatedDate)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.SN" class="btn btn-primary">編輯</a> |
-                            <a asp-action="Details" asp-route-id="@item.SN" class="btn btn-primary">檢視</a> |
+                            <a asp-action="Edit" asp-route-id="@item.SN" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a> |
+                            <a asp-action="Details" asp-route-id="@item.SN" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">檢視</a> |
                             <form asp-action="Delete">
                                 <input type="hidden" value="@item.SN" name="id" />
                                 <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" />
