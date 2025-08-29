@@ -125,7 +125,7 @@ ShowVisitsOnMap.cshtml
                     try{
                         //將Html Json文字轉成物件
                         let FiltedVisits=JSON.parse(Html);
-                        //console.log("FiltedVisits : "+FiltedVisits);
+                        //console.log("FiltedVisits:", JSON.stringify(FiltedVisits, null, 2));
 
                         SetMarkers(FiltedVisits);
                     }
