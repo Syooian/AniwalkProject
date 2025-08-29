@@ -96,7 +96,7 @@
             <a>|</a>
         }
         <!--返回按鈕-->
-        <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary btn-sm" asp-route-MapDataParam="@Uri.EscapeDataString(MapData)">返回列表</a><!--須將Json字串轉換為URL對應格式-->
+        <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary btn-sm" asp-route-MapDataParam="@Uri.EscapeDataString(MapData)" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回列表</a><!--須將Json字串轉換為URL對應格式-->
     </form>
 </div>
 

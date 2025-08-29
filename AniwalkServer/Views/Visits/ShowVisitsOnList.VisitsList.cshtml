@@ -93,7 +93,7 @@
                                     <a>|</a>
                                 }
                                 <!--詳細檢視按鈕-->
-                                <a asp-action="Details" asp-route-VisitSN="@item.SN" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-info btn-sm">詳細檢視</a>
+                                <a asp-action="Details" asp-route-VisitSN="@item.SN" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-info btn-sm">詳細檢視</a>
                             </form>
                         </td>
                     </tr>

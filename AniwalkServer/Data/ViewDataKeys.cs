@@ -9,6 +9,10 @@
         public const string AnimeID = "AnimeID";
         public const string CountryCode = "CountryCode";
         public const string CommentID = "CommentID";
+        /// <summary>
+        /// 上一個頁數
+        /// </summary>
+        public const string LastPage = "LastPage";
         public const string MapData = "MapData";
         public const string MemberID = "MemberID";
         public const string MemberStatusCode = "MemberStatusCode";

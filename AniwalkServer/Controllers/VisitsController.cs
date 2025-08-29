@@ -147,6 +147,8 @@ namespace AniwalkServer.Controllers
             ViewData[ViewDataKeys.AJAXAction] = nameof(ShowVisitsOnList);
             await SetViewData();
 
+            ViewData[ViewDataKeys.LastPage] = Page;
+
             // 判斷是否為 AJAX 請求
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
@@ -384,11 +386,12 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="LastPage">上一頁</param>
         /// <param name="MapDataParam"></param>
         /// <param name="LastAction">上一個Action</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Details(int VisitSN, string? MapDataParam, string? LastAction)
+        public async Task<IActionResult> Details(int VisitSN, int LastPage, string? MapDataParam, string? LastAction)
         {
             var Visit = await VisitsServices.GetVisit(VisitSN, true);
 
@@ -412,6 +415,8 @@ namespace AniwalkServer.Controllers
             }
 
             ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             //SetViewData();
 
