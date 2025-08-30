@@ -339,8 +339,9 @@ namespace AniwalkServer.Controllers
                 var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, true, VisitPhotos, GetMemberID);
                 if (UploadPhotoResult.Type == ResultType.Fail)
                 {
+                    Debug.WriteLine("Controller Edit UploadPhotoResult Error : " + UploadPhotoResult.Message);
                     ViewData["PhotoError"] = UploadPhotoResult.Message;
-                    return View(Visit);
+                    return NotFound(Visit);//不要回傳View，不然ajax會觸發success
                 }
 
                 #region 測試2
@@ -363,10 +364,11 @@ namespace AniwalkServer.Controllers
                 #endregion
 
                 var UpdatePhotoDataMsg = await UpdatePhotoData(Visit, VisitPhotos);
-                if (UpdatePhotoDataMsg != "")
+                if (UpdatePhotoDataMsg.Type == ResultType.Fail)
                 {
+                    Debug.WriteLine("Controller Edit UpdatePhotoDataMsg Error : " + UpdatePhotoDataMsg.Message);
                     ViewData["PhotoError"] = UpdatePhotoDataMsg;
-                    return View(Visit);
+                    return NotFound(Visit);//不要回傳View，不然ajax會觸發success
                 }
 
                 //(寫法不佳)
@@ -538,12 +540,11 @@ namespace AniwalkServer.Controllers
         /// <param name="Visit"></param>
         /// <param name="VisitPhotos"></param>
         /// <returns></returns>
-        async Task<string> UpdatePhotoData(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
+        async Task<Result> UpdatePhotoData(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
         {
             if (VisitPhotos == null || VisitPhotos.Count == 0)
             {
-                Debug.WriteLine("沒有圖片資料更新");
-                return await Task.FromResult("");
+                return new Result(Message: "沒有圖片資料更新");
             }
 
             //Debug.WriteLine($"UpdatePhotoData VisitPhotos Count : {VisitPhotos.Count()}");
@@ -560,7 +561,7 @@ namespace AniwalkServer.Controllers
                 }
             }
 
-            return await Task.FromResult("");
+            return new Result();
         }
 
         /// <summary>
