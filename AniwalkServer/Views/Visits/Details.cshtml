@@ -8,12 +8,12 @@
 
     var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    string MapData = Shared.GetMapDataJsonString(ViewData);
+    string MapData = Shared.GetMapDataJsonEscapeDataString(ViewData);
     // if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
     //     MapData = JsonConvert.SerializeObject(Data);
     // else
     //     MapData = "";//從清單檢視進來會有空值的情況 (沒有地圖資料)
-    //Debug.WriteLine("MapData : " + MapData);
+    //Debug.WriteLine("View Details MapData : " + MapData);
 }
 
 <h1>
@@ -92,11 +92,11 @@
         <!--編輯按鈕 (限發表人)-->
         @if (MemberID == Model.MemberID)
         {
-            <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" class="btn btn-primary btn-sm">編輯</a>
+            <a asp-action="Edit" asp-route-VisitSN="@Model?.SN" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" asp-route-MapDataParam="@MapData" class="btn btn-primary btn-sm">編輯</a>
             <a>|</a>
         }
         <!--返回按鈕-->
-        <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary btn-sm" asp-route-MapDataParam="@Uri.EscapeDataString(MapData)" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回列表</a><!--須將Json字串轉換為URL對應格式-->
+        <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary btn-sm" asp-route-MapDataParam="@MapData" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回列表</a><!--須將Json字串轉換為URL對應格式-->
     </form>
 </div>
 

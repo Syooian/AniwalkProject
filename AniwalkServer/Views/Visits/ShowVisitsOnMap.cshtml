@@ -118,7 +118,8 @@
             MapCenterLongitude: Center.lng(),
             Zoom: map.getZoom()
         }
-        //console.log(MapData);
+        //console.log("OM 1 : "+MapData);
+        //console.log("OM 2 : "+JSON.stringify(MapData));
 
         window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}&MapDataParam=${encodeURIComponent(JSON.stringify(MapData))}&LastAction=ShowVisitsOnMap`;//JSON 字串包含 {、}、" 等特殊字元，直接放在網址會造成問題，所以要用encodeURIComponent去轉，否則瀏覽器或伺服器可能無法正確解析。
     });

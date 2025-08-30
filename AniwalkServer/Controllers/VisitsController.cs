@@ -90,6 +90,9 @@ namespace AniwalkServer.Controllers
                 //Debug.WriteLine("ShowVisitsOnMap MapData : " + MapDataParam);
                 //ViewData[ViewDataKeys.MapData] = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
                 ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);//因為在View丟值過來時因為是帶在網頁上，需經過一次URL格式的轉換避免出錯，因此再次塞給View時需轉換回來才會是正確的Json格式
+                //Debug.WriteLine("Controller ShowVisitsOnMap 1 MapData : " + MapDataParam);
+                //Debug.WriteLine("Controller ShowVisitsOnMap 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+                //Debug.WriteLine("Controller ShowVisitsOnMap 2 MapData : " +JsonConvert.SerializeObject Uri.UnescapeDataString(MapDataParam));
             }
             else
             {
@@ -236,9 +239,13 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="LastPage"></param>
+        /// <param name="LastAction"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Edit(int VisitSN)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int VisitSN, int LastPage, string? LastAction, string? MapDataParam)
         {
             //Console.WriteLine($"Edit VisitSN : {VisitSN}");
 
@@ -269,6 +276,13 @@ namespace AniwalkServer.Controllers
 
             await SetViewData();
 
+            ViewData[ViewDataKeys.AJAXAction] = LastAction;
+            //Debug.WriteLine("Controller Edit 1 MapData : " + MapDataParam);
+            if (!string.IsNullOrEmpty(MapDataParam))
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);
+            //Debug.WriteLine("Controller Edit 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+            ViewData[ViewDataKeys.LastPage] = LastPage;
+
             return View(Visit);
         }
 
@@ -278,12 +292,18 @@ namespace AniwalkServer.Controllers
         /// <param name="Visit"></param>
         /// <param name="VisitPhotos">圖片資料</param>
         /// <param name="DeletePhoto">要刪除的圖片</param>
+        /// <param name="LastPage"></param>
+        /// <param name="LastAction"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit,
             List<VisitsPhotosDTO>? VisitPhotos,
-            List<string>? DeletePhoto)
+            List<string>? DeletePhoto,
+            int LastPage,
+            string? MapDataParam,
+            string? LastAction)
         {
             //if (id != tStudent.fStuId)
             //{
@@ -372,12 +392,26 @@ namespace AniwalkServer.Controllers
                 Context.Update(Visit);
                 await Context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(ShowVisitsOnList));
+                switch (LastAction)
+                {
+                    case nameof(ShowVisitsOnMap):
+                        return RedirectToAction(nameof(ShowVisitsOnMap), new { MapDataParam = MapDataParam });
+                    case nameof(ShowVisitsOnList):
+                        return RedirectToAction(nameof(ShowVisitsOnList), new { Page = LastPage });
+                }
+
+                return NotFound();
             }
 
             Shared.ShowModelState(ModelState);
 
             await SetViewData();
+
+            //Debug.WriteLine("Controller Edit 1 MapData : " + MapDataParam);
+            ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);
+            //Debug.WriteLine("Controller Edit 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+            ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(Visit);
         }
@@ -408,14 +442,15 @@ namespace AniwalkServer.Controllers
             {
                 //Debug.WriteLine(MapDataParam);
 
-                var MapData = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
+                //var MapData = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
                 //Debug.WriteLine("Details MapData : " + MapData);
 
-                ViewData[ViewDataKeys.MapData] = MapData;
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);//因為在View丟值過來時因為是帶在網頁上，需經過一次URL格式的轉換避免出錯，因此再次塞給View時需轉換回來才會是正確的Json格式
+                //Debug.WriteLine("Controller Details MapData : " + Uri.UnescapeDataString(MapDataParam));
+                //ViewData[ViewDataKeys.MapData] = MapData;
             }
 
             ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
-
             ViewData[ViewDataKeys.LastPage] = LastPage;
 
             //SetViewData();

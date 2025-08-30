@@ -89,7 +89,7 @@
                                 <!--編輯按鈕 (限發表人)-->
                                 @if (MemberID == item.MemberID)
                                 {
-                                    <a asp-action="Edit" asp-route-VisitSN="@item.SN" class="btn btn-primary btn-sm">編輯</a>
+                                    <a asp-action="Edit" asp-route-VisitSN="@item.SN" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary btn-sm">編輯</a>
                                     <a>|</a>
                                 }
                                 <!--詳細檢視按鈕-->

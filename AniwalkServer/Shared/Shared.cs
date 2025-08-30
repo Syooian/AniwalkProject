@@ -80,10 +80,10 @@ namespace AniwalkServer
         /// </summary>
         /// <param name="ViewData"></param>
         /// <returns></returns>
-        public static string GetMapDataJsonString(ViewDataDictionary ViewData)
+        public static string GetMapDataJsonEscapeDataString(ViewDataDictionary ViewData)
         {
             if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
-                return JsonConvert.SerializeObject(Data);
+                return Uri.EscapeDataString(Data.ToString());
             else
                 return "";
         }
