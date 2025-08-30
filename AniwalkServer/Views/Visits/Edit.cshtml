@@ -37,6 +37,7 @@
             <div class="form-group">
                 <label asp-for="CountryCode" class="control-label"></label>
                 <select asp-for="CountryCode" class="form-control js-example-basic-single">
+                    @*@foreach (var Item in (ViewBag.CountryCode ?? new List<SelectListItem>()))*@@*遇到null時的處理*@
                     @foreach (var Item in ViewBag.CountryCode)
                     {
                         <option value="@Item.Value">@Item.Text</option>
@@ -47,6 +48,7 @@
             <div class="form-group">
                 <label asp-for="AnimeID" class="control-label"></label>
                 <select asp-for="AnimeID" class="form-control js-example-basic-single">
+                    @*@foreach (var Item in (ViewBag.AnimeID ?? new List<SelectListItem>()))*@@*遇到null時的處理*@
                     @foreach (var Item in ViewBag.AnimeID)
                     {
                         <option value="@Item.Value">@Item.Text</option>
@@ -77,6 +79,9 @@
             </div>
             <div class="form-group">
                 @*<input type="submit" value="修改" class="btn btn-primary" />*@
+                <input type="hidden" name="LastPage" value="@ViewData[ViewDataKeys.LastPage]" />
+                <input type="hidden" name="LastAction" value="@ViewData[ViewDataKeys.AJAXAction]" />
+                <input type="hidden" name="MapDataParam" value="@ViewData[ViewDataKeys.MapData]" />
                 <input type="button" value="修改" class="btn btn-primary" onclick="SendForm()" />
             </div>
         </form>

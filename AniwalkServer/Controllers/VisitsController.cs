@@ -310,6 +310,16 @@ namespace AniwalkServer.Controllers
             //    return NotFound();
             //}
 
+            //因為有些錯誤會返回到原畫面所以乾脆直接在開頭就設ViewData
+            await SetViewData();
+
+            //Debug.WriteLine("Controller Edit 1 MapData : " + MapDataParam);
+            if (!string.IsNullOrEmpty(MapDataParam))
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);
+            //Debug.WriteLine("Controller Edit 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+            ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
+            ViewData[ViewDataKeys.LastPage] = LastPage;
+
             if (ModelState.IsValid)
             {
                 //Debug.WriteLine($"VP Count 2 : " + Visit.VisitsPhotos.Count());
@@ -394,26 +404,20 @@ namespace AniwalkServer.Controllers
                 Context.Update(Visit);
                 await Context.SaveChangesAsync();
 
-                switch (LastAction)
-                {
-                    case nameof(ShowVisitsOnMap):
-                        return RedirectToAction(nameof(ShowVisitsOnMap), new { MapDataParam = MapDataParam });
-                    case nameof(ShowVisitsOnList):
-                        return RedirectToAction(nameof(ShowVisitsOnList), new { Page = LastPage });
-                }
+                //switch (LastAction)
+                //{
+                //    case nameof(ShowVisitsOnMap):
+                //        return RedirectToAction(nameof(ShowVisitsOnMap), new { MapDataParam = MapDataParam });
+                //    case nameof(ShowVisitsOnList):
+                //        return RedirectToAction(nameof(ShowVisitsOnList), new { Page = LastPage });
+                //}
 
-                return NotFound();
+                //return NotFound();
+
+                return View(Visit);
             }
 
             Shared.ShowModelState(ModelState);
-
-            await SetViewData();
-
-            //Debug.WriteLine("Controller Edit 1 MapData : " + MapDataParam);
-            ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);
-            //Debug.WriteLine("Controller Edit 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
-            ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
-            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(Visit);
         }
