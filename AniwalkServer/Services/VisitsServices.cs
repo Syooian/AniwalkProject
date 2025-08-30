@@ -373,7 +373,7 @@ namespace AniwalkServer.Services
         {
             if (VisitPhotos == null || VisitPhotos.Count == 0)
             {
-                return new Result(ResultType.Fail, "沒有上傳圖片");
+                return new Result(Message: "沒有上傳圖片");
             }
 
             var UploadPhotos = VisitPhotos.FindAll(VP => VP.UploadFile != null && VP.UploadFile.Length != 0);
