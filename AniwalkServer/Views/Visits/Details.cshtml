@@ -8,11 +8,11 @@
 
     var MemberID = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    string MapData;
-    if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
-        MapData = JsonConvert.SerializeObject(Data);
-    else
-        MapData = "";//從清單檢視進來會有空值的情況 (沒有地圖資料)
+    string MapData = Shared.GetMapDataJsonString(ViewData);
+    // if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
+    //     MapData = JsonConvert.SerializeObject(Data);
+    // else
+    //     MapData = "";//從清單檢視進來會有空值的情況 (沒有地圖資料)
     //Debug.WriteLine("MapData : " + MapData);
 }
 
