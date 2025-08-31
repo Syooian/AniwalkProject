@@ -176,7 +176,8 @@ namespace AniwalkServer.Data
                     MemberID = MemberIDs[0],
                     CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "JPN").CountryCode,
                     AnimeID = Animes[0].AnimeID,
-                    VisitedDate = DateTime.Now.AddDays(-5)
+                    VisitedDate = DateTime.Now.AddDays(-5),
+                    CreatedDate = DateTime.Now.AddDays(-5)
                 });
 
                 Visits.Add(new Visits()
@@ -187,7 +188,8 @@ namespace AniwalkServer.Data
                     MemberID = MemberIDs[0],
                     CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "JPN").CountryCode,
                     AnimeID = Animes[1].AnimeID,
-                    VisitedDate = DateTime.Now.AddDays(-10)
+                    VisitedDate = DateTime.Now.AddDays(-10),
+                    CreatedDate = DateTime.Now.AddDays(-10)
                 });
 
                 Visits.Add(new Visits()
@@ -198,7 +200,8 @@ namespace AniwalkServer.Data
                     MemberID = MemberIDs[1],
                     CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "TWN").CountryCode,
                     AnimeID = Animes[2].AnimeID,
-                    VisitedDate = DateTime.Now.AddDays(-15)
+                    VisitedDate = DateTime.Now.AddDays(-15),
+                    CreatedDate = DateTime.Now.AddDays(-15)
                 });
 
                 var Ran = new Random();
@@ -213,7 +216,8 @@ namespace AniwalkServer.Data
                         MemberID = MemberIDs[Ran.Next(0, MemberIDs.Length)],
                         CountryCode = Countries[Ran.Next(0, Countries.Length)].CountryCode,
                         AnimeID = Animes[Ran.Next(0, Animes.Length)].AnimeID,
-                        VisitedDate = DateTime.Now.AddDays((a + 1) * -5)
+                        VisitedDate = DateTime.Now.AddDays((a + 1) * -5),
+                        CreatedDate = DateTime.Now.AddDays((a + 1) * -5)
                     });
                 }
 
