@@ -32,10 +32,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.SN" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a> |
     <form asp-action="Delete">
         <input type="hidden" value="@Model?.SN" name="id" />
-        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" /> |
+        <a asp-action="Edit" asp-route-id="@Model?.SN" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" />
+        <a asp-action="Index" class="btn btn-outline-primary" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回</a>
     </form>
-    <a asp-action="Index" class="btn btn-outline-primary" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回</a>
 </div>
