@@ -1,4 +1,5 @@
-﻿@model AniwalkServer.Models.Announcements
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Announcements
 @{
     ViewData["Title"] = "編輯公告";
 }
@@ -29,6 +30,7 @@
                 <span asp-validation-for="CreatedDate" class="text-danger"></span>
             </div> *@
             <div class="form-group">
+                <input type="hidden" name="LastPage" value="@ViewData[ViewDataKeys.LastPage]" />
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
@@ -36,7 +38,7 @@
 </div>
 
 <div>
-    <a asp-action="Index" class="btn btn-outline-primary">返回</a>
+    <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回</a>
 </div>
 
 @section Scripts {

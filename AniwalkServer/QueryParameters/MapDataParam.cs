@@ -28,5 +28,14 @@
         /// 
         /// </summary>
         public int Zoom { get; set; } = 10;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return MapCenterLatitude + "," + MapCenterLongitude + ", Zoom : " + Zoom;
+        }
     }
 }

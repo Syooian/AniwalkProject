@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using AniwalkServer.Data;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace AniwalkServer
 {
@@ -70,6 +73,19 @@ namespace AniwalkServer
             }
 
             return "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ViewData"></param>
+        /// <returns></returns>
+        public static string GetMapDataJsonEscapeDataString(ViewDataDictionary ViewData)
+        {
+            if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
+                return Uri.EscapeDataString(Data.ToString());
+            else
+                return "";
         }
     }
 
