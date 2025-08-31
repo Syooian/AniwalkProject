@@ -15,6 +15,8 @@
         .Properties.FirstOrDefault(P => P.Name == nameof(Animes.Title)).DisplayName;
     var MemberName = MetadataProvider.GetMetadataForType(typeof(Members))
         .Properties.FirstOrDefault(P => P.Name == nameof(Members.Name)).DisplayName;
+    var VisitedDate = MetadataProvider.GetMetadataForType(typeof(Visits))
+        .Properties.FirstOrDefault(P => P.Name == nameof(Visits.VisitedDate)).DisplayName;
 
     #region 條件篩選
     if (Model.Filter != null)
@@ -53,7 +55,7 @@
                         @MemberName
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().VisitedDate)
+                        @VisitedDate
                     </th>
                     <th></th>
                 </tr>
@@ -77,20 +79,18 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.VisitedDate)
                         </td>
-                        <td>
+                        <td class="col-2">
                             <form asp-action="Delete">
                                 <input type="hidden" value="@item.SN" name="VisitSN" />
                                 <!--刪除按鈕 (限發表人或管理員)-->
                                 @if (MemberID == item.MemberID || User.IsInRole(Shared.Role_Admin))
                                 {
                                     <input type="submit" value="刪除" class="btn btn-danger btn-sm" onclick="return confirm('確定要刪除此到訪記錄嗎?')" />
-                                    <a>|</a>
                                 }
                                 <!--編輯按鈕 (限發表人)-->
                                 @if (MemberID == item.MemberID)
                                 {
                                     <a asp-action="Edit" asp-route-VisitSN="@item.SN" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary btn-sm">編輯</a>
-                                    <a>|</a>
                                 }
                                 <!--詳細檢視按鈕-->
                                 <a asp-action="Details" asp-route-VisitSN="@item.SN" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-info btn-sm">詳細檢視</a>
