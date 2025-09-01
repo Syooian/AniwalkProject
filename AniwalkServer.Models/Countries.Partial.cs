@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 國家
+    /// </summary>
     public partial class Countries
     {
         /// <summary>

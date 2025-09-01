@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 動畫
+    /// </summary>
     public partial class Animes
     {
         /// <summary>
@@ -29,7 +32,7 @@ namespace AniwalkServer.Models
         [StringLength(1000)]
         public string Description { get; set; } = null!;
         /// <summary>
-        /// 
+        /// 創建日期
         /// </summary>
         [HiddenInput]
         public DateTime CreatedDate { get; set; } = DateTime.Now;

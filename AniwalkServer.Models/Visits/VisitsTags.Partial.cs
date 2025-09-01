@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 到訪紀錄Tag
+    /// </summary>
     public partial class VisitsTags
     {
         /// <summary>

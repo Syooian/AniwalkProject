@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 會員角色
+    /// </summary>
     public class MemberRoles
     {
         /// <summary>

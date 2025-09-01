@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 帳密
+    /// </summary>
     public class Login
     {
         /// <summary>
