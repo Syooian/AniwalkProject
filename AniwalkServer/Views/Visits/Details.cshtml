@@ -224,7 +224,7 @@
             //console.log("AddContent : "+Controller);
 
             //2.5.17判斷表單是否驗證通過
-            if(!$('#AddContentForm form').valid()){
+            if(!ValidateForm()){
                 //驗證失敗，不送出表單
                 return;
             }
@@ -248,7 +248,7 @@
 
         //使用Ajax達成更新評論\回覆
         function EditContent(Controller, ID){
-            if(!$('#AddContentForm form').valid()){
+            if(!ValidateForm()){
                 //驗證失敗，不送出表單
                 return;
             }
@@ -268,6 +268,18 @@
                     console.error("編輯評論or回覆錯誤", error);
                 }
             });
+        }
+
+        //驗證表單
+        function ValidateForm(){
+            if(!$('#AddContentForm form').valid()){
+                //驗證失敗，不送出表單
+                console.log("表單驗證失敗");
+                false;
+            }
+            else{
+                true;
+            }
         }
 
         //使用Ajax達成刪除回覆\留言
