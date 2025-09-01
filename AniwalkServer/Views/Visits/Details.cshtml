@@ -205,7 +205,7 @@
             if(CommentID != "")//編輯評論
                 URL+='CommentID='+CommentID;
 
-            console.log("LoadEditContentForm : "+URL);
+            //console.log("LoadEditContentForm : "+URL);
 
             //使用Callback function重新綁定 unobtrusive validation
             $('#AddContentForm').load(URL, function(){
@@ -224,7 +224,7 @@
             //console.log("AddContent : "+Controller);
 
             //2.5.17判斷表單是否驗證通過
-                if(!$('#AddContentForm form').valid()){
+            if(!$('#AddContentForm form').valid()){
                 //驗證失敗，不送出表單
                 return;
             }
@@ -242,6 +242,30 @@
                 },
                 error:function(xhr, status, error){
                     console.error("新增評論or回覆錯誤", error);
+                }
+            });
+        }
+
+        //使用Ajax達成更新評論\回覆
+        function EditContent(Controller, ID){
+            if(!$('#AddContentForm form').valid()){
+                //驗證失敗，不送出表單
+                return;
+            }
+
+            $.ajax({
+                type:"POST",
+                url:`/${Controller}/Edit?id=${ID}`,//Controller/Action?ID
+                data:$('#AddContentForm form').serialize(),
+                success:function(){
+                    //更新底下回覆留言區
+                    UpdateList();
+
+                    //關閉彈出框
+                    Modal.hide();
+                },
+                error:function(xhr, status, error){
+                    console.error("編輯評論or回覆錯誤", error);
                 }
             });
         }
