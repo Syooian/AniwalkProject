@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
+using AniwalkServer.Models;
+using AniwalkServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Models;
-using Microsoft.AspNetCore.Authorization;
-using AniwalkServer.Data;
-using AniwalkServer.Services;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
@@ -58,7 +59,7 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Roles = Shared.Role_Guest)]
-        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members, /*[Bind("Account,Password")]*/ Login Login)
+        public async Task<IActionResult> Create([Bind("Name,Email,CountryCode,Account,Password,PasswordConfirm")] RegistDTO RegistData)
         {
             #region Dev
             //try
@@ -92,22 +93,47 @@ namespace AniwalkServer.Controllers
             if (ModelState.IsValid)
             {
                 #region 檢查輸入的會員名稱是否已被使用
-                if (_context.Members.Any(m => m.Name == members.Name))
+                Debug.WriteLine($"Account : {RegistData.Name}");
+                if (_context.Members.Any(m => m.Name == RegistData.Name))
                 {
+                    Debug.WriteLine($"Account {RegistData.Name} 已被使用");
                     ViewData["Error"] = "此會員名稱已被使用。";
                     SetViewData();
-                    return View(members);
+                    return View(RegistData);
                 }
                 #endregion
 
                 #region 檢查輸入的電子郵件是否已被使用
-                if (_context.Members.Any(m => m.Email == members.Email))
+                Debug.WriteLine($"Email : {RegistData.Email}");
+                if (_context.Members.Any(m => m.Email == RegistData.Email))
                 {
+                    Debug.WriteLine($"Email {RegistData.Email} 已被使用");
                     ViewData["Error"] = "此電子郵件已被使用。";
                     SetViewData();
-                    return View(members);
+                    return View(RegistData);
                 }
                 #endregion
+
+                #region 檢查輸入的帳號是否已被使用
+                Debug.WriteLine($"Email : {RegistData.Account}");
+                if (_context.Members.Any(m => m.Email == RegistData.Account))
+                {
+                    Debug.WriteLine($"Email {RegistData.Account} 已被使用");
+                    ViewData["Error"] = "此帳號名稱已被使用。";
+                    SetViewData();
+                    return View(RegistData);
+                }
+                #endregion
+
+                var NewMember = new Members()
+                {
+                    Name = RegistData.Name,
+                    Email = RegistData.Email,
+                    CountryCode = RegistData.CountryCode,
+                    CreatedDate = DateTime.Now, // 設定創建日期為當前時間
+                    RoleID = (int)RoleEnum.Member, // 設定會員角色為一般會員
+                    MemberStatus = new MemberStatus()//新增會員狀態
+                };
 
                 //生成MemberID並檢查是否重複
                 while (true)
@@ -115,41 +141,34 @@ namespace AniwalkServer.Controllers
                     var NewMemberID = new Random().Next(0, 999999999).ToString("D10"); // 生成隨機的10位數會員ID
                     if (!_context.Members.Any(m => m.MemberID == NewMemberID)) // 檢查是否已存在相同的會員ID
                     {
-                        members.MemberID = NewMemberID; // 如果不存在，則使用這個ID
+                        NewMember.MemberID = NewMemberID; // 如果不存在，則使用這個ID
                         break;
                     }
                 }
 
-                members.CreatedDate = DateTime.Now; // 設定創建日期為當前時間
+                //新增帳密
+                var Login = new Login()
+                {
+                    MemberID = NewMember.MemberID, // 設定Login的MemberID為新生成的會員ID
+                    Account = RegistData.Account,
+                    Password = RegistData.Password
+                };
 
                 //將Login資料與Members關聯
-                Login.MemberID = members.MemberID; // 設定Login的MemberID為新生成的會員ID
+                NewMember.Login = Login;
 
-                members.RoleID = (int)RoleEnum.Member; // 設定會員角色為一般會員
-
-                members.MemberStatus = new MemberStatus();//新增會員狀態
-
-                _context.Add(members);
-                _context.Add(Login);
+                _context.Add(NewMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), "Home");
             }
 
             #region 檢查模型驗證
-            //foreach (var key in ModelState.Keys)
-            //{
-            //    var errors = ModelState[key].Errors;
-            //    if (errors.Any())
-            //    {
-            //        Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
-            //    }
-            //}
-            //Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            Shared.ShowModelState(ModelState);
             #endregion
 
-            SetViewData(members.CountryCode);
+            SetViewData(RegistData.CountryCode);
 
-            return View(members);
+            return View(RegistData);
         }
 
         // GET: Members/Edit/5
