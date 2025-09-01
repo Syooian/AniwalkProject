@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
+using AniwalkServer.Models;
+using AniwalkServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Models;
-using Microsoft.AspNetCore.Authorization;
-using AniwalkServer.Data;
-using AniwalkServer.Services;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
@@ -24,6 +25,10 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         readonly MembersServices MembersServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly CountriesServices CountriesServices;
         #endregion
 
         /// <summary>
@@ -31,11 +36,13 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="context"></param>
         /// <param name="MembersServices"></param>
-        public MembersController(AniwalkDBContext context, MembersServices MembersServices)
+        /// <param name="CountriesServices"></param>
+        public MembersController(AniwalkDBContext context, MembersServices MembersServices, CountriesServices CountriesServices)
         {
             _context = context;
             #region Services
             this.MembersServices = MembersServices;
+            this.CountriesServices = CountriesServices;
             #endregion
         }
 
@@ -45,9 +52,9 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         // GET: Members/Create
         //[Authorize(Roles = Shared.Role_Guest)]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            SetViewData();
+            await SetViewData();
 
             return View();
         }
@@ -58,7 +65,7 @@ namespace AniwalkServer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Roles = Shared.Role_Guest)]
-        public async Task<IActionResult> Create([Bind("MemberID,Name,Email,CountryCode")] Members members, /*[Bind("Account,Password")]*/ Login Login)
+        public async Task<IActionResult> Create([Bind("Name,Email,CountryCode,Account,Password,PasswordConfirm")] RegistDTO RegistData)
         {
             #region Dev
             //try
@@ -91,65 +98,58 @@ namespace AniwalkServer.Controllers
 
             if (ModelState.IsValid)
             {
-                #region 檢查輸入的會員名稱是否已被使用
-                if (_context.Members.Any(m => m.Name == members.Name))
+                async Task<ViewResult> ReturnView(string Message)
                 {
-                    ViewData["Error"] = "此會員名稱已被使用。";
-                    SetViewData();
-                    return View(members);
+                    Debug.WriteLine(Message);
+                    ViewData["Error"] = Message;
+                    await SetViewData();
+                    return View(RegistData);
+                }
+
+                #region 檢查輸入的會員名稱是否已被使用
+                //Debug.WriteLine($"Account : {RegistData.Name}");
+                var CheckName = await MembersServices.GetMemberByName(RegistData.Name);
+                if (CheckName != null)
+                {
+                    return await ReturnView("此會員名稱已被使用。");
                 }
                 #endregion
 
                 #region 檢查輸入的電子郵件是否已被使用
-                if (_context.Members.Any(m => m.Email == members.Email))
+                //Debug.WriteLine($"Email : {RegistData.Email}");
+                var CheckEmail = await MembersServices.GetMemberByEmail(RegistData.Email);
+                if (CheckEmail != null)
                 {
-                    ViewData["Error"] = "此電子郵件已被使用。";
-                    SetViewData();
-                    return View(members);
+                    return await ReturnView("此電子郵件已被使用。");
                 }
                 #endregion
 
-                //生成MemberID並檢查是否重複
-                while (true)
+                #region 檢查輸入的帳號是否已被使用
+                //Debug.WriteLine($"Email : {RegistData.Account}");
+                var CheckAccount = await MembersServices.GetMemberByAccount(RegistData.Account);
+                if (CheckAccount != null)
                 {
-                    var NewMemberID = new Random().Next(0, 999999999).ToString("D10"); // 生成隨機的10位數會員ID
-                    if (!_context.Members.Any(m => m.MemberID == NewMemberID)) // 檢查是否已存在相同的會員ID
-                    {
-                        members.MemberID = NewMemberID; // 如果不存在，則使用這個ID
-                        break;
-                    }
+                    return await ReturnView("此帳號名稱已被使用。");
+                }
+                #endregion
+
+                //創建新會員
+                var CreateNewMemberResult = await MembersServices.CreateNewMember(RegistData);
+                if (CreateNewMemberResult.Type == ResultType.Fail)
+                {
+                    return await ReturnView(CreateNewMemberResult.Message);
                 }
 
-                members.CreatedDate = DateTime.Now; // 設定創建日期為當前時間
-
-                //將Login資料與Members關聯
-                Login.MemberID = members.MemberID; // 設定Login的MemberID為新生成的會員ID
-
-                members.RoleID = (int)RoleEnum.Member; // 設定會員角色為一般會員
-
-                members.MemberStatus = new MemberStatus();//新增會員狀態
-
-                _context.Add(members);
-                _context.Add(Login);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), "Home");
+                return RedirectToAction(nameof(LoginController.Login), nameof(LoginController.Login));
             }
 
             #region 檢查模型驗證
-            //foreach (var key in ModelState.Keys)
-            //{
-            //    var errors = ModelState[key].Errors;
-            //    if (errors.Any())
-            //    {
-            //        Console.WriteLine($"Key: {key}, Errors: {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
-            //    }
-            //}
-            //Console.WriteLine("ModelState is invalid. Errors: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+            Shared.ShowModelState(ModelState);
             #endregion
 
-            SetViewData(members.CountryCode);
+            await SetViewData(RegistData.CountryCode);
 
-            return View(members);
+            return View(RegistData);
         }
 
         // GET: Members/Edit/5
@@ -235,9 +235,9 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="CountryCode"></param>
-        public void SetViewData(string? CountryCode = null)
+        public async Task SetViewData(string? CountryCode = null)
         {
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
+            ViewData[ViewDataKeys.CountryCode] = await CountriesServices.GetCountriesSelect(CountryCode);
         }
     }
 }
