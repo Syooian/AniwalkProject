@@ -199,11 +199,8 @@
         }
 
         //載入評論&回覆輸入表單並填入值
-        function LoadEditContentForm(Controller, CommentID="", ParentReplyID=""){
-            var URL=`/${Controller}/Edit?`;
-
-            if(CommentID != "")//編輯評論
-                URL+='CommentID='+CommentID;
+        function LoadEditContentForm(Controller, ID){
+            var URL=`/${Controller}/Edit?ID=${ID}`;
 
             //console.log("LoadEditContentForm : "+URL);
 
@@ -219,7 +216,7 @@
 
         //LoadAddContentForm();
 
-        //使用Ajax達成新增回覆\留言
+        //新增回覆\留言
         function AddContent(Controller){
             //console.log("AddContent : "+Controller);
 
@@ -228,9 +225,16 @@
             PostByAJAXForCreateAndEdit(URL);
         }
 
-        //使用Ajax達成更新評論
+        //更新評論
         function EditComment(CommentID){
             let URL=`/@nameof(Comments)/Edit?@nameof(Comments.CommentID)=${CommentID}`;
+
+            PostByAJAXForCreateAndEdit(URL);
+        }
+
+        //更新回覆
+        function EditReply(ReplyID){
+            let URL=`/@nameof(Replies)/Edit?@nameof(Replies.ReplyID)=${ReplyID}`;
 
             PostByAJAXForCreateAndEdit(URL);
         }

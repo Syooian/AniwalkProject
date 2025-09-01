@@ -78,21 +78,26 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Replies/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ID"><see cref="Replies.ReplyID"/></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Edit(string ID)
         {
-            if (id == null)
+            if (ID == null)
             {
                 return NotFound();
             }
 
-            var replies = await _context.Replies.FindAsync(id);
+            var replies = await _context.Replies.FindAsync(ID);
             if (replies == null)
             {
                 return NotFound();
             }
-            ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);
-            ViewData["ParentReplyID"] = new SelectList(_context.Replies, "ReplyID", "ReplyID", replies.ParentReplyID);
+            //ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
+            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);
+            //ViewData["ParentReplyID"] = new SelectList(_context.Replies, "ReplyID", "ReplyID", replies.ParentReplyID);
             return View(replies);
         }
 
@@ -101,9 +106,9 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ReplyID,ReplyContent,ReplyDate,CommentID,ParentReplyID,MemberID")] Replies replies)
+        public async Task<IActionResult> Edit(string ReplyID, [Bind("ReplyID,ReplyContent,ReplyDate,CommentID,ParentReplyID,MemberID")] Replies Reply)
         {
-            if (id != replies.ReplyID)
+            if (ReplyID != Reply.ReplyID)
             {
                 return NotFound();
             }
@@ -112,12 +117,12 @@ namespace AniwalkServer.Controllers
             {
                 try
                 {
-                    _context.Update(replies);
+                    _context.Update(Reply);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RepliesServices.IsReplyExists(replies.ReplyID))
+                    if (!RepliesServices.IsReplyExists(Reply.ReplyID))
                     {
                         return NotFound();
                     }
@@ -126,12 +131,12 @@ namespace AniwalkServer.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(Reply);
             }
-            ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);
-            ViewData["ParentReplyID"] = new SelectList(_context.Replies, "ReplyID", "ReplyID", replies.ParentReplyID);
-            return View(replies);
+            //ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
+            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);
+            //ViewData["ParentReplyID"] = new SelectList(_context.Replies, "ReplyID", "ReplyID", replies.ParentReplyID);
+            return NotFound();
         }
 
         // POST: Replies/Delete/5

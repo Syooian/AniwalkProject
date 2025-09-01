@@ -25,7 +25,7 @@
                 <input asp-for="MemberID" class="form-control" value="@Model.MemberID" />
             </div>
             <div class="form-group">
-                <input type="submit" value="更新評論" class="btn btn-warning" />
+                <input type="button" value="更新回覆" class="btn btn-warning" onclick="EditReply('@Model.ReplyID')" />
             </div>
         </form>
     </div>
