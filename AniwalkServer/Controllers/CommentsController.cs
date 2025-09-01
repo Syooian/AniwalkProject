@@ -131,12 +131,12 @@ namespace AniwalkServer.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(comments);
             }
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
+            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
-            ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
-            return View(comments);
+            //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
+            return Json(comments);
         }
 
         // POST: Comments/Delete/5
