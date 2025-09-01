@@ -29,6 +29,10 @@ namespace AniwalkServer.Admin.Controllers
         /// 
         /// </summary>
         readonly MembersServices MembersServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly CountriesServices CountriesServices;
         #endregion
 
         /// <summary>
@@ -36,11 +40,13 @@ namespace AniwalkServer.Admin.Controllers
         /// </summary>
         /// <param name="context"></param>
         /// <param name="MembersServices"></param>
-        public MembersController(AniwalkDBContext context, MembersServices MembersServices)
+        /// <param name="CountriesServices"></param>
+        public MembersController(AniwalkDBContext context, MembersServices MembersServices, CountriesServices CountriesServices)
         {
             _context = context;
             #region Services
             this.MembersServices = MembersServices;
+            this.CountriesServices = CountriesServices;
             #endregion
         }
 
@@ -138,9 +144,9 @@ namespace AniwalkServer.Admin.Controllers
         /// 
         /// </summary>
         /// <param name="CountryCode"></param>
-        public void SetViewData(string? CountryCode = null)
+        public async Task SetViewData(string? CountryCode = null)
         {
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
+            ViewData[ViewDataKeys.CountryCode] = await CountriesServices.GetCountriesSelect(CountryCode);
         }
     }
 }
