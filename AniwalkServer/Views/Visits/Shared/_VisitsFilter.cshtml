@@ -21,13 +21,13 @@ ShowVisitsOnMap.cshtml
         <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body row">
                 <div>
-                    到訪國家：<select id="Ipt_CountryCode" placeholder="請輸入國家名稱" class="js-example-basic-single">
+                    到訪國家：<select id="Ipt_CountryCode" placeholder="請輸入國家名稱" class="js-example-basic-single VisitsFilter">
                         @foreach (var Item in ViewBag.CountryCode)
                         {
                             <option value="@Item.Value">@Item.Text</option>
                         }
                     </select>
-                    動畫：<select id="Ipt_AnimeID" placeholder="請輸入動畫標題" class="js-example-basic-single">
+                    動畫：<select id="Ipt_AnimeID" placeholder="請輸入動畫標題" class="js-example-basic-single VisitsFilter">
                         @foreach (var Item in ViewBag.AnimeID)
                         {
                             <option value="@Item.Value">@Item.Text</option>
