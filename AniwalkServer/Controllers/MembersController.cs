@@ -159,7 +159,7 @@ namespace AniwalkServer.Controllers
 
                 _context.Add(NewMember);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), "Home");
+                return RedirectToAction(nameof(LoginController.Login), "Login");
             }
 
             #region 檢查模型驗證
