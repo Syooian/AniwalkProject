@@ -274,6 +274,8 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
+            SetGoogleMapsApiKey();
+
             await SetViewData();
 
             ViewData[ViewDataKeys.AJAXAction] = LastAction;
