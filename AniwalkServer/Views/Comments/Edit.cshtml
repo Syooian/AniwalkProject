@@ -1,49 +1,41 @@
-﻿@model AniwalkServer.Models.Comments
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Comments
 
 @{
-    ViewData["Title"] = "Edit";
+    Layout = null;
+    ViewData["Title"] = "編輯評論";
 }
 
-<h1>Edit</h1>
-
-<h4>Comments</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
+    <div>
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="CommentID" />
             <div class="form-group">
                 <label asp-for="CommentContent" class="control-label"></label>
-                <input asp-for="CommentContent" class="form-control" />
+                <textarea asp-for="CommentContent" class="form-control" rows="10"></textarea>
                 <span asp-validation-for="CommentContent" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CommentDate" class="control-label"></label>
+                @*<label asp-for="CommentDate" class="control-label"></label>*@
                 <input asp-for="CommentDate" class="form-control" />
                 <span asp-validation-for="CommentDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MemberID" class="control-label"></label>
-                <select asp-for="MemberID" class="form-control" asp-items="ViewBag.MemberID"></select>
-                <span asp-validation-for="MemberID" class="text-danger"></span>
+                <input asp-for="MemberID" class="form-control" value="@Model.MemberID" />
             </div>
             <div class="form-group">
-                <label asp-for="SN" class="control-label"></label>
-                <select asp-for="SN" class="form-control" asp-items="ViewBag.SN"></select>
-                <span asp-validation-for="SN" class="text-danger"></span>
+                <input asp-for="SN" class="form-control" value="@Model.SN" />
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="button" value="更新評論" class="btn btn-warning" onclick="EditComment('@Model.CommentID')" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

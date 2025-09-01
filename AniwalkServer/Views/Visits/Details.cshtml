@@ -174,7 +174,7 @@
             });
         }
 
-        //載入回覆留言表單
+        //載入評論&回覆輸入表單
         function LoadAddContentForm(Controller, CommentID="", ParentReplyID=""){
             //console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
@@ -198,23 +198,76 @@
             });
         }
 
+        //載入評論&回覆輸入表單並填入值
+        function LoadEditContentForm(Controller, ID){
+            var URL=`/${Controller}/Edit?ID=${ID}`;
+
+            //console.log("LoadEditContentForm : "+URL);
+
+            //使用Callback function重新綁定 unobtrusive validation
+            $('#AddContentForm').load(URL, function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                $.validator.unobtrusive.parse($('#AddContentForm'));
+
+                Modal.show();
+            });
+        }
+
         //LoadAddContentForm();
 
-        //使用Ajax達成新增回覆\留言
+        //新增回覆\留言
         function AddContent(Controller){
             //console.log("AddContent : "+Controller);
 
-            //2.5.17判斷表單是否驗證通過
-                if(!$('#AddContentForm form').valid()){
+            let URL=`/${Controller}/Create`;
+
+            PostByAJAXForCreateAndEdit(URL);
+        }
+
+        //更新評論
+        function EditComment(CommentID){
+            let URL=`/@nameof(Comments)/Edit?@nameof(Comments.CommentID)=${CommentID}`;
+
+            PostByAJAXForCreateAndEdit(URL);
+        }
+
+        //更新回覆
+        function EditReply(ReplyID){
+            let URL=`/@nameof(Replies)/Edit?@nameof(Replies.ReplyID)=${ReplyID}`;
+
+            PostByAJAXForCreateAndEdit(URL);
+        }
+
+        //驗證表單
+        function ValidateForm(){
+            if(!$('#AddContentForm form').valid()){
+                //驗證失敗，不送出表單
+                //console.log("表單驗證失敗");
+                return false;
+            }
+            else{
+                //console.log("表單驗證成功");
+                return true;
+            }
+        }
+
+        //使用AJAX Post表單 (Create & Edit 用)
+        function PostByAJAXForCreateAndEdit(URL){
+            //console.log("PostByAJAXForCreateAndEdit URL : "+URL);
+
+            if(!ValidateForm()){
                 //驗證失敗，不送出表單
                 return;
             }
 
             $.ajax({
-                type:"POST",
-                url:"/"+Controller+"/Create",//Controller/Action
+                type: "POST",
+                url: URL,
                 data:$('#AddContentForm form').serialize(),
                 success:function(){
+                    //console.log("PostByAJAXForCreateAndEdit Success");
+
                     //更新底下回覆留言區
                     UpdateList();
 
@@ -222,7 +275,7 @@
                     Modal.hide();
                 },
                 error:function(xhr, status, error){
-                    console.error("新增評論or回覆錯誤", error);
+                    console.error("PostByAJAXForCreateAndEdit Error", error);
                 }
             });
         }

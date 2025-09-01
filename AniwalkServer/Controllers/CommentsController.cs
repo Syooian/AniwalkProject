@@ -81,14 +81,19 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Comments/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ID"><see cref="Comments.CommentID"/></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Edit(string ID)
         {
-            if (id == null)
+            if (ID == null)
             {
                 return NotFound();
             }
 
-            var comments = await CommentsServices.GetComment(id);
+            var comments = await CommentsServices.GetComment(ID);
 
             if (comments == null)
             {
@@ -106,9 +111,9 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments comments)
+        public async Task<IActionResult> Edit(string CommentID, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments Comment)
         {
-            if (id != comments.CommentID)
+            if (CommentID != Comment.CommentID)
             {
                 return NotFound();
             }
@@ -117,12 +122,12 @@ namespace AniwalkServer.Controllers
             {
                 try
                 {
-                    _context.Update(comments);
+                    _context.Update(Comment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentsServices.IsCommentsExists(comments.CommentID))
+                    if (!CommentsServices.IsCommentsExists(Comment.CommentID))
                     {
                         return NotFound();
                     }
@@ -131,12 +136,12 @@ namespace AniwalkServer.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(Comment);
             }
-            ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
+            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
-            ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
-            return View(comments);
+            //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
+            return NotFound();
         }
 
         // POST: Comments/Delete/5
