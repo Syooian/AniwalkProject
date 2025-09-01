@@ -106,9 +106,9 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string CommentID, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments comments)
+        public async Task<IActionResult> Edit(string CommentID, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments Comment)
         {
-            if (CommentID != comments.CommentID)
+            if (CommentID != Comment.CommentID)
             {
                 return NotFound();
             }
@@ -117,12 +117,12 @@ namespace AniwalkServer.Controllers
             {
                 try
                 {
-                    _context.Update(comments);
+                    _context.Update(Comment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentsServices.IsCommentsExists(comments.CommentID))
+                    if (!CommentsServices.IsCommentsExists(Comment.CommentID))
                     {
                         return NotFound();
                     }
@@ -131,7 +131,7 @@ namespace AniwalkServer.Controllers
                         throw;
                     }
                 }
-                return Json(comments);
+                return Json(Comment);
             }
             //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
