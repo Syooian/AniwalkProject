@@ -25,6 +25,10 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         readonly MembersServices MembersServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly CountriesServices CountriesServices;
         #endregion
 
         /// <summary>
@@ -32,11 +36,13 @@ namespace AniwalkServer.Controllers
         /// </summary>
         /// <param name="context"></param>
         /// <param name="MembersServices"></param>
-        public MembersController(AniwalkDBContext context, MembersServices MembersServices)
+        /// <param name="CountriesServices"></param>
+        public MembersController(AniwalkDBContext context, MembersServices MembersServices, CountriesServices CountriesServices)
         {
             _context = context;
             #region Services
             this.MembersServices = MembersServices;
+            this.CountriesServices = CountriesServices;
             #endregion
         }
 
@@ -46,9 +52,9 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         // GET: Members/Create
         //[Authorize(Roles = Shared.Role_Guest)]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            SetViewData();
+            await SetViewData();
 
             return View();
         }
@@ -92,11 +98,11 @@ namespace AniwalkServer.Controllers
 
             if (ModelState.IsValid)
             {
-                ViewResult ReturnView(string Message)
+                async Task<ViewResult> ReturnView(string Message)
                 {
                     Debug.WriteLine(Message);
                     ViewData["Error"] = Message;
-                    SetViewData();
+                    await SetViewData();
                     return View(RegistData);
                 }
 
@@ -105,7 +111,7 @@ namespace AniwalkServer.Controllers
                 var CheckName = await MembersServices.GetMemberByName(RegistData.Name);
                 if (CheckName != null)
                 {
-                    return ReturnView("此會員名稱已被使用。");
+                    return await ReturnView("此會員名稱已被使用。");
                 }
                 #endregion
 
@@ -114,7 +120,7 @@ namespace AniwalkServer.Controllers
                 var CheckEmail = await MembersServices.GetMemberByEmail(RegistData.Email);
                 if (CheckEmail != null)
                 {
-                    return ReturnView("此電子郵件已被使用。");
+                    return await ReturnView("此電子郵件已被使用。");
                 }
                 #endregion
 
@@ -123,7 +129,7 @@ namespace AniwalkServer.Controllers
                 var CheckAccount = await MembersServices.GetMemberByAccount(RegistData.Account);
                 if (CheckAccount != null)
                 {
-                    return ReturnView("此帳號名稱已被使用。");
+                    return await ReturnView("此帳號名稱已被使用。");
                 }
                 #endregion
 
@@ -131,7 +137,7 @@ namespace AniwalkServer.Controllers
                 var CreateNewMemberResult = await MembersServices.CreateNewMember(RegistData);
                 if (CreateNewMemberResult.Type == ResultType.Fail)
                 {
-                    return ReturnView(CreateNewMemberResult.Message);
+                    return await ReturnView(CreateNewMemberResult.Message);
                 }
 
                 return RedirectToAction(nameof(LoginController.Login), nameof(LoginController.Login));
@@ -141,7 +147,7 @@ namespace AniwalkServer.Controllers
             Shared.ShowModelState(ModelState);
             #endregion
 
-            SetViewData(RegistData.CountryCode);
+            await SetViewData(RegistData.CountryCode);
 
             return View(RegistData);
         }
@@ -229,9 +235,9 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="CountryCode"></param>
-        public void SetViewData(string? CountryCode = null)
+        public async Task SetViewData(string? CountryCode = null)
         {
-            ViewData["CountryCode"] = new SelectList(_context.Countries, "CountryCode", "CountryName", CountryCode);
+            ViewData[ViewDataKeys.CountryCode] = await CountriesServices.GetCountriesSelect(CountryCode);
         }
     }
 }
