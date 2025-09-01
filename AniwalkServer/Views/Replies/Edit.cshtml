@@ -1,6 +1,7 @@
 ﻿@model AniwalkServer.Models.Replies
 
 @{
+    Layout = null;
     ViewData["Title"] = "編輯回覆";
 }
 
@@ -13,7 +14,7 @@
             <input type="hidden" asp-for="ParentReplyID" />
             <div class="form-group">
                 <label asp-for="ReplyContent" class="control-label"></label>
-                <input asp-for="ReplyContent" class="form-control" />
+                <textarea asp-for="ReplyContent" class="form-control" rows="10"></textarea>
                 <span asp-validation-for="ReplyContent" class="text-danger"></span>
             </div>
             <div class="form-group">
