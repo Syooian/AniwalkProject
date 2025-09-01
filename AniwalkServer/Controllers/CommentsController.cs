@@ -81,14 +81,14 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Comments/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string CommentID)
         {
-            if (id == null)
+            if (CommentID == null)
             {
                 return NotFound();
             }
 
-            var comments = await CommentsServices.GetComment(id);
+            var comments = await CommentsServices.GetComment(CommentID);
 
             if (comments == null)
             {

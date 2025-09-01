@@ -174,7 +174,7 @@
             });
         }
 
-        //載入回覆留言表單
+        //載入評論&回覆輸入表單
         function LoadAddContentForm(Controller, CommentID="", ParentReplyID=""){
             //console.log("LoadAddContentForm Controller : "+Controller+", CommentID : "+CommentID+", ParentReplyID : "+ParentReplyID);
 
@@ -195,6 +195,25 @@
                 //Load結束之後才會呼叫此function
                 //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
                     $.validator.unobtrusive.parse($('#AddContentForm'));
+            });
+        }
+
+        //載入評論&回覆輸入表單並填入值
+        function LoadEditContentForm(Controller, CommentID="", ParentReplyID=""){
+            var URL=`/${Controller}/Edit?`;
+
+            if(CommentID != "")//編輯評論
+                URL+='CommentID='+CommentID;
+
+            console.log("LoadEditContentForm : "+URL);
+
+            //使用Callback function重新綁定 unobtrusive validation
+            $('#AddContentForm').load(URL, function(){
+                //Load結束之後才會呼叫此function
+                //unobtrusive：<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js">其中的==>unobtrusive<==
+                $.validator.unobtrusive.parse($('#AddContentForm'));
+
+                Modal.show();
             });
         }
 
