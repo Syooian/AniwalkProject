@@ -1,0 +1,37 @@
+﻿@model AniwalkServer.Models.Replies
+
+@{
+    ViewData["Title"] = "編輯回覆";
+}
+
+<div class="row">
+    <div>
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CommentID" />
+            <input type="hidden" asp-for="ReplyID" />
+            <input type="hidden" asp-for="ParentReplyID" />
+            <div class="form-group">
+                <label asp-for="ReplyContent" class="control-label"></label>
+                <input asp-for="ReplyContent" class="form-control" />
+                <span asp-validation-for="ReplyContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="ReplyDate" class="form-control" />
+                <span asp-validation-for="ReplyDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="MemberID" class="form-control" value="@Model.MemberID" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="更新評論" class="btn btn-warning" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
