@@ -15,6 +15,9 @@
             @if (Model.PostMemberID == Model.MemberID)//自己的回覆或留言才可刪除
             {
                 <li>
+                    <button class="dropdown-item" onclick=""><img src="~/lib/bootstrap/Icon/pencil-square.svg" /> 編輯</button>
+                </li>
+                <li>
                     <button class="dropdown-item" onclick="DeleteContent('@Model.Controller', '@Model.ID')"><img src="~/lib/bootstrap/Icon/x-octagon.svg" /> 刪除</button>
                 </li>
             }
