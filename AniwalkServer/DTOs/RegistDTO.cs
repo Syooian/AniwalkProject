@@ -6,7 +6,8 @@ using System.Diagnostics.Metrics;
 
 namespace AniwalkServer.DTOs
 {
-    public class RegistDTO : ValidationAttribute
+    [PasswordMatchCheck]
+    public class RegistDTO
     {
         /// <summary>
         /// 會員名稱
@@ -45,7 +46,7 @@ namespace AniwalkServer.DTOs
         /// </summary>
         [Display(Name = "輸入密碼")]
         [DataType(DataType.Password)]
-        //[Required(ErrorMessage = "請輸入密碼")]
+        [Required(ErrorMessage = "請輸入密碼")]
         [PasswordCheck]
         public string Password { get; set; } = null!;
         /// <summary>
@@ -53,10 +54,16 @@ namespace AniwalkServer.DTOs
         /// </summary>
         [Display(Name = "再次輸入密碼")]
         [DataType(DataType.Password)]
-        //[Required(ErrorMessage = "請輸入密碼")]
+        [Required(ErrorMessage = "請輸入密碼")]
         [PasswordCheck]
         public string PasswordConfirm { get; set; } = null!;
+    }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PasswordMatchCheck : ValidationAttribute
+    {
         /// <summary>
         /// 
         /// </summary>
@@ -65,8 +72,10 @@ namespace AniwalkServer.DTOs
         /// <returns></returns>
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            if (Password != PasswordConfirm)
-                return new ValidationResult("密碼不相同");
+            var DTO = value as RegistDTO;
+
+            if (DTO.Password != DTO.PasswordConfirm)
+                return new ValidationResult("密碼不相同，輸入的密碼必須一致。");
             else
                 return ValidationResult.Success;
         }
