@@ -1,8 +1,11 @@
-﻿using System.Diagnostics;
+﻿using AniwalkServer.Data;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace AniwalkServer
 {
-    public class Shared
+    public partial class Shared
     {
         /// <summary>
         /// 訪客角色名稱
@@ -36,6 +39,53 @@ namespace AniwalkServer
                     Debug.WriteLine($"Key : {key}, Errors : {string.Join(", ", errors.Select(e => e.ErrorMessage))}");
                 }
             }
+        }
+
+        /// <summary>
+        /// 截斷文字
+        /// </summary>
+        /// <param name="Msg">文字內容</param>
+        /// <param name="LimitLength">限制長度</param>
+        /// <returns></returns>
+        public static string TruncateText(string Msg, int LimitLength)
+        {
+            if (!string.IsNullOrEmpty(Msg))
+            {
+                if (Msg.Length > LimitLength)
+                    return Msg.Substring(0, LimitLength) + "......";
+                else
+                    return Msg;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// 轉換斷行符號
+        /// </summary>
+        /// <param name="Msg"></param>
+        /// <returns></returns>
+        public static string ConvertNewLineToBr(string Msg)
+        {
+            if (!string.IsNullOrEmpty(Msg))
+            {
+                return Msg.Replace("\r\n", "<br>");
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ViewData"></param>
+        /// <returns></returns>
+        public static string GetMapDataJsonEscapeDataString(ViewDataDictionary ViewData)
+        {
+            if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
+                return Uri.EscapeDataString(Data.ToString());
+            else
+                return "";
         }
     }
 

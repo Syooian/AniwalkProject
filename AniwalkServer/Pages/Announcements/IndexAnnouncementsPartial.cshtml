@@ -1,0 +1,8 @@
+﻿@*建立 Razor Page 包裝 ViewComponent*@
+@page
+@using AniwalkServer.Pages.Announcements
+@model IndexAnnouncementsPartialModel
+@{
+    Layout = null;// 局部載入不需要 Layout
+}
+@await Component.InvokeAsync("VC_IndexAnnouncements", new { Page = Model.NewPage })

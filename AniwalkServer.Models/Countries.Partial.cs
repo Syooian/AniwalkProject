@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 國家
+    /// </summary>
     public partial class Countries
     {
         /// <summary>
@@ -11,6 +14,8 @@ namespace AniwalkServer.Models
         [Key]
         [HiddenInput]
         [StringLength(3, MinimumLength = 3)]
+        [Display(Name = "所在國家")]
+        [Required(ErrorMessage = "請選擇所在國家")]
         public string CountryCode { get; set; } = null!;
         /// <summary>
         /// 國名

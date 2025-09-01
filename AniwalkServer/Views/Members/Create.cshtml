@@ -33,7 +33,13 @@
             </div> *@
             <div class="form-group">
                 <label asp-for="CountryCode" class="control-label"></label>
-                <select asp-for="CountryCode" class="form-control" asp-items="ViewBag.CountryCode"></select>
+                <select asp-for="CountryCode" class="form-control js-example-basic-single" id="Ipt_CountryCode" @*asp-items="ViewBag.CountryCode"*@>
+                    @foreach (var Item in ViewBag.CountryCode)
+                    {
+                        <option value="@Item.Value">@Item.Text</option>
+                    }
+                </select>
+                <span asp-validation-for="CountryCode" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input asp-for="Login.MemberID" class="form-control" value="0000000000" />
@@ -62,4 +68,10 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    @await Html.PartialAsync("_Select2");
 }
+
+<script>
+    document.getElementById("Ipt_CountryCode").value="";
+</script>

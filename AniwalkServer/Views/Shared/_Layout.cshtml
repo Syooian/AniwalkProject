@@ -36,7 +36,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
-                    <a class="nav-link text-light text-end btn btn-primary" asp-area="" asp-controller="Members" asp-action="Create">註冊</a> |
+                </div>
+                <div class="d-sm-inline-flex justify-content-between gap-1">
+                    <a class="nav-link text-light text-end btn btn-primary" asp-area="" asp-controller="Members" asp-action="Create">註冊</a>
                     <a class="nav-link text-light text-end btn btn-primary" asp-area="" asp-controller="Login" asp-action="Login">登入</a>
                 </div>
             </div>
@@ -60,9 +62,10 @@
             &copy; 2025 - AniwalkServer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    @{
+        //共用Scripts
+        await Html.RenderPartialAsync("_SharedLayout.Scripts");
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

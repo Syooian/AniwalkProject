@@ -1,4 +1,5 @@
-﻿@model AniwalkServer.Models.Announcements
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Announcements
 @{
     ViewData["Title"] = "編輯公告";
 }
@@ -23,20 +24,18 @@
                 <textarea asp-for="Content" class="form-control" rows="10"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-            @* <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                @*<label asp-for="CreatedDate" class="control-label"></label>*@
+                <input asp-for="CreatedDate" class="form-control" hidden />
+                @*<span asp-validation-for="CreatedDate" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <input type="hidden" name="LastPage" value="@ViewData[ViewDataKeys.LastPage]" />
+                <input type="submit" value="保存" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index" class="btn btn-outline-primary">返回</a>
 </div>
 
 @section Scripts {

@@ -1,10 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
+using AniwalkServer.Models;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace AniwalkServer.Models
+namespace AniwalkServer.Data
 {
     public class SeedData
     {
+        /// <summary>
+        /// SeedData文字檔的放置路徑
+        /// </summary>
+        static readonly string SeedDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SeedData");
+
         /// <summary>
         /// 
         /// </summary>
@@ -34,12 +42,21 @@ namespace AniwalkServer.Models
                     return;   // DB has been seeded
                 }
 
-                var Countries = new Countries[]
+                var Countries = new Countries[] { };
+                //載入檔案
                 {
-                    new Countries() { CountryCode = "JPN", CountryName = "日本" },
-                    new Countries() { CountryCode = "GBR", CountryName = "英國" },
-                    new Countries() { CountryCode = "TWN", CountryName = "台灣" }
-                };
+                    var FilePath = Path.Combine(SeedDataPath, "Countries.txt");
+                    LoadFile(FilePath, ref Countries);
+
+                    //列出國名長度超出資料表限制的國家
+                    foreach (var C in Countries)
+                    {
+                        if (C.CountryName.Length > 30)
+                        {
+                            Debug.WriteLine(C.CountryName + ", Length : " + C.CountryName.Length);
+                        }
+                    }
+                }
 
                 context.Countries.AddRange(Countries);
                 #endregion
@@ -50,12 +67,12 @@ namespace AniwalkServer.Models
                     return;   // DB has been seeded
                 }
 
-                var Animes = new Animes[]
+                var Animes = new Animes[] { };
+                //載入檔案
                 {
-                    new Animes() { AnimeID = "0001", Title = "聖誕之吻SS", HeaderPhoto = "0001.jpg", Description = "アマガミSS" },
-                    new Animes() { AnimeID = "0002", Title = "K-ON！輕音部", HeaderPhoto = "0002.jpg", Description = "けいおん!" },
-                    new Animes() { AnimeID = "0003", Title = "信長之槍", HeaderPhoto = "0003.jpg", Description = "ノブナガン" }
-                };
+                    var FilePath = Path.Combine(SeedDataPath, "Animes.txt");
+                    LoadFile(FilePath, ref Animes);
+                }
 
                 context.Animes.AddRange(Animes);
                 #endregion
@@ -157,9 +174,10 @@ namespace AniwalkServer.Models
                     Latitude = 35.725771,
                     Longitude = 140.819210,
                     MemberID = MemberIDs[0],
-                    CountryCode = Countries[0].CountryCode,
+                    CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "JPN").CountryCode,
                     AnimeID = Animes[0].AnimeID,
-                    VisitedDate = DateTime.Now.AddDays(-5)
+                    VisitedDate = DateTime.Now.AddDays(-5),
+                    CreatedDate = DateTime.Now.AddDays(-5)
                 });
 
                 Visits.Add(new Visits()
@@ -168,9 +186,10 @@ namespace AniwalkServer.Models
                     Latitude = 35.706208,
                     Longitude = 140.837881,
                     MemberID = MemberIDs[0],
-                    CountryCode = Countries[0].CountryCode,
+                    CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "JPN").CountryCode,
                     AnimeID = Animes[1].AnimeID,
-                    VisitedDate = DateTime.Now.AddDays(-10)
+                    VisitedDate = DateTime.Now.AddDays(-10),
+                    CreatedDate = DateTime.Now.AddDays(-10)
                 });
 
                 Visits.Add(new Visits()
@@ -179,10 +198,49 @@ namespace AniwalkServer.Models
                     Latitude = 22.684911,
                     Longitude = 120.295731,
                     MemberID = MemberIDs[1],
-                    CountryCode = Countries[2].CountryCode,
+                    CountryCode = Countries.FirstOrDefault(C => C.CountryCode == "TWN").CountryCode,
                     AnimeID = Animes[2].AnimeID,
-                    VisitedDate = DateTime.Now.AddDays(-15)
+                    VisitedDate = DateTime.Now.AddDays(-15),
+                    CreatedDate = DateTime.Now.AddDays(-15)
                 });
+
+                var Ran = new Random();
+
+                for (int a = 0; a < 100; a++)
+                {
+                    Visits.Add(new Visits()
+                    {
+                        MainText = $"Test Anime MainText {a + 1}",
+                        Latitude = 20 + (22 - 20) * Ran.NextDouble(),//產生20~22內的隨機數值
+                        Longitude = 120 + (122 - 120) * Ran.NextDouble(),//產生120~122內的隨機數值
+                        MemberID = MemberIDs[Ran.Next(0, MemberIDs.Length)],
+                        CountryCode = Countries[Ran.Next(0, Countries.Length)].CountryCode,
+                        AnimeID = Animes[Ran.Next(0, Animes.Length)].AnimeID,
+                        VisitedDate = DateTime.Now.AddDays((a + 1) * -5),
+                        CreatedDate = DateTime.Now.AddDays((a + 1) * -5)
+                    });
+                }
+
+                //載入檔案
+                {
+                    var VisitsLoad = new List<Visits>();
+                    var FilePath = Path.Combine(SeedDataPath, "Visits.txt");
+                    LoadFile(FilePath, ref VisitsLoad);
+
+                    for (int a = 0; a < VisitsLoad.Count; a++)
+                    {
+                        Visits.Add(new Visits()
+                        {
+                            MainText = VisitsLoad[a].MainText,
+                            Latitude = 20 + (22 - 20) * Ran.NextDouble(),//產生20~22內的隨機數值
+                            Longitude = 120 + (122 - 120) * Ran.NextDouble(),//產生120~122內的隨機數值
+                            MemberID = MemberIDs[Ran.Next(0, MemberIDs.Length)],
+                            CountryCode = Countries[Ran.Next(0, Countries.Length)].CountryCode,
+                            AnimeID = Animes[Ran.Next(0, Animes.Length)].AnimeID,
+                            VisitedDate = DateTime.Now.AddDays((a + 1) * -5)
+                        });
+                    }
+                }
 
                 context.Visits.AddRange(Visits);
 
@@ -336,12 +394,15 @@ namespace AniwalkServer.Models
                         CreatedDate = DateTime.Now.AddMonths(-1)
                     });
 
-                    context.Announcements.Add(new Announcements()
+                    for (int a = 1; a <= 50; a++)
                     {
-                        Title = "Announcement Test 1",
-                        Content = "This is a test announcement content for testing purposes.",
-                        CreatedDate = DateTime.Now.AddDays(-10)
-                    });
+                        context.Announcements.Add(new Announcements()
+                        {
+                            Title = $"Announcement Test {a}",
+                            Content = $"This is a test announcement {a} content for testing purposes.",
+                            CreatedDate = DateTime.Now.AddDays(a * -1)
+                        });
+                    }
 
                     context.SaveChanges();
                 }
@@ -351,6 +412,32 @@ namespace AniwalkServer.Models
                 //context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT VisitsTags ON");
 
                 context.SaveChanges();
+            }
+        }
+
+        /// <summary>
+        /// 讀取SeedData資料檔
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="FilePath"></param>
+        /// <param name="Data"></param>
+        static void LoadFile<T>(string FilePath, ref T Data)
+        {
+            if (Directory.Exists(SeedDataPath) && File.Exists(FilePath))
+            {
+                try
+                {
+                    var DataStr = File.ReadAllText(FilePath);
+                    Data = JsonConvert.DeserializeObject<T>(DataStr);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"LoadFile EX : {ex.Message}");
+                }
+            }
+            else
+            {
+                Debug.WriteLine($"{FilePath} 路徑或檔案不存在");
             }
         }
     }

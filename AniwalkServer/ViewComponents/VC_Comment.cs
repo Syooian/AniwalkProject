@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
 
 namespace AniwalkServer.ViewComponents
 {
@@ -14,10 +15,16 @@ namespace AniwalkServer.ViewComponents
         /// <summary>
         /// 
         /// </summary>
+        readonly CommentsServices CommentsServices;
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="Context"></param>
-        public VC_Comment(AniwalkDBContext Context)
+        /// <param name="CommentsServices"></param>
+        public VC_Comment(AniwalkDBContext Context, CommentsServices CommentsServices)
         {
             this.Context = Context;
+            this.CommentsServices = CommentsServices;
         }
 
         /// <summary>
@@ -30,11 +37,7 @@ namespace AniwalkServer.ViewComponents
         {
             Console.WriteLine($"Invoke VC_Comment with VisitSN: {VisitSN}, IsChange: {IsChange}");
 
-            var Result = await Context.Comments
-                .Where(V => V.SN == VisitSN)
-                .Include(V => V.Replies).ThenInclude(R => R.Member)
-                .Include(V => V.Replies).ThenInclude(R => R.ParentReply)
-                .OrderByDescending(C => C.CommentDate).ToListAsync();
+            var Result = await CommentsServices.GetComments(VisitSN, User.IsInRole(Shared.Role_Admin) ? true : false);
 
             if (IsChange)
                 return View("Change", Result);

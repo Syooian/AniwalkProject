@@ -1,4 +1,5 @@
-﻿@{
+﻿@using AniwalkServer
+@{
     var CurrentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var CurrentAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
@@ -6,8 +7,8 @@
 <!DOCTYPE html>
 <html lang="en">
 @{
-        //共用Head
-        await Html.RenderPartialAsync("_SharedLayout.Head");
+    //共用Head
+    await Html.RenderPartialAsync("_SharedLayout.Head");
 }
 <body>
     <header>
@@ -24,16 +25,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Visits" asp-action="ShowVisitsOnList">清單檢視</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Visits" asp-action="ShowVisitsOnList">到訪紀錄清單檢視</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AddNewAnimes" asp-action="Index">檢視新增動畫建議</a>
+                            <a class="nav-link text-dark" asp-area="@Shared.Role_Admin" asp-controller="AddNewAnimes" asp-action="Index">檢視新增動畫建議</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Announcements" asp-action="Index">公告檢視</a>
+                            <a class="nav-link text-dark" asp-area="@Shared.Role_Admin" asp-controller="Announcements" asp-action="Index">公告檢視</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="MembersAdmin" asp-action="Index">會員檢視</a>
+                            <a class="nav-link text-dark" asp-area="@Shared.Role_Admin" asp-controller="Members" asp-action="Index">會員檢視</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav text-end">
@@ -66,9 +67,10 @@
             &copy; 2025 - AniwalkServer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    @{
+        //共用Scripts
+        await Html.RenderPartialAsync("_SharedLayout.Scripts");
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

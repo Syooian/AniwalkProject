@@ -1,7 +1,10 @@
-﻿@model AniwalkServer.Models.Visits
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Visits
 
 @{
     ViewData["FormAction"] = "Edit";
+
+    string MapData = Shared.GetMapDataJsonEscapeDataString(ViewData);
 }
 
 <h4>編輯到訪紀錄</h4>
@@ -27,23 +30,38 @@
                 <span asp-validation-for="Longitude" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <input asp-for="CreatedDate" class="form-control" hidden />
+            </div>
+            <div class="form-group">
                 @*<label asp-for="MemberID" class="control-label"></label>*@
                 <input asp-for="MemberID" class="form-control" value="@ViewBag.MemberID" hidden />
                 <span asp-validation-for="MemberID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CountryCode" class="control-label"></label>
-                <select asp-for="CountryCode" class="form-control" asp-items="ViewBag.CountryCode"></select>
+                <select asp-for="CountryCode" class="form-control js-example-basic-single">
+                    @*@foreach (var Item in (ViewBag.CountryCode ?? new List<SelectListItem>()))*@@*遇到null時的處理*@
+                    @foreach (var Item in ViewBag.CountryCode)
+                    {
+                        <option value="@Item.Value">@Item.Text</option>
+                    }
+                </select>
                 <span asp-validation-for="CountryCode" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AnimeID" class="control-label"></label>
-                <select asp-for="AnimeID" class="form-control" asp-items="ViewBag.AnimeID"></select>
+                <select asp-for="AnimeID" class="form-control js-example-basic-single">
+                    @*@foreach (var Item in (ViewBag.AnimeID ?? new List<SelectListItem>()))*@@*遇到null時的處理*@
+                    @foreach (var Item in ViewBag.AnimeID)
+                    {
+                        <option value="@Item.Value">@Item.Text</option>
+                    }
+                </select>
                 <span asp-validation-for="AnimeID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="VisitedDate" class="control-label"></label>
-                <input asp-for="VisitedDate" class="form-control" />
+                <input asp-for="VisitedDate" class="form-control" type="date"/>
                 <span asp-validation-for="VisitedDate" class="text-danger"></span>
             </div>
             @*<div class="form-group">
@@ -64,15 +82,15 @@
             </div>
             <div class="form-group">
                 @*<input type="submit" value="修改" class="btn btn-primary" />*@
+                <input type="hidden" name="LastPage" value="@ViewData[ViewDataKeys.LastPage]" />
+                <input type="hidden" name="LastAction" value="@ViewData[ViewDataKeys.AJAXAction]" />
+                <input type="hidden" name="MapDataParam" value="@ViewData[ViewDataKeys.MapData]" />
                 <input type="button" value="修改" class="btn btn-primary" onclick="SendForm()" />
+                <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary" asp-route-MapDataParam="@MapData" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回列表</a>
             </div>
         </form>
     </div>
     @await Html.PartialAsync("_SharedMap", new { Latitude = Model.Latitude, Longitude = Model.Longitude, EnableClick = true })
-</div>
-
-<div>
-    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
 </div>
 
 <hr />
@@ -85,4 +103,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    @await Html.PartialAsync("_Select2");
 }

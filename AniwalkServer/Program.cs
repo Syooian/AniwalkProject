@@ -2,7 +2,6 @@
 using AniwalkServer.Controllers;
 using AniwalkServer.Data;
 using AniwalkServer.Filters;
-using AniwalkServer.Models;
 using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -26,15 +25,18 @@ builder.Services.AddDbContext<AniwalkDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
 
 #region 自訂Services
-builder.Services.AddScoped<VisitsServices>();
-builder.Services.AddScoped<PhotoServices>();
-builder.Services.AddScoped<MembersServices>();
 builder.Services.AddScoped<AddNewAnimesServices>();
+builder.Services.AddScoped<AnimesServices>();
 builder.Services.AddScoped<AnnouncementsServices>();
 builder.Services.AddScoped<CommentsServices>();
+builder.Services.AddScoped<CountriesServices>();
 builder.Services.AddScoped<ForgotPasswordServices>();
 builder.Services.AddScoped<LoginServices>();
 builder.Services.AddScoped<MailServices>();
+builder.Services.AddScoped<MembersServices>();
+builder.Services.AddScoped<PhotoServices>();
+builder.Services.AddScoped<RepliesServices>();
+builder.Services.AddScoped<VisitsServices>();
 #endregion
 
 //註冊 Cookie Authentication
@@ -47,6 +49,8 @@ builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCook
     Options.Cookie.HttpOnly = true;// 防止客戶端腳本訪問 Cookie
     Options.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -74,8 +78,19 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+#region 路由設定
+// 支援 Area 路由（依角色分區）
 app.MapControllerRoute(
-    name: "default",
+    name: "Areas",
+    pattern: "{area:exists}/{controller=Home}/{action=index}/{id?}");//Exists : 路由約束（Route Constraint），表示「只有當 area 這個區段存在時，這條路由才會被比對」
+
+// Razor Pages 路由
+app.MapRazorPages();
+
+//一般Controller路由
+app.MapControllerRoute(
+    name: "default",//Guest
     pattern: "{controller=Home}/{action=Index}/{id?}");
+#endregion
 
 app.Run();

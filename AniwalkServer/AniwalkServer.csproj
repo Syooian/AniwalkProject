@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="microsoft-web-helpers" Version="2.1.20710.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6">
@@ -21,10 +22,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Guest\Controllers\" />
+    <Folder Include="Areas\Guest\Data\" />
+    <Folder Include="Areas\Guest\Models\" />
+    <Folder Include="Areas\Guest\Views\" />
     <Folder Include="Areas\Member\Controllers\" />
     <Folder Include="Areas\Member\Data\" />
     <Folder Include="Areas\Member\Models\" />
     <Folder Include="Areas\Member\Views\" />
+    <Folder Include="Models\" />
+    <Folder Include="Pages\Shared\" />
+    <Folder Include="Views\Announcements\" />
   </ItemGroup>
 
 </Project>

@@ -20,3 +20,14 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/*清單垂直ScrollBar*/
+/*vh 是「視窗高度」的單位，70vh 代表 70% 的瀏覽器高度。*/
+.ListVerticalScrollBar {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.VisitsFilter{
+    width: 250px;
+}

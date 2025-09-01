@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AniwalkServer.Controllers
 {
@@ -26,6 +28,14 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         readonly PhotoServices PhotoServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly AnimesServices AnimesServices;
+        /// <summary>
+        /// 
+        /// </summary>
+        readonly CountriesServices CountriesServices;
         #endregion
 
         /// <summary>
@@ -36,7 +46,9 @@ namespace AniwalkServer.Controllers
         /// <param name="Context"></param>
         /// <param name="VisitsServices"></param>
         /// <param name="PhotoServices"></param>
-        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices, PhotoServices PhotoServices)
+        /// <param name="AnimesServices"></param>
+        /// <param name="CountriesServices"></param>
+        public VisitsController(ILogger<HomeController> logger, IConfiguration configuration, AniwalkDBContext Context, VisitsServices VisitsServices, PhotoServices PhotoServices, AnimesServices AnimesServices, CountriesServices CountriesServices)
         {
             _logger = logger;
             _configuration = configuration;
@@ -44,6 +56,8 @@ namespace AniwalkServer.Controllers
             #region Services
             this.VisitsServices = VisitsServices;
             this.PhotoServices = PhotoServices;
+            this.AnimesServices = AnimesServices;
+            this.CountriesServices = CountriesServices;
             #endregion
         }
 
@@ -51,9 +65,11 @@ namespace AniwalkServer.Controllers
         /// 從地圖瀏覽到訪紀錄
         /// </summary>
         /// <param name="VisitsParam"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam)
+        [HttpGet]//補上HttpGet，不然會報錯 (多個EndPoint錯誤)
+        public async Task<IActionResult> ShowVisitsOnMap(VisitsParam? VisitsParam, string? MapDataParam)
         {
             SetGoogleMapsApiKey();
 
@@ -66,6 +82,23 @@ namespace AniwalkServer.Controllers
             //Result.OrderByDescending(R => R.CreatedDate);
             #endregion
 
+            if (Result == null)
+                return NotFound();
+
+            if (!string.IsNullOrEmpty(MapDataParam))
+            {
+                //Debug.WriteLine("ShowVisitsOnMap MapData : " + MapDataParam);
+                //ViewData[ViewDataKeys.MapData] = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);//因為在View丟值過來時因為是帶在網頁上，需經過一次URL格式的轉換避免出錯，因此再次塞給View時需轉換回來才會是正確的Json格式
+                //Debug.WriteLine("Controller ShowVisitsOnMap 1 MapData : " + MapDataParam);
+                //Debug.WriteLine("Controller ShowVisitsOnMap 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+                //Debug.WriteLine("Controller ShowVisitsOnMap 2 MapData : " +JsonConvert.SerializeObject Uri.UnescapeDataString(MapDataParam));
+            }
+            else
+            {
+                ViewData[ViewDataKeys.MapData] = JsonConvert.SerializeObject(new MapDataParam());
+            }
+
             //var Markers = new List<object>
             //{
             //    new{Lat=22.589893781702656,Lng= 120.31014242236083,Title="Marker 1" },
@@ -76,7 +109,8 @@ namespace AniwalkServer.Controllers
 
             //ViewBag.Markers = Markers;
 
-            ViewData["AJAXAction"] = nameof(ShowVisitsOnMap);
+            ViewData[ViewDataKeys.AJAXAction] = nameof(ShowVisitsOnMap);
+            await SetViewData();
 
             // 判斷是否為 AJAX 請求
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -84,13 +118,13 @@ namespace AniwalkServer.Controllers
                 //Debug.WriteLine("Return AJAX");
 
                 // 回傳部分視圖（只渲染清單）
-                return Json(Result); // _VisitsList.cshtml 需只渲染清單
+                return Json(Result.Data); // _VisitsList.cshtml 需只渲染清單
             }
             else// 一般頁面載入
             {
                 //Debug.WriteLine("Return View");
 
-                return View(Result.ToArray());
+                return View(Result.Data);
             }
         }
 
@@ -100,14 +134,23 @@ namespace AniwalkServer.Controllers
         /// <param name="VisitsParam"></param>
         /// <returns></returns>
         [AllowAnonymous]//允許所有人檢視
-        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam)
+        public async Task<IActionResult> ShowVisitsOnList(VisitsParam? VisitsParam, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
             //if (VisitsParam != null)
-            //    Debug.WriteLine(VisitsParam.ToString());
+            //    Debug.WriteLine("ShowVisitsOnList 1 Param : " + VisitsParam.ToString());
 
-            var Result = await VisitsServices.GetVisits(VisitsParam);
+            var Result = await VisitsServices.GetVisits(VisitsParam, Page, PageSize, (User.IsInRole(Shared.Role_Admin) ? true : false));
 
-            ViewData["AJAXAction"] = nameof(ShowVisitsOnList);
+            if (Result == null)
+                return NotFound();
+
+            //if (Result.Filter != null)
+            //    Debug.WriteLine("ShowVisitsOnList 2 Filter : " + Result.Filter.ToString());
+
+            ViewData[ViewDataKeys.AJAXAction] = nameof(ShowVisitsOnList);
+            await SetViewData();
+
+            ViewData[ViewDataKeys.LastPage] = Page;
 
             // 判斷是否為 AJAX 請求
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -131,11 +174,11 @@ namespace AniwalkServer.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = Shared.Role_Member)]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             SetGoogleMapsApiKey();
 
-            SetViewData();
+            await SetViewData();
 
             return View();
         }
@@ -156,10 +199,10 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                var UploadMsg = await UploadPhoto(Visit, false, VisitPhotos);
-                if (UploadMsg != "")
+                var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, false, VisitPhotos, GetMemberID);
+                if (UploadPhotoResult.Type == ResultType.Fail)
                 {
-                    ViewData["PhotoError"] = UploadMsg;
+                    ViewData["PhotoError"] = UploadPhotoResult.Message;
                     return View(Visit);
                 }
 
@@ -187,7 +230,7 @@ namespace AniwalkServer.Controllers
 
             Shared.ShowModelState(ModelState);
 
-            SetViewData();
+            await SetViewData();
 
             return View(Visit);
         }
@@ -196,9 +239,13 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="LastPage"></param>
+        /// <param name="LastAction"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Edit(int VisitSN)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int VisitSN, int LastPage, string? LastAction, string? MapDataParam)
         {
             //Console.WriteLine($"Edit VisitSN : {VisitSN}");
 
@@ -227,7 +274,16 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            SetViewData();
+            SetGoogleMapsApiKey();
+
+            await SetViewData();
+
+            ViewData[ViewDataKeys.AJAXAction] = LastAction;
+            //Debug.WriteLine("Controller Edit 1 MapData : " + MapDataParam);
+            if (!string.IsNullOrEmpty(MapDataParam))
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);
+            //Debug.WriteLine("Controller Edit 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(Visit);
         }
@@ -238,17 +294,33 @@ namespace AniwalkServer.Controllers
         /// <param name="Visit"></param>
         /// <param name="VisitPhotos">圖片資料</param>
         /// <param name="DeletePhoto">要刪除的圖片</param>
+        /// <param name="LastPage"></param>
+        /// <param name="LastAction"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("SN,MainText,Latitude,Longitude,MemberID,CountryCode,AnimeID,CreatedDate,VisitedDate,VisitsPhotos")] Visits Visit,
             List<VisitsPhotosDTO>? VisitPhotos,
-            List<string>? DeletePhoto)
+            List<string>? DeletePhoto,
+            int LastPage,
+            string? MapDataParam,
+            string? LastAction)
         {
             //if (id != tStudent.fStuId)
             //{
             //    return NotFound();
             //}
+
+            //因為有些錯誤會返回到原畫面所以乾脆直接在開頭就設ViewData
+            await SetViewData();
+
+            //Debug.WriteLine("Controller Edit 1 MapData : " + MapDataParam);
+            if (!string.IsNullOrEmpty(MapDataParam))
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);
+            //Debug.WriteLine("Controller Edit 2 MapData : " + Uri.UnescapeDataString(MapDataParam));
+            ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             if (ModelState.IsValid)
             {
@@ -276,11 +348,12 @@ namespace AniwalkServer.Controllers
                 //}
                 #endregion
 
-                var UploadPhotoMsg = await UploadPhoto(Visit, true, VisitPhotos);
-                if (UploadPhotoMsg != "")
+                var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, true, VisitPhotos, GetMemberID);
+                if (UploadPhotoResult.Type == ResultType.Fail)
                 {
-                    ViewData["PhotoError"] = UploadPhotoMsg;
-                    return View(Visit);
+                    Debug.WriteLine("Controller Edit UploadPhotoResult Error : " + UploadPhotoResult.Message);
+                    ViewData["PhotoError"] = UploadPhotoResult.Message;
+                    return NotFound(Visit);//不要回傳View，不然ajax會觸發success
                 }
 
                 #region 測試2
@@ -303,10 +376,11 @@ namespace AniwalkServer.Controllers
                 #endregion
 
                 var UpdatePhotoDataMsg = await UpdatePhotoData(Visit, VisitPhotos);
-                if (UpdatePhotoDataMsg != "")
+                if (UpdatePhotoDataMsg.Type == ResultType.Fail)
                 {
+                    Debug.WriteLine("Controller Edit UpdatePhotoDataMsg Error : " + UpdatePhotoDataMsg.Message);
                     ViewData["PhotoError"] = UpdatePhotoDataMsg;
-                    return View(Visit);
+                    return NotFound(Visit);//不要回傳View，不然ajax會觸發success
                 }
 
                 //(寫法不佳)
@@ -332,12 +406,20 @@ namespace AniwalkServer.Controllers
                 Context.Update(Visit);
                 await Context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(ShowVisitsOnList));
+                //switch (LastAction)
+                //{
+                //    case nameof(ShowVisitsOnMap):
+                //        return RedirectToAction(nameof(ShowVisitsOnMap), new { MapDataParam = MapDataParam });
+                //    case nameof(ShowVisitsOnList):
+                //        return RedirectToAction(nameof(ShowVisitsOnList), new { Page = LastPage });
+                //}
+
+                //return NotFound();
+
+                return View(Visit);
             }
 
             Shared.ShowModelState(ModelState);
-
-            SetViewData();
 
             return View(Visit);
         }
@@ -346,8 +428,12 @@ namespace AniwalkServer.Controllers
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="LastPage">上一頁</param>
+        /// <param name="MapDataParam"></param>
+        /// <param name="LastAction">上一個Action</param>
         /// <returns></returns>
-        public async Task<IActionResult> Details(int VisitSN)
+        [HttpGet]
+        public async Task<IActionResult> Details(int VisitSN, int LastPage, string? MapDataParam, string? LastAction)
         {
             var Visit = await VisitsServices.GetVisit(VisitSN, true);
 
@@ -359,6 +445,21 @@ namespace AniwalkServer.Controllers
             }
 
             SetGoogleMapsApiKey();
+
+            if (!string.IsNullOrEmpty(MapDataParam))
+            {
+                //Debug.WriteLine(MapDataParam);
+
+                //var MapData = JsonConvert.DeserializeObject<MapDataParam>(MapDataParam);
+                //Debug.WriteLine("Details MapData : " + MapData);
+
+                ViewData[ViewDataKeys.MapData] = Uri.UnescapeDataString(MapDataParam);//因為在View丟值過來時因為是帶在網頁上，需經過一次URL格式的轉換避免出錯，因此再次塞給View時需轉換回來才會是正確的Json格式
+                //Debug.WriteLine("Controller Details MapData : " + Uri.UnescapeDataString(MapDataParam));
+                //ViewData[ViewDataKeys.MapData] = MapData;
+            }
+
+            ViewData[ViewDataKeys.AJAXAction] = LastAction ?? string.Empty;
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             //SetViewData();
 
@@ -376,6 +477,19 @@ namespace AniwalkServer.Controllers
         //}
 
         /// <summary>
+        /// 取得回覆留言資料
+        /// </summary>
+        /// <param name="VisitSN"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult GetContentsByViewComponent(int VisitSN)
+        {
+            Debug.WriteLine($"GetContentsByViewComponent VisitSN: {VisitSN}");
+
+            return ViewComponent("VC_Comment", new { VisitSN = VisitSN });
+        }
+
+        /// <summary>
         /// 刪除到訪紀錄
         /// </summary>
         /// <param name="VisitSN"></param>
@@ -384,22 +498,18 @@ namespace AniwalkServer.Controllers
         {
             //Console.WriteLine($"Delete VisitSN : {VisitSN}");
 
-            //var Visit = await Context.Visits
-            //    .Include(V => V.VisitsPhotos)
-            //    .FirstOrDefaultAsync(V => V.SN == VisitSN);
-            var Visit = await VisitsServices.GetVisit(VisitSN);
-
-            if (Visit == null)
-            {
-                Console.WriteLine($"VisitSN {VisitSN} not found");
+            if (VisitSN < 0)
                 return NotFound();
-            }
+
+            var Result = await VisitsServices.DeleteVisit(VisitSN);
+            if (Result.Type == ResultType.Fail)
+                return NotFound();
 
             //刪除到訪紀錄照片
-            PhotoServices.DeletePhoto(Visit);
+            //PhotoServices.DeletePhoto(Visit);
 
-            Context.Visits.Remove(Visit);
-            await Context.SaveChangesAsync();
+            //Context.Visits.Remove(Visit);
+            //await Context.SaveChangesAsync();
 
             //SetGoogleMapsApiKey();
             return RedirectToAction(nameof(ShowVisitsOnList));
@@ -408,10 +518,10 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 
         /// </summary>
-        public void SetViewData()
+        public async Task SetViewData()
         {
-            ViewData["CountryCode"] = new SelectList(Context.Countries, "CountryCode", "CountryName");
-            ViewData["AnimeID"] = new SelectList(Context.Animes, "AnimeID", "Title");
+            ViewData[ViewDataKeys.CountryCode] = await CountriesServices.GetCountriesSelect();
+            ViewData[ViewDataKeys.AnimeID] = await AnimesServices.GetAnimesSelect();
             //ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
             //    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             ViewData["MemberID"] = GetMemberID;
@@ -436,12 +546,11 @@ namespace AniwalkServer.Controllers
         /// <param name="Visit"></param>
         /// <param name="VisitPhotos"></param>
         /// <returns></returns>
-        async Task<string> UpdatePhotoData(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
+        async Task<Result> UpdatePhotoData(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
         {
             if (VisitPhotos == null || VisitPhotos.Count == 0)
             {
-                Debug.WriteLine("沒有圖片資料更新");
-                return await Task.FromResult("");
+                return new Result(Message: "沒有圖片資料更新");
             }
 
             //Debug.WriteLine($"UpdatePhotoData VisitPhotos Count : {VisitPhotos.Count()}");
@@ -458,234 +567,7 @@ namespace AniwalkServer.Controllers
                 }
             }
 
-            return await Task.FromResult("");
-        }
-
-        /// <summary>
-        /// 到訪紀錄照片有變動
-        /// </summary>
-        /// <param name="Visit">到訪記錄</param>
-        /// <param name="VisitPhotos">圖片資料</param>
-        /// <param name="DeletePhoto">上傳的圖片</param>
-        /// <returns></returns>
-        /// 修正 Task<string> 回傳型別，將所有 return "字串" 改為 return Task.FromResult("字串")
-        //async Task<string> OnVisitPhotoChanged(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
-        //{
-        //    if (VisitPhotos == null || VisitPhotos.Count == 0)
-        //    {
-        //        Debug.WriteLine("沒有上傳變動");
-        //        return await Task.FromResult("");
-        //    }
-
-        //    #region 檢查是否有上傳圖片
-        //    if (VisitPhotos != null)
-        //    {
-        //        Debug.WriteLine("圖片資料數量 : " + VisitPhotos.Count());
-
-        //        try
-        //        {
-        //            for (int a = 0; a < VisitPhotosList.Count(); a++)
-        //            {
-        //                //檢查是否有圖片要上傳
-        //                Debug.WriteLine($"{VisitPhotosList[a].PhotoID} 圖片 : {(VisitPhotosList[a].UploadFile == null ? null : VisitPhotosList[a].UploadFile.FileName)}");
-        //                if (VisitPhotosList[a].UploadFile != null && VisitPhotosList[a].UploadFile.Length != 0)
-        //                {
-        //                    //檢查檔案類型
-        //                    switch (VisitPhotosList[a].UploadFile.ContentType)
-        //                    {
-        //                        case "image/gif":
-        //                        case "image/bmp":
-        //                        case "image/jpg":
-        //                        case "image/jpeg":
-        //                        case "image/png":
-        //                        case "image/jfif":
-        //                            break;
-        //                        default:
-        //                            return await Task.FromResult("有不支援的圖片類型");
-        //                    }
-
-        //                    //上傳路徑
-        //                    var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID);
-        //                    Debug.WriteLine($"UploadPath : {UploadPath}");
-        //                    //檢查上傳路徑
-        //                    if (!Directory.Exists(UploadPath))
-        //                        Directory.CreateDirectory(UploadPath);
-        //                    //上傳
-        //                    using (FileStream FS = new FileStream(Path.Combine(UploadPath, VisitPhotosList[a].PhotoID + VisitPhotosList[a].PhotoType), FileMode.Create))
-        //                    {
-        //                        VisitPhotosList[a].UploadFile.CopyTo(FS);
-        //                    }
-
-        //                    //Context.VisitsPhotos.Add(new VisitsPhotos
-        //                    //{
-        //                    //    PhotoID = VisitPhotosList[a].PhotoID,
-        //                    //    PhotoType = VisitPhotosList[a].PhotoType,
-        //                    //    Description = VisitPhotosList[a].Description,
-        //                    //    MemberID = GetMemberID,
-        //                    //    SN = Visit.SN
-        //                    //});
-
-        //                    //IsModified = true;
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Debug.WriteLine($"Error uploading photos : {ex.Message}");
-        //            return await Task.FromResult("上傳失敗1");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Debug.WriteLine("沒有圖片資料");
-        //    }
-        //    #endregion
-
-        //    #region 檢查是否有刪除圖片
-
-        //    #endregion
-
-
-        //    //等待一次增加新圖片資料到資料庫
-        //    //if (IsModified)
-        //    //    await Context.SaveChangesAsync();
-
-        //    #region 更新資料庫
-        //    //if (Visit.VisitsPhotos == null)
-        //    //{
-        //    //    Debug.WriteLine($"New Visit.VisitsPhotos");
-        //    //    Visit.VisitsPhotos = new List<VisitsPhotos>();
-        //    //}
-        //    //else
-        //    //{
-        //    //    Debug.WriteLine($"Visit.VisitsPhotos Count : {Visit.VisitsPhotos.Count()}");
-        //    //}
-
-        //    //foreach (var VP in VisitPhotos)
-        //    //{
-        //    //    //找出有無和原圖片資料相同
-        //    //    var V = Visit.VisitsPhotos.FindIndex(R => R.PhotoID == VP.PhotoID);
-
-        //    //    if (V == -1)//無相同資料，直接插入新的
-        //    //    {
-        //    //        Debug.WriteLine($"新增圖片資料");
-
-        //    //        Visit.VisitsPhotos.Add(new VisitsPhotos
-        //    //        {
-        //    //            PhotoID = VP.PhotoID,
-        //    //            PhotoType = VP.PhotoType,
-        //    //            Description = VP.Description,
-        //    //            MemberID = GetMemberID,
-        //    //            SN = Visit.SN
-        //    //        });
-        //    //    }
-        //    //    else//有相同資料，用修改的 (也只有圖片說明會更改)
-        //    //    {
-        //    //        Debug.WriteLine($"修改圖片資料");
-
-        //    //        Visit.VisitsPhotos[V].Description = VP.Description;
-        //    //    }
-        //    //}
-
-        //    //追蹤問題??? 樂觀並發控制???
-
-        //    //-----------------------------------------------------------------------------------------------------
-
-        //    foreach (var VP in VisitPhotosList)
-        //    {
-        //        //找出有無和原圖片資料相同
-        //        var Original = await Context.VisitsPhotos.FirstOrDefaultAsync(V => V.PhotoID == VP.PhotoID);
-        //        if (Original == null)//無相同資料，直接插入新的
-        //        {
-        //            Debug.WriteLine($"新增圖片資料");
-        //            Context.VisitsPhotos.Add(new VisitsPhotos()
-        //            {
-        //                PhotoID = VP.PhotoID,
-        //                PhotoType = VP.PhotoType,
-        //                Description = VP.Description,
-        //                MemberID = Visit.MemberID,
-        //                SN = Visit.SN
-        //            });
-        //        }
-        //        else if (Original.Description != VP.Description)//有相同資料，用修改的 (也只有圖片說明會更改)
-        //        {
-        //            Debug.WriteLine($"修改圖片資料");
-        //            Original.Description = VP.Description;
-        //            Context.Update(Original);
-        //        }
-        //    }
-
-        //    await Context.SaveChangesAsync();
-        //    #endregion
-
-        //    return await Task.FromResult("");
-        //}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Visit"></param>
-        /// <param name="VisitPhotos"></param>
-        /// <returns></returns>
-        async Task<string> UploadPhoto(Visits Visit, bool SetDBFirst, List<VisitsPhotosDTO>? VisitPhotos)
-        {
-            if (VisitPhotos == null || VisitPhotos.Count == 0)
-            {
-                Debug.WriteLine("沒有上傳圖片");
-                return await Task.FromResult("");
-            }
-
-            var UploadPhotos = VisitPhotos.FindAll(VP => VP.UploadFile != null && VP.UploadFile.Length != 0);
-            foreach (var Photo in UploadPhotos)
-            {
-                //檢查檔案類型
-                switch (Photo.UploadFile.ContentType)
-                {
-                    case "image/gif":
-                    case "image/bmp":
-                    case "image/jpg":
-                    case "image/jpeg":
-                    case "image/png":
-                    case "image/jfif":
-                        break;
-                    default:
-                        return await Task.FromResult("有不支援的圖片類型");
-                }
-
-                try
-                {
-                    //上傳路徑
-                    var UploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath, GetMemberID);
-                    Debug.WriteLine($"UploadPath : {UploadPath}");
-                    //檢查上傳路徑
-                    if (!Directory.Exists(UploadPath))
-                        Directory.CreateDirectory(UploadPath);
-                    //上傳
-                    using (FileStream FS = new FileStream(Path.Combine(UploadPath, Photo.PhotoID + Photo.PhotoType), FileMode.Create))
-                    {
-                        Photo.UploadFile.CopyTo(FS);
-                    }
-
-                    if (SetDBFirst)
-                    {
-                        Context.Add(new VisitsPhotos()
-                        {
-                            PhotoID = Photo.PhotoID,
-                            PhotoType = Photo.PhotoType,
-                            Description = Photo.Description,
-                            MemberID = GetMemberID,
-                            SN = Visit.SN
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error uploading photos : {ex.Message}");
-                    return await Task.FromResult("上傳失敗1");
-                }
-            }
-
-            return await Task.FromResult("");
+            return new Result();
         }
 
         /// <summary>

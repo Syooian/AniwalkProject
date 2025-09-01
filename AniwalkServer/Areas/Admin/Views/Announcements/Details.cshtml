@@ -1,4 +1,5 @@
-﻿@model AniwalkServer.Models.Announcements
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Announcements
 @{
     ViewData["Title"] = "公告檢視";
 }
@@ -20,7 +21,7 @@
             @Html.DisplayNameFor(model => model.Content)
         </dt>
         <dd class="col-sm-10">
-            @Html.Raw(Model.Content.Replace("\r\n", "<br>"))
+            @Html.Raw(Shared.ConvertNewLineToBr(Model.Content))
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedDate)
@@ -31,10 +32,10 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.SN" class="btn btn-primary">編輯</a> |
     <form asp-action="Delete">
         <input type="hidden" value="@Model?.SN" name="id" />
-        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" /> |
+        <a asp-action="Edit" asp-route-id="@Model?.SN" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+        <input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('確定刪除公告？')" />
+        <a asp-action="Index" class="btn btn-outline-primary" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回</a>
     </form>
-    <a asp-action="Index" class="btn btn-outline-primary">返回</a>
 </div>

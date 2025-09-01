@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AniwalkServer.Models
 {
+    /// <summary>
+    /// 會員
+    /// </summary>
     public partial class Members
     {
         /// <summary>
@@ -47,6 +50,7 @@ namespace AniwalkServer.Models
         [HiddenInput]
         [ForeignKey(nameof(Country))]
         [Display(Name = "所在國家")]
+        [Required(ErrorMessage = "請選擇所在國家")]
         public string CountryCode { get; set; } = null!;
         /// <summary>
         /// 國家

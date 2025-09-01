@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AniwalkServer.Data;
+using AniwalkServer.Models;
+using AniwalkServer.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using AniwalkServer.Data;
-using AniwalkServer.Models;
-using Microsoft.AspNetCore.Authorization;
-using AniwalkServer.Services;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace AniwalkServer.Controllers
+namespace AniwalkServer.Admin.Controllers
 {
-    [Authorize(Roles = Shared.Role_Admin)]
+    [Area(Shared.Role_Admin), Authorize(Roles = Shared.Role_Admin)]
     public class AnnouncementsController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -27,22 +29,34 @@ namespace AniwalkServer.Controllers
             this.AnnouncementsServices = AnnouncementsServices;
         }
 
-        // GET: Announcements
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Skip">跳過開頭幾筆紀錄</param>
-        /// <param name="Take">取幾筆紀錄</param>
+        /// <param name="PageSize"></param>
+        /// <param name="Page"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Index(int? Skip, int? Take)
+        public async Task<IActionResult> Index(int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
-            var Result = await AnnouncementsServices.GetAnnouncements(Skip, Take);
+            var Result = await AnnouncementsServices.GetAnnouncements(Page, PageSize);
+
+            if (Result == null)
+            {
+                return NotFound();
+            }
+
+            ViewData[ViewDataKeys.LastPage] = Page;
 
             return View(Result);
         }
 
         // GET: Announcements/Details/5
-        public async Task<IActionResult> Details(int id)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="LastPage"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Details(int id, int LastPage)
         {
             var announcements = await AnnouncementsServices.GetAnnouncement(id);
 
@@ -50,6 +64,8 @@ namespace AniwalkServer.Controllers
             {
                 return NotFound();
             }
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(announcements);
         }
@@ -80,7 +96,8 @@ namespace AniwalkServer.Controllers
         }
 
         // GET: Announcements/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id, int LastPage)
         {
             var announcements = await AnnouncementsServices.GetAnnouncement(id);
 
@@ -88,6 +105,8 @@ namespace AniwalkServer.Controllers
             {
                 return NotFound();
             }
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
 
             return View(announcements);
         }
@@ -97,7 +116,7 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SN,Title,Content")] Announcements announcements)
+        public async Task<IActionResult> Edit(int id, [Bind("SN,Title,Content,CreatedDate")] Announcements announcements, int LastPage)
         {
             if (id != announcements.SN)
             {
@@ -122,8 +141,12 @@ namespace AniwalkServer.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Index), new { Page = LastPage });
             }
+
+            ViewData[ViewDataKeys.LastPage] = LastPage;
+
             return View(announcements);
         }
 
