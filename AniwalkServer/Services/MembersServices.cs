@@ -1,7 +1,11 @@
 ﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
 using AniwalkServer.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Diagnostics;
 
 namespace AniwalkServer.Services
 {
@@ -71,6 +75,28 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        public async Task<Members> GetMemberByName(string Name)
+        {
+            return await Context.Members.FirstOrDefaultAsync(M => M.Name == Name);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <returns></returns>
+        public async Task<Members> GetMemberByAccount(string Account)
+        {
+            return await Context.Members
+                .Include(L => L.Login)
+                .FirstOrDefaultAsync(M => M.Login.Account == Account);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
         public async Task<MemberStatus> GetMemberStatus(string MemberID)
@@ -80,6 +106,60 @@ namespace AniwalkServer.Services
                 .FirstOrDefaultAsync();
 
             return Result;
+        }
+
+        /// <summary>
+        /// 新建會員
+        /// </summary>
+        /// <param name="RegistData"></param>
+        /// <returns></returns>
+        public async Task<Result> CreateNewMember(RegistDTO RegistData)
+        {
+            try
+            {
+                var NewMember = new Members()
+                {
+                    Name = RegistData.Name,
+                    Email = RegistData.Email,
+                    CountryCode = RegistData.CountryCode,
+                    CreatedDate = DateTime.Now, // 設定創建日期為當前時間
+                    RoleID = (int)RoleEnum.Member, // 設定會員角色為一般會員
+                    MemberStatus = new MemberStatus()//新增會員狀態
+                };
+
+                //生成MemberID並檢查是否重複
+                while (true)
+                {
+                    var NewMemberID = new Random().Next(0, 999999999).ToString("D10"); // 生成隨機的10位數會員ID
+                    if (!Context.Members.Any(m => m.MemberID == NewMemberID)) // 檢查是否已存在相同的會員ID
+                    {
+                        NewMember.MemberID = NewMemberID; // 如果不存在，則使用這個ID
+                        break;
+                    }
+                }
+
+                //新增帳密
+                var Login = new Login()
+                {
+                    MemberID = NewMember.MemberID, // 設定Login的MemberID為新生成的會員ID
+                    Account = RegistData.Account,
+                    Password = RegistData.Password
+                };
+
+                //將Login資料與Members關聯
+                NewMember.Login = Login;
+
+                Context.Add(NewMember);
+                await Context.SaveChangesAsync();
+
+                return new Result();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"CreateNewMember ex : " + ex.Message);
+
+                return new Result(ResultType.Fail, "註冊失敗");
+            }
         }
 
         /// <summary>

@@ -92,74 +92,49 @@ namespace AniwalkServer.Controllers
 
             if (ModelState.IsValid)
             {
-                #region 檢查輸入的會員名稱是否已被使用
-                Debug.WriteLine($"Account : {RegistData.Name}");
-                if (_context.Members.Any(m => m.Name == RegistData.Name))
+                ViewResult ReturnView(string Message)
                 {
-                    Debug.WriteLine($"Account {RegistData.Name} 已被使用");
-                    ViewData["Error"] = "此會員名稱已被使用。";
+                    Debug.WriteLine(Message);
+                    ViewData["Error"] = Message;
                     SetViewData();
                     return View(RegistData);
+                }
+
+                #region 檢查輸入的會員名稱是否已被使用
+                //Debug.WriteLine($"Account : {RegistData.Name}");
+                var CheckName = await MembersServices.GetMemberByName(RegistData.Name);
+                if (CheckName != null)
+                {
+                    return ReturnView("此會員名稱已被使用。");
                 }
                 #endregion
 
                 #region 檢查輸入的電子郵件是否已被使用
-                Debug.WriteLine($"Email : {RegistData.Email}");
-                if (_context.Members.Any(m => m.Email == RegistData.Email))
+                //Debug.WriteLine($"Email : {RegistData.Email}");
+                var CheckEmail = await MembersServices.GetMemberByEmail(RegistData.Email);
+                if (CheckEmail != null)
                 {
-                    Debug.WriteLine($"Email {RegistData.Email} 已被使用");
-                    ViewData["Error"] = "此電子郵件已被使用。";
-                    SetViewData();
-                    return View(RegistData);
+                    return ReturnView("此電子郵件已被使用。");
                 }
                 #endregion
 
                 #region 檢查輸入的帳號是否已被使用
-                Debug.WriteLine($"Email : {RegistData.Account}");
-                if (_context.Members.Any(m => m.Email == RegistData.Account))
+                //Debug.WriteLine($"Email : {RegistData.Account}");
+                var CheckAccount = await MembersServices.GetMemberByAccount(RegistData.Account);
+                if (CheckAccount != null)
                 {
-                    Debug.WriteLine($"Email {RegistData.Account} 已被使用");
-                    ViewData["Error"] = "此帳號名稱已被使用。";
-                    SetViewData();
-                    return View(RegistData);
+                    return ReturnView("此帳號名稱已被使用。");
                 }
                 #endregion
 
-                var NewMember = new Members()
+                //創建新會員
+                var CreateNewMemberResult = await MembersServices.CreateNewMember(RegistData);
+                if (CreateNewMemberResult.Type == ResultType.Fail)
                 {
-                    Name = RegistData.Name,
-                    Email = RegistData.Email,
-                    CountryCode = RegistData.CountryCode,
-                    CreatedDate = DateTime.Now, // 設定創建日期為當前時間
-                    RoleID = (int)RoleEnum.Member, // 設定會員角色為一般會員
-                    MemberStatus = new MemberStatus()//新增會員狀態
-                };
-
-                //生成MemberID並檢查是否重複
-                while (true)
-                {
-                    var NewMemberID = new Random().Next(0, 999999999).ToString("D10"); // 生成隨機的10位數會員ID
-                    if (!_context.Members.Any(m => m.MemberID == NewMemberID)) // 檢查是否已存在相同的會員ID
-                    {
-                        NewMember.MemberID = NewMemberID; // 如果不存在，則使用這個ID
-                        break;
-                    }
+                    return ReturnView(CreateNewMemberResult.Message);
                 }
 
-                //新增帳密
-                var Login = new Login()
-                {
-                    MemberID = NewMember.MemberID, // 設定Login的MemberID為新生成的會員ID
-                    Account = RegistData.Account,
-                    Password = RegistData.Password
-                };
-
-                //將Login資料與Members關聯
-                NewMember.Login = Login;
-
-                _context.Add(NewMember);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(LoginController.Login), "Login");
+                return RedirectToAction(nameof(LoginController.Login), nameof(LoginController.Login));
             }
 
             #region 檢查模型驗證
