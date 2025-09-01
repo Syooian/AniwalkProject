@@ -223,63 +223,57 @@
         function AddContent(Controller){
             //console.log("AddContent : "+Controller);
 
-            //2.5.17判斷表單是否驗證通過
-            if(!ValidateForm()){
-                //驗證失敗，不送出表單
-                return;
-            }
+            let URL=`/${Controller}/Create`;
 
-            $.ajax({
-                type:"POST",
-                url:"/"+Controller+"/Create",//Controller/Action
-                data:$('#AddContentForm form').serialize(),
-                success:function(){
-                    //更新底下回覆留言區
-                    UpdateList();
-
-                    //關閉彈出框
-                    Modal.hide();
-                },
-                error:function(xhr, status, error){
-                    console.error("新增評論or回覆錯誤", error);
-                }
-            });
+            PostByAJAXForCreateAndEdit(URL);
         }
 
-        //使用Ajax達成更新評論\回覆
-        function EditContent(Controller, ID){
-            if(!ValidateForm()){
-                //驗證失敗，不送出表單
-                return;
-            }
+        //使用Ajax達成更新評論
+        function EditComment(CommentID){
+            let URL=`/@nameof(Comments)/Edit?@nameof(Comments.CommentID)=${CommentID}`;
 
-            $.ajax({
-                type:"POST",
-                url:`/${Controller}/Edit?id=${ID}`,//Controller/Action?ID
-                data:$('#AddContentForm form').serialize(),
-                success:function(){
-                    //更新底下回覆留言區
-                    UpdateList();
-
-                    //關閉彈出框
-                    Modal.hide();
-                },
-                error:function(xhr, status, error){
-                    console.error("編輯評論or回覆錯誤", error);
-                }
-            });
+            PostByAJAXForCreateAndEdit(URL);
         }
 
         //驗證表單
         function ValidateForm(){
             if(!$('#AddContentForm form').valid()){
                 //驗證失敗，不送出表單
-                console.log("表單驗證失敗");
-                false;
+                //console.log("表單驗證失敗");
+                return false;
             }
             else{
-                true;
+                //console.log("表單驗證成功");
+                return true;
             }
+        }
+
+        //使用AJAX Post表單 (Create & Edit 用)
+        function PostByAJAXForCreateAndEdit(URL){
+            //console.log("PostByAJAXForCreateAndEdit URL : "+URL);
+
+            if(!ValidateForm()){
+                //驗證失敗，不送出表單
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: URL,
+                data:$('#AddContentForm form').serialize(),
+                success:function(){
+                    //console.log("PostByAJAXForCreateAndEdit Success");
+
+                    //更新底下回覆留言區
+                    UpdateList();
+
+                    //關閉彈出框
+                    Modal.hide();
+                },
+                error:function(xhr, status, error){
+                    console.error("PostByAJAXForCreateAndEdit Error", error);
+                }
+            });
         }
 
         //使用Ajax達成刪除回覆\留言

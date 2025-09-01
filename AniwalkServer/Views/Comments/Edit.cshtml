@@ -4,8 +4,6 @@
 @{
     Layout = null;
     ViewData["Title"] = "編輯評論";
-
-    var ControllerName = nameof(Comments);
 }
 
 <div class="row">
@@ -30,7 +28,7 @@
                 <input asp-for="SN" class="form-control" value="@Model.SN" />
             </div>
             <div class="form-group">
-                <input type="button" value="更新評論" class="btn btn-warning" onclick="EditContent('@ControllerName', '@Model.CommentID')" />
+                <input type="button" value="更新評論" class="btn btn-warning" onclick="EditComment('@Model.CommentID')" />
             </div>
         </form>
     </div>

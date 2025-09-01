@@ -106,9 +106,9 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments comments)
+        public async Task<IActionResult> Edit(string CommentID, [Bind("CommentID,CommentContent,CommentDate,MemberID,SN")] Comments comments)
         {
-            if (id != comments.CommentID)
+            if (CommentID != comments.CommentID)
             {
                 return NotFound();
             }
@@ -136,7 +136,7 @@ namespace AniwalkServer.Controllers
             //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
             //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
-            return Json(comments);
+            return NotFound();
         }
 
         // POST: Comments/Delete/5
