@@ -13,6 +13,10 @@ using AniwalkServer.Services;
 
 namespace AniwalkServer.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [Authorize(Roles = Shared.Role_Member)]
     public class AddNewAnimesController : Controller
     {
         private readonly AniwalkDBContext _context;
@@ -36,7 +40,6 @@ namespace AniwalkServer.Controllers
         /// 建立新的新增動畫建議
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = Shared.Role_Member)]
         public IActionResult Create()
         {
             return View();
@@ -47,14 +50,13 @@ namespace AniwalkServer.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Shared.Role_Member)]
         public async Task<IActionResult> Create([Bind("SN,AnimeTitle,AddDate,Status,CloseDate,Note")] AddNewAnime addNewAnime)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(addNewAnime);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             }
             return View(addNewAnime);
         }
