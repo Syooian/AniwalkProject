@@ -68,6 +68,31 @@ namespace AniwalkServer.Services
             var SQLPara = new DynamicParameters();
             SQLPara.Add("@VisitSN", VisitSN);
 
+            /*
+             select count(*) from Comments as C
+	            left join Members as M on C.MemberID = M.MemberID
+	            left join Replies as R on R.CommentID = C.CommentID
+	            left join Members as RM on R.MemberID = RM.MemberID
+	            left join Replies as PR on R.ParentReplyID = PR.ReplyID
+	            left join Members as PRM on PR.MemberID = PRM.MemberID
+	            where C.SN = 1
+            select 
+	            C.*, 
+	            M.Name AS MemberName,
+	            R.*, 
+	            RM.Name AS ReplyMemberName,
+	            PR.*,
+	            PRM.Name AS ParentReplyMemberName
+	            from Comments as C
+	            left join Members as M on C.MemberID = M.MemberID
+	            left join Replies as R on R.CommentID = C.CommentID
+	            left join Members as RM on R.MemberID = RM.MemberID
+	            left join Replies as PR on R.ParentReplyID = PR.ReplyID
+	            left join Members as PRM on PR.MemberID = PRM.MemberID
+	            where C.SN = 1
+	            order by C.CommentDate desc, R.ReplyDate desc
+             */
+
             //資料Join
             var SQLJoin = @$"
                 left join Members as M on C.MemberID = M.MemberID
