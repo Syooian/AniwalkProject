@@ -31,9 +31,11 @@ namespace AniwalkServer.ViewComponents
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
+        /// <param name="Page"></param>
+        /// <param name="PageSize"></param>
         /// <param name="IsChange">編輯 or 刪除</param>
         /// <returns></returns>
-        public async Task<IViewComponentResult> InvokeAsync(int VisitSN, bool IsChange = false)
+        public async Task<IViewComponentResult> InvokeAsync(int VisitSN, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20, bool IsChange = false)
         {
             Console.WriteLine($"Invoke VC_Comment with VisitSN: {VisitSN}, IsChange: {IsChange}");
 
