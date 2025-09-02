@@ -90,15 +90,13 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            var replies = await _context.Replies.FindAsync(ID);
-            if (replies == null)
+            var Reply = await RepliesServices.GetReply(ID);
+            if (Reply == null)
             {
                 return NotFound();
             }
-            //ViewData["CommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", replies.CommentID);
-            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", replies.MemberID);
-            //ViewData["ParentReplyID"] = new SelectList(_context.Replies, "ReplyID", "ReplyID", replies.ParentReplyID);
-            return View(replies);
+
+            return View(Reply);
         }
 
         // POST: Replies/Edit/5
