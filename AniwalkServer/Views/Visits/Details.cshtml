@@ -108,7 +108,7 @@
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <p class="card-text">
-                        @Html.Raw(Photo.Description?.Length > 100 ? Photo.Description.Substring(0, 100) + "......" : Photo.Description)
+                        @Html.Raw(Shared.ConvertNewLineToBr(Photo.Description))
                     </p>
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LargePhotoModal">檢視大圖</button>
                 </div>

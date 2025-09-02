@@ -62,6 +62,7 @@ namespace AniwalkServer
 
         /// <summary>
         /// 轉換斷行符號
+        /// <para>使用時須用Html.Raw包起來才會正常顯示斷行的效果</para>
         /// </summary>
         /// <param name="Msg"></param>
         /// <returns></returns>
