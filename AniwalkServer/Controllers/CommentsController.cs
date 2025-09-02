@@ -93,17 +93,13 @@ namespace AniwalkServer.Controllers
                 return NotFound();
             }
 
-            var comments = await CommentsServices.GetComment(ID);
-
-            if (comments == null)
+            var Comment = await CommentsServices.GetComment(ID);
+            if (Comment == null)
             {
                 return NotFound();
             }
 
-            //ViewData["MemberID"] = new SelectList(_context.Members, "MemberID", "MemberID", comments.MemberID);
-            //ViewData["ParentCommentID"] = new SelectList(_context.Comments, "CommentID", "CommentID", comments.ParentCommentID);
-            //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN", comments.SN);
-            return View(comments);
+            return View(Comment);
         }
 
         // POST: Comments/Edit/5
