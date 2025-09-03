@@ -91,10 +91,26 @@
             revert: true,
             update: function(Event, UI){
                 // 拖曳結束後可在這裡取得新順序
-                //console.log("拖曳結束");
-                //console.log($("#PhotoContainer").sortable("toArray"));
+                console.log("拖曳結束，"+UI);
+                console.log(`被拖曳的Card : ${UI.item.id}, position : ${UI.position}, originalPosition : ${UI.originalPosition}`);
+
+                RecalculateCardOrder();
             }
         });
+    }
+
+    //重新計算卡片的排列順序
+    function RecalculateCardOrder(){
+        let NewOrder=[];
+        $("#PhotoContainer .card").each(function(){
+            NewOrder.push(this.id);
+        });
+
+        for(let a=0;a<NewOrder.length;a++){
+            console.log("New Order "+a+" : "+NewOrder[a]);
+        }
+
+        PrintSelectedPhoto();
     }
 
     //開啟文件選擇器
@@ -313,7 +329,7 @@
         //console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
         for(let a=0;a<SelectedPhoto.length;a++){
             console.log(
-                `${a} ID : ${SelectedPhoto[a].ID}, File : ${SelectedPhoto[a].File ? SelectedPhoto[a].File.name : "null"}`);
+                `${a} ID : ${SelectedPhoto[a].ID}, PhotoID : ${SelectedPhoto[a].PhotoID}, File : ${SelectedPhoto[a].File ? SelectedPhoto[a].File.name : "null"}`);
         }
     }
 
