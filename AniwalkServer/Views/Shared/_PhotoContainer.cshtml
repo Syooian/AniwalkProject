@@ -62,8 +62,6 @@
             {
                 SetPhotoCard(a, Json[a].PhotoSrc, Json[a].Description);
 
-                SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType, Json[a].Description);
-
                 //如果模型傳來時已有圖片，也將其加入已選取檔案陣列
                 SetSelectPhoto(a,  Json[a].PhotoID, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
             }
@@ -253,8 +251,6 @@
                 //let PhotoNum=a;
 
                 SetPhotoCard(SelectedPhotoAmount, E.target.result, "");
-
-                SetPhotoFormData(SelectedPhotoAmount, PhotoID, PhotoType, "");
             }
 
             Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
@@ -293,20 +289,6 @@
         */
 
         PhotoContainer.appendChild(Card);
-    }
-
-    //設置表單內圖片資料
-    function SetPhotoFormData(ID, PhotoID, PhotoType, Description){
-        // const FormData = document.createElement("div");
-        // FormData.id = GetPhotoFormDataID(ID);
-        // FormData.innerHTML = `
-        //     <input name="VisitsPhotos[${ID}].MemberID" class="form-control" value="@ViewBag.MemberID" />
-        //     <input name="VisitsPhotos[${ID}].PhotoID" class="form-control" value="${PhotoID}" />
-        //     <input name="VisitsPhotos[${ID}].PhotoType" class="form-control" value="${PhotoType}" />
-        //     <textarea name="VisitsPhotos[${ID}].Description" class="form-control">${Description}</textarea>
-        // `;
-
-        // PhotoForm.appendChild(FormData);
     }
 
     //紀錄選取的照片
