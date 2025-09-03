@@ -239,6 +239,7 @@
         Card.id = GetPhotoCardID(ID);
 
         Card.innerHTML=`
+            <img src="/lib/bootstrap/Icon/arrows-move.svg" class="position-absolute top-0 end-0" style="width: 2rem; height: 2rem;"/>
             <img class="card-img-top" src="${PhotoSrc}" alt="Card image cap">
             <div class="card-body">
                 <textarea name="VisitsPhotos[${ID}].Description" class="w-100" rows="10" onchange="UpdateDescription(${ID}, this.value)" placeholder="照片說明">${Description==null?"":Description}</textarea>
