@@ -287,7 +287,7 @@ namespace AniwalkServer.Services
         /// <summary>
         /// 隨機取一定數量的到訪紀錄照片
         /// </summary>
-        /// <param name="Amount">數量</param>
+        /// <param name="Amount">照片數量</param>
         /// <returns></returns>
         public async Task<List<VisitsPhotos>> GetRandomVisitsPhotos(int Amount)
         {

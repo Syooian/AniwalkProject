@@ -18,9 +18,14 @@ namespace AniwalkServer.ViewComponents
             this.VisitsServices = VisitsServices;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Amount">照片數量</param>
+        /// <returns></returns>
+        public async Task<IViewComponentResult> InvokeAsync(int Amount = 10)
         {
-            var Result = await VisitsServices.GetRandomVisitsPhotos(10);
+            var Result = await VisitsServices.GetRandomVisitsPhotos(Amount);
 
             return View(Result);
         }
