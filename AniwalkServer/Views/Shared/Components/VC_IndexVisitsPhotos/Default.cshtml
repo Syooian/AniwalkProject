@@ -11,6 +11,8 @@
             <div class="carousel-item @(IsFirst ? "active" : "")">
                 <img src=@($"/{Shared.GetVisitsPhotoPath(Photo.MemberID, Photo.PhotoID, Photo.PhotoType)}") class="d-block w-75">
             </div>
+
+            IsFirst = false;
         }
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#VisitsPhotosCarousel" data-bs-slide="prev">
