@@ -4,12 +4,12 @@
     bool IsFirst = true;
 }
 
-<div id="VisitsPhotosCarousel" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-inner">
+<div id="VisitsPhotosCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 500px">
+    <div class="carousel-inner h-100">
         @foreach (var Photo in Model)
         {
             <div class="carousel-item @(IsFirst ? "active" : "")">
-                <img src=@($"/{Shared.GetVisitsPhotoPath(Photo.MemberID, Photo.PhotoID, Photo.PhotoType)}") class="d-block w-75 mx-auto">
+                <img src=@($"/{Shared.GetVisitsPhotoPath(Photo.MemberID, Photo.PhotoID, Photo.PhotoType)}") class="d-block w-75 mx-auto h-100" style="object-fit: contain; max-height: 100%;">
             </div>
 
             IsFirst = false;
