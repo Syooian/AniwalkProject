@@ -11,14 +11,17 @@
     <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <h3>找不到想要的動畫來新增你的到訪紀錄嗎？趕快填寫回報單讓我們知道！</h3>
-            <div class="form-group">
-                @*<label asp-for="AnimeTitle" class="control-label"></label>*@
-                <input asp-for="AnimeTitle" class="form-control" placeholder="輸入希望增加的動畫標題" />
-                <span asp-validation-for="AnimeTitle" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="送出" class="btn btn-primary" />
+            <div class="card">
+                <div class="card-header text-center"><h4>找不到想要的動畫來新增你的到訪紀錄嗎？趕快填寫回報單讓我們知道！</h4></div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <input asp-for="AnimeTitle" class="form-control" placeholder="輸入希望增加的動畫標題" />
+                        <span asp-validation-for="AnimeTitle" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <input type="submit" value="送出" class="btn btn-primary" />
+                </div>
             </div>
         </form>
     </div>
