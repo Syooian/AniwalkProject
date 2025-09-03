@@ -307,21 +307,32 @@ namespace AniwalkServer.Services
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>
-        /// <param name="SortVisitsPhotos">對到訪紀錄照片做排序</param>
+        /// <param name="IncludeMember"></param>
+        /// <param name="IncludeAnime"></param>
+        /// <param name="IncludeCountry"></param>
+        /// <param name="IncludePhotos"></param>
+        /// <param name="SortPhotos">對到訪紀錄照片做排序</param>
         /// <returns></returns>
-        public async Task<Visits> GetVisit(int VisitSN, bool SortVisitsPhotos = false)
+        public async Task<Visits> GetVisit(int VisitSN, bool IncludeMember = true, bool IncludeAnime = true, bool IncludeCountry = true, bool IncludePhotos = true, bool SortPhotos = false)
         {
-            var Visit = await Context.Visits
-                .Include(V => V.Member)
-                .Include(V => V.Anime)
-                .Include(V => V.Country)
-                .Include(V => V.VisitsPhotos)
-                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            var VisitQuery = Context.Visits.AsQueryable();
 
-            if (SortVisitsPhotos)
-            {
+            if (IncludeMember)
+                VisitQuery = VisitQuery.Include(V => V.Member);
+
+            if (IncludeAnime)
+                VisitQuery = VisitQuery.Include(V => V.Anime);
+
+            if (IncludeCountry)
+                VisitQuery = VisitQuery.Include(V => V.Country);
+
+            if (IncludePhotos)
+                VisitQuery = VisitQuery.Include(V => V.VisitsPhotos);
+
+            var Visit = await VisitQuery.FirstOrDefaultAsync(V => V.SN == VisitSN);
+
+            if (IncludePhotos && SortPhotos)
                 Visit.VisitsPhotos = SortVisitPhotos(Visit.VisitsPhotos);
-            }
 
             return Visit;
         }

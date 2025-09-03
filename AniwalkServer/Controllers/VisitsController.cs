@@ -259,7 +259,7 @@ namespace AniwalkServer.Controllers
             //var Visit = await Context.Visits
             //    .Include(V => V.VisitsPhotos)
             //    .FirstOrDefaultAsync(V => V.SN == VisitSN);
-            var Visit = await VisitsServices.GetVisit(VisitSN, true);
+            var Visit = await VisitsServices.GetVisit(VisitSN, SortPhotos: true);
 
             //Debug.WriteLine($"VP Count 1 : " + Visit.VisitsPhotos.Count());
             //for (int a = 0; a < Visit.VisitsPhotos.Count(); a++)
@@ -435,7 +435,7 @@ namespace AniwalkServer.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int VisitSN, int LastPage, string? MapDataParam, string? LastAction)
         {
-            var Visit = await VisitsServices.GetVisit(VisitSN, true);
+            var Visit = await VisitsServices.GetVisit(VisitSN, SortPhotos: true);
 
             if (Visit == null)
             {
