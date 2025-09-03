@@ -13,11 +13,11 @@
     <a asp-action="Create" class="btn btn-outline-primary">新增公告</a>
 </p>
 
-<div class="ListVerticalScrollBar">
-    <table class="table table-striped">
-        <thead>
-            @if (Model.Data.Count > 0)
-            {
+@if (Model.Data.Any())
+{
+    <div class="ListVerticalScrollBar">
+        <table class="table table-striped">
+            <thead>
                 <tr>
                     <th>
                         @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Title)
@@ -30,11 +30,8 @@
                     </th>
                     <th></th>
                 </tr>
-            }
-        </thead>
-        <tbody>
-            @if (Model.Data.Count > 0)
-            {
+            </thead>
+            <tbody>
                 @foreach (var item in Model.Data)
                 {
                     <tr>
@@ -57,49 +54,44 @@
                         </td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td><h3 class="text-center">無任何公告</h3></td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <!--分頁選擇-->
-                @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
-                {
-                    <td class="text-center">
-                        <nav aria-label="...">
-                            <ul class="pagination">
-                                <!--上一頁-->
-                                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div class="d-flex justify-content-center">
+        <!--分頁選擇-->
+        @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+        {
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <!--上一頁-->
+                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
 
-                                @{
-                                    for (int a = 1; a <= Model.PageCount; a++)
-                                    {
-                                        <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
-                                            <a class="page-link" asp-action="Index" asp-route-Page="@a">@a</a>
-                                        </li>
-                                    }
-                                }
+                    @{
+                        for (int a = 1; a <= Model.PageCount; a++)
+                        {
+                            <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
+                                <a class="page-link" asp-action="Index" asp-route-Page="@a">@a</a>
+                            </li>
+                        }
+                    }
 
-                                <!--下一頁-->
-                                <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
-                                    <a class="page-link" asp-action="Index" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </td>
-                }
-            </tr>
-        </tfoot>
-    </table>
-</div>
+                    <!--下一頁-->
+                    <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+}
+else
+{
+    <h3 class="text-center">無任何公告</h3>
+}
