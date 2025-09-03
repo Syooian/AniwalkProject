@@ -138,8 +138,9 @@
        }
 
        //刪除Card
-        const Card = ButtonElement.parentElement;
-        Card.remove();
+        const Card = ButtonElement.closest('.card');//往上找到最近的 .card 元素
+        if(Card)
+            Card.remove();
 
         //console.log(`移除已選取的第 ${DeleteIndex+1} 張圖片`);
 
