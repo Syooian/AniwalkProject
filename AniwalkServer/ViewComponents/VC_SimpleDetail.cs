@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AniwalkServer.Data;
+using AniwalkServer.Services;
+using System.Diagnostics;
 
 namespace AniwalkServer.ViewComponents
 {
@@ -10,14 +12,14 @@ namespace AniwalkServer.ViewComponents
         /// <summary>
         /// 
         /// </summary>
-        readonly AniwalkDBContext Context;
+        readonly VisitsServices VisitsServices;
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Context"></param>
-        public VC_SimpleDetail(AniwalkDBContext Context)
+        /// <param name="VisitsServices"></param>
+        public VC_SimpleDetail(VisitsServices VisitsServices)
         {
-            this.Context = Context;
+            this.VisitsServices = VisitsServices;
         }
 
         /// <summary>
@@ -27,14 +29,9 @@ namespace AniwalkServer.ViewComponents
         /// <returns></returns>
         public async Task<IViewComponentResult> InvokeAsync(int VisitSN)
         {
-            Console.WriteLine($"Invoke VC_SimpleDetail with VisitSN : {VisitSN}");
+            Debug.WriteLine($"VC_SimpleDetail VisitSN : {VisitSN}");
 
-            var Visit = await Context.Visits
-                .Include(V => V.Member)
-                .Include(V => V.Anime)
-                .Include(V => V.Country)
-                .Include(V => V.VisitsPhotos)
-                .FirstOrDefaultAsync(V => V.SN == VisitSN);
+            var Visit = await VisitsServices.GetVisit(VisitSN, false, false, false, SortPhotos: true);
 
             return View(Visit);
         }
