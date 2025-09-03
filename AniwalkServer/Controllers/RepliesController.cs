@@ -46,9 +46,9 @@ namespace AniwalkServer.Controllers
         {
             //Console.WriteLine($"Replies Create VisitSN : {VisitSN}, CommentID : {CommentID}, ParentReplyID : {ParentReplyID}");
 
-            ViewData["CommentID"] = CommentID;
-            ViewData["ParentReplyID"] = ParentReplyID;
-            ViewData["SN"] = VisitSN;
+            ViewData[ViewDataKeys.CommentID] = CommentID;
+            ViewData[ViewDataKeys.ParentReplyID] = ParentReplyID;
+            ViewData[ViewDataKeys.VisitSN] = VisitSN;
 
             return View();
         }

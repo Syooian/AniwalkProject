@@ -48,7 +48,7 @@ namespace AniwalkServer.Controllers
             Console.WriteLine($"Create VisitSN : {VisitSN}");
 
             //ViewData["SN"] = new SelectList(_context.Visits, "SN", "SN");
-            ViewData["SN"] = VisitSN;
+            ViewData[ViewDataKeys.VisitSN] = VisitSN;
 
             return View();
         }
