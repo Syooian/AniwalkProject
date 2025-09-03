@@ -9,7 +9,7 @@
         @foreach (var Photo in Model)
         {
             <div class="carousel-item @(IsFirst ? "active" : "")">
-                <img src=@($"/{Shared.GetVisitsPhotoPath(Photo.MemberID, Photo.PhotoID, Photo.PhotoType)}") class="d-block w-75">
+                <img src=@($"/{Shared.GetVisitsPhotoPath(Photo.MemberID, Photo.PhotoID, Photo.PhotoType)}") class="d-block w-75 mx-auto">
             </div>
 
             IsFirst = false;
