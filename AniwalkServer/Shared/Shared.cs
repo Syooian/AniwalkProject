@@ -24,6 +24,17 @@ namespace AniwalkServer
         /// 到訪照片根路徑
         /// </summary>
         public const string VisitsPhotosRootPath = "VisitsPhotos";
+        /// <summary>
+        /// 取到訪紀錄照片路徑
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <param name="PhotoID"></param>
+        /// <param name="PhotoType"></param>
+        /// <returns></returns>
+        public static string GetVisitsPhotoPath(string MemberID, string PhotoID, string PhotoType)
+        {
+            return $"{VisitsPhotosRootPath}/{MemberID}/{PhotoID}{PhotoType}";
+        }
 
         /// <summary>
         /// 
