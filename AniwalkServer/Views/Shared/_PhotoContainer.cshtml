@@ -56,7 +56,7 @@
 
         if(Json!=null)
         {
-            console.log(Json);
+            //console.log(Json);
 
             for(let a=0;a<Json.length;a++)
             {
@@ -67,6 +67,11 @@
                 //如果模型傳來時已有圖片，也將其加入已選取檔案陣列
                 SetSelectPhoto(a,  Json[a].PhotoID, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
             }
+
+            //兩張圖片以上才能拖曳
+            if(Json.length>2){
+                SortablePhoto();
+            }
         }
         else
         {
@@ -75,6 +80,22 @@
     }
     InitPhotoContainer();
 
+    //啟用拖曳
+    function SortablePhoto(){
+        //console.log("SortablePhoto");
+
+        //PhotoContainer 是 DOM 物件，不能直接呼叫。應該直接用 jQuery 選擇器：
+        $("#PhotoContainer").sortable({
+            items: ".card",//只針對Card
+            cursor: "move",
+            revert: true,
+            update: function(Event, UI){
+                // 拖曳結束後可在這裡取得新順序
+                //console.log("拖曳結束");
+                //console.log($("#PhotoContainer").sortable("toArray"));
+            }
+        });
+    }
 
     //開啟文件選擇器
     function OpenPhotoPicker(){
