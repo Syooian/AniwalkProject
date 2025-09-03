@@ -103,13 +103,15 @@
     <div class="row justify-content-center">
         @foreach (var Photo in Model.VisitsPhotos)
         {
-            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem;">
+            <div class="card mt-1 mb-1 ms-1 me-1" style="max-width: 18rem; padding: 0px; overflow: hidden;">
                 <img class="card-img-top" src="@($"/{Shared.VisitsPhotosRootPath}/{Model.MemberID}/{Photo.PhotoID}{Photo.PhotoType}")" alt="Card image cap">
                 <div class="card-body">
                     <!--h5 class="card-title">Card title</h5>-->
                     <p class="card-text">
                         @Html.Raw(Shared.ConvertNewLineToBr(Photo.Description))
                     </p>
+                </div>
+                <div class="card-footer text-end">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LargePhotoModal">檢視大圖</button>
                 </div>
             </div>
