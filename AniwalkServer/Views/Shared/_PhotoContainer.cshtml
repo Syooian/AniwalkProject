@@ -233,14 +233,17 @@
         const Card=document.createElement("div");
         Card.className="card mt-1 mb-1 ms-1 me-1";
         Card.style.maxWidth = "18rem";
+        Card.style.padding="0px";
+        Card.style.overflow="hidden";
         Card.id = GetPhotoCardID(ID);
 
         Card.innerHTML=`
-            <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${ID}, this)">刪除</button>
             <img class="card-img-top" src="${PhotoSrc}" alt="Card image cap">
             <div class="card-body">
-                <p class="card-title">照片說明</p>
-                <textarea name="VisitsPhotos[${ID}].Description" rows="10" onchange="UpdateDescription(${ID}, this.value)">${Description==null?"":Description}</textarea>
+                <textarea name="VisitsPhotos[${ID}].Description" class="w-100" rows="10" onchange="UpdateDescription(${ID}, this.value)" placeholder="照片說明">${Description==null?"":Description}</textarea>
+            </div>
+            <div class="card-footer text-center">
+                <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${ID}, this)">刪除</button>
             </div>
         `;
         /*
