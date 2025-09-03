@@ -285,6 +285,25 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 隨機取一定數量的到訪紀錄照片
+        /// </summary>
+        /// <param name="Amount">照片數量</param>
+        /// <returns></returns>
+        public async Task<List<VisitsPhotos>> GetRandomVisitsPhotos(int Amount)
+        {
+            //先撈出未被刪除的到訪紀錄
+            var Visits = await Context.Visits.Where(D => D.DeleteDate == null).Include(V => V.VisitsPhotos).ToListAsync();
+            //再取照片
+            var VisitsPhotos = Visits
+                .SelectMany(V => V.VisitsPhotos ?? new List<VisitsPhotos>())//可能取到null的話，直接new一個
+                .OrderBy(P => Guid.NewGuid())//隨機排序
+                .Take(Amount)//取一定數量
+                .ToList();
+
+            return VisitsPhotos;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="VisitSN"></param>

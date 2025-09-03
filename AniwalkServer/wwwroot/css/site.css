@@ -31,3 +31,15 @@ body {
 .VisitsFilter{
     width: 250px;
 }
+
+/*首頁到訪紀錄照片Carousel的箭頭陰影*/
+.CarouselControlShadow {
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    box-shadow: 0 0 8px #000;
+    width: 2rem;
+    height: 2rem;
+    background-size: 60% 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+}

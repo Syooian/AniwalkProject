@@ -1,0 +1,31 @@
+﻿@model List<AniwalkServer.Models.VisitsPhotos>
+@{
+    Layout = null;
+    bool IsFirst = true;
+}
+
+@if (Model.Any())
+{
+    <div id="VisitsPhotosCarousel" class="carousel slide shadow border border-dark" data-bs-ride="carousel" style="height: 500px; border-radius: 10px;">
+        <div class="carousel-inner d-flex align-items-center h-100">
+            @foreach (var Photo in Model)
+            {
+                <div class="carousel-item @(IsFirst ? "active" : "")">
+                    <a href="/Visits/Details?VisitSN=@Photo.SN" title="查看到訪紀錄">
+                        <img src=@($"/{Shared.GetVisitsPhotoPath(Photo.MemberID, Photo.PhotoID, Photo.PhotoType)}") class="d-block w-75 mx-auto h-100" style="object-fit: contain; max-height: 100%;">
+                    </a>
+                </div>
+                IsFirst = false;
+            }
+            <div class="position-absolute bottom-0 start-0 end-0 text-center pb-3" style="z-index: 10; text-shadow: 2px 2px 6px #000; color: #fff;">點擊圖片查看更多</div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#VisitsPhotosCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon CarouselControlShadow" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#VisitsPhotosCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon CarouselControlShadow" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+}

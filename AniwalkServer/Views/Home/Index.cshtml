@@ -4,6 +4,10 @@
 
 <h1 class="text-center">Welcome to Aniwalk</h1>
 
+<!-- #region 隨機到訪紀錄照片 -->
+@await Component.InvokeAsync("VC_IndexVisitsPhotos")
+<!-- #endregion -->
+<div class="my-5"></div><!--上下外距為3rem (5 是 Bootstrap 預設間距等級)-->
 <!-- #region 公告 -->
 @await Component.InvokeAsync("VC_IndexAnnouncements", new { Skip = 0, Take = 999 })
 <!-- #endregion -->
