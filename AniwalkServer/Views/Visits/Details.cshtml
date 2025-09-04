@@ -88,9 +88,12 @@
     <form asp-action="Delete">
         <input type="hidden" value="@Model?.SN" name="VisitSN" />
         <!--彈出評論留言框的按鈕 -->
-        <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
-            評論
-        </button>
+        @if (!User.IsInRole(Shared.Role_Admin))
+        {
+            <button type="button" class="btn btn-primary btn-sm" onclick="CheckAuthorization('Comments')">
+                評論
+            </button>
+        }
         <!--刪除按鈕 (限發表人或管理員)-->
         @if (MemberID == Model.MemberID || (User.IsInRole(Shared.Role_Admin) && Model.DeleteDate == null))
         {

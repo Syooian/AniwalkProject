@@ -32,9 +32,12 @@
                     {
                         <span class="d-block text-danger">刪除於 @Html.DisplayFor(ModelItem => Comment.DeleteDate)</span>
                     }
-                    <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
-                        回覆
-                    </button>
+                    @if (!User.IsInRole(Shared.Role_Admin))
+                    {
+                        <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
+                            回覆
+                        </button>
+                    }
                 </p>
                 @if (Comment.Replies.Count > 0)
                 {
@@ -62,9 +65,12 @@
                                 {
                                     <span class="d-block text-danger">刪除於 @Html.DisplayFor(ModelItem => Reply.DeleteDate)</span>
                                 }
-                                <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
-                                    回覆
-                                </button>
+                                @if (!User.IsInRole(Shared.Role_Admin))
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
+                                        回覆
+                                    </button>
+                                }
                             </p>
                             <hr />
                         }
