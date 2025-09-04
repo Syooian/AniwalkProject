@@ -11,7 +11,7 @@
 }
 
 @{
-    Console.WriteLine($"Rendering Comments View Component {Model.Count()}");
+    //Console.WriteLine($"Rendering Comments View Component {Model.Count()}");
 }
 
 @if (Model.Count() > 0)
@@ -19,60 +19,58 @@
     <div class="border border-1 rounded p-3 bg-secondary ListVerticalScrollBar">
         @foreach (var Comment in Model)
         {
-            if (Comment.DeleteDate == null)
-            {
-                <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
-                    @*<p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>*@
-                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Comments", ID = Comment.CommentID, MemberID = MemberID, PostMemberID = Comment.MemberID })
+            <div class="border border-1 rounded p-3 bg-light" style="margin-bottom: 20px">
+                @*<p>@Html.DisplayFor(ModelItem => Comment.CommentID)</p>*@
+                @await Html.PartialAsync(CRDropdownPath, new { Controller = "Comments", ID = Comment.CommentID, MemberID = MemberID, PostMemberID = Comment.MemberID })
 
-                    <p>@Html.Raw(Shared.ConvertNewLineToBr(Comment.CommentContent))</p>
-                    <p class="text-end">
+                <p>@Html.Raw(Shared.ConvertNewLineToBr(Comment.CommentContent))</p>
+                <p class="text-end">
+                    <span class="d-block">
                         @Html.DisplayFor(ModelItem => Comment.Member.Name) 發表於 @Html.DisplayFor(ModelItem => Comment.CommentDate)
-                        <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
-                            回覆
-                        </button>
-                    </p>
-                    @if (Comment.Replies.Count > 0)
+                    </span>
+                    @if (User.IsInRole(Shared.Role_Admin) && Comment.DeleteDate != null)
                     {
-                        <hr />
-                        <div style="padding-left: 20px">
-                            @foreach (var Reply in Comment.Replies)
-                            {
-                                if (Reply.DeleteDate == null)
-                                {
-                                    @*<p>@Html.DisplayFor(Item => Reply.ReplyID)</p>*@
-                                    @await Html.PartialAsync(CRDropdownPath, new { Controller = "Replies", ID = Reply.ReplyID, MemberID = MemberID, PostMemberID = Reply.MemberID })
-
-                                    @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
-                                    {
-                                        <p>回覆 @Html.DisplayFor(Item => Reply.ParentReply.Member.Name)</p>
-                                    }
-                                    else//回覆給評論
-                                    {
-                                        <p>回覆 @Html.DisplayFor(Item => Reply.Comment.Member.Name)</p>
-                                    }
-                                    <p>@Html.Raw(Shared.ConvertNewLineToBr(Reply.ReplyContent))</p>
-                                    <p class="text-end">
-                                        @Html.DisplayFor(Item => Reply.Member.Name) 發表於 @Html.DisplayFor(Item => Reply.ReplyDate)
-                                        <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
-                                            回覆
-                                        </button>
-                                    </p>
-                                    <hr />
-                                }
-                                else
-                                {
-                                    Debug.WriteLine($"Reply {Reply.ReplyID} 刪除於 {Reply.DeleteDate}");
-                                }
-                            }
-                        </div>
+                        <span class="d-block text-danger">刪除於 @Html.DisplayFor(ModelItem => Comment.DeleteDate)</span>
                     }
-                </div>
-            }
-            else
-            {
-                Debug.WriteLine($"Comment {Comment.CommentID} 刪除於 {Comment.DeleteDate}");
-            }
+                    <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID')">
+                        回覆
+                    </button>
+                </p>
+                @if (Comment.Replies.Count > 0)
+                {
+                    <hr />
+                    <div style="padding-left: 20px">
+                        @foreach (var Reply in Comment.Replies)
+                        {
+                            @*<p>@Html.DisplayFor(Item => Reply.ReplyID)</p>*@
+                            @await Html.PartialAsync(CRDropdownPath, new { Controller = "Replies", ID = Reply.ReplyID, MemberID = MemberID, PostMemberID = Reply.MemberID })
+
+                            @if (!string.IsNullOrEmpty(Reply.ParentReplyID))//子回覆
+                            {
+                                <p>回覆 @Html.DisplayFor(Item => Reply.ParentReply.Member.Name)</p>
+                            }
+                            else//回覆給評論
+                            {
+                                <p>回覆 @Html.DisplayFor(Item => Reply.Comment.Member.Name)</p>
+                            }
+                            <p>@Html.Raw(Shared.ConvertNewLineToBr(Reply.ReplyContent))</p>
+                            <p class="text-end">
+                                <span class="d-block">
+                                    @Html.DisplayFor(Item => Reply.Member.Name) 發表於 @Html.DisplayFor(Item => Reply.ReplyDate)
+                                </span>
+                                @if (User.IsInRole(Shared.Role_Admin) && Reply.DeleteDate != null)
+                                {
+                                    <span class="d-block text-danger">刪除於 @Html.DisplayFor(ModelItem => Reply.DeleteDate)</span>
+                                }
+                                <button type="button" class="btn btn-primary" onclick="CheckAuthorization('Replies', '@Comment.CommentID', '@Reply.ReplyID')">
+                                    回覆
+                                </button>
+                            </p>
+                            <hr />
+                        }
+                    </div>
+                }
+            </div>
         }
     </div>
 }
