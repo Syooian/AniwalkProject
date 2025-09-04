@@ -73,7 +73,7 @@ namespace AniwalkServer.Services
 
                     if (SetDBFirst)
                     {
-                        var OrderID = VisitPhotos.FindIndex(P => P.PhotoID == Photo.PhotoID);
+                        var OrderID = GetOrderID(VisitPhotos, Photo.PhotoID);
 
                         Context.Add(new VisitsPhotos()
                         {
@@ -117,7 +117,7 @@ namespace AniwalkServer.Services
             {
                 //Debug.WriteLine(VP.ToString());
                 var Original = await Context.VisitsPhotos.FirstOrDefaultAsync(V => V.PhotoID == PhotoData.PhotoID);
-                var OrderID = VisitPhotos.FindIndex(P => P.PhotoID == PhotoData.PhotoID);
+                var OrderID = GetOrderID(VisitPhotos, PhotoData.PhotoID);
                 if (Original != null && (Original.Description != PhotoData.Description || Original.SortNumber != OrderID))//檢查資料是否有變動
                 {
                     //Debug.WriteLine($"修改圖片資料 {Original.PhotoID}");
@@ -129,6 +129,17 @@ namespace AniwalkServer.Services
             }
 
             return new Result();
+        }
+
+        /// <summary>
+        /// 取圖片在陣列中的順序編號
+        /// </summary>
+        /// <param name="Source"></param>
+        /// <param name="PhotoID"></param>
+        /// <returns></returns>
+        int GetOrderID(List<VisitsPhotosDTO> Source, string PhotoID)
+        {
+            return Source.FindIndex(P => P.PhotoID == PhotoID);
         }
 
         #region 刪除
