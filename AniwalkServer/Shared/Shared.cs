@@ -88,16 +88,17 @@ namespace AniwalkServer
         }
 
         /// <summary>
-        /// 
+        /// 取得 MapData 並進行 URI 編碼
         /// </summary>
         /// <param name="ViewData"></param>
         /// <returns></returns>
         public static string GetMapDataJsonEscapeDataString(ViewDataDictionary ViewData)
         {
             if (ViewData.TryGetValue(ViewDataKeys.MapData, out object Data))
-                return Uri.EscapeDataString(Data.ToString());
-            else
-                return "";
+                if (Data != null)
+                    return Uri.EscapeDataString(Data.ToString());
+
+            return "";
         }
     }
 
