@@ -1,7 +1,10 @@
-﻿@model AniwalkServer.Models.Visits
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Visits
 
 @{
     ViewData["FormAction"] = "Create";
+
+    string MapData = Shared.GetMapDataJsonEscapeDataString(ViewData);
 }
 
 <h4>新增到訪紀錄</h4>
@@ -68,14 +71,11 @@
             <div class="form-group">
                 @*<input type="submit" value="新增" class="btn btn-primary" />*@
                 <input type="button" value="新增" class="btn btn-primary" onclick="SendForm()" />
+                <a asp-action="@ViewData[ViewDataKeys.AJAXAction]" class="btn btn-outline-primary" asp-route-MapDataParam="@MapData" asp-route-Page="@ViewData[ViewDataKeys.LastPage]">返回列表</a>
             </div>
         </form>
     </div>
     @await Html.PartialAsync("_SharedMap", new { EnableClick = true })
-</div>
-
-<div>
-    <a asp-action="ShowVisitsOnList" class="btn btn-outline-primary">返回列表</a>
 </div>
 
 <hr />

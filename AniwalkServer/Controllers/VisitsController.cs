@@ -171,13 +171,19 @@ namespace AniwalkServer.Controllers
         /// <summary>
         /// 創建新的到訪記錄
         /// </summary>
+        /// <param name="LastPage"></param>
+        /// <param name="LastAction"></param>
+        /// <param name="MapDataParam"></param>
         /// <returns></returns>
         [HttpGet]
         [Authorize(Roles = Shared.Role_Member)]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? LastPage, string? LastAction, string? MapDataParam)
         {
             SetGoogleMapsApiKey();
 
+            ViewData[ViewDataKeys.AJAXAction] = LastAction;
+            ViewData[ViewDataKeys.LastPage] = LastPage;
+            ViewData[ViewDataKeys.MapData] = MapDataParam;
             await SetViewData();
 
             return View();
