@@ -217,6 +217,8 @@ namespace AniwalkServer.Controllers
                     Visit.VisitsPhotos = new List<VisitsPhotos>();
                     for (int a = 0; a < VisitPhotos.Count(); a++)
                     {
+                        //Debug.WriteLine($"NewPhoto {a} : {VisitPhotos[a].PhotoID}");
+
                         Visit.VisitsPhotos.Add(new VisitsPhotos
                         {
                             PhotoID = VisitPhotos[a].PhotoID,

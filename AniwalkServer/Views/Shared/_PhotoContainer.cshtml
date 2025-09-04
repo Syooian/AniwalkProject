@@ -205,25 +205,23 @@
         console.log("新選取了 "+Files.length+" 張照片");
 
         for(let a=0;a<Files.length;a++){
-            console.log("第 "+(a+1)+" 張新照片");
+            //console.log("第 "+(a+1)+" 張新照片 FileName : "+Files[a].name);
 
             //取新的GUID作為PhotoID
             const PhotoID = crypto.randomUUID();
             //副檔名
             const PhotoType = GetFileExtension(Files[a].name);
 
-            //儲存到變數
-            SetSelectPhoto(PhotoID, PhotoType, "", Files[a]);
-
             // 使用 FileReader 讀取圖片
             const Reader=new FileReader();
             Reader.onloadend=function(E){
-                //let PhotoNum=a;
-
+                //儲存到變數
+                SetSelectPhoto(PhotoID, PhotoType, "", Files[a]);
+                //顯示圖片Card
                 SetPhotoCard(PhotoID, E.target.result, "");
             }
 
-            Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
+            Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL，讀取完成後會觸發onloadend
         }
 
         //PrintSelectedPhoto();
