@@ -19,5 +19,13 @@
         public const string PhotoError = "PhotoError";
         public const string ParentReplyID = "ParentReplyID";
         public const string VisitSN = "SN";
+        /// <summary>
+        /// 頁面標題
+        /// </summary>
+        public const string Title = "Title";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string WebsiteDisplayName = "WebsiteDisplayName";
     }
 }
