@@ -29,7 +29,7 @@ namespace AniwalkServer.Services
         /// <returns></returns>
         public async Task<List<Comments>> GetComments(int VisitSN, bool IncludeDeleted = false)
         {
-            var SQL = Context.Comments.Where(V => V.SN == VisitSN);
+            var SQL = Context.Comments.Include(V => V.Member).Where(V => V.SN == VisitSN);
 
             //是否包含已刪除的評論
             if (!IncludeDeleted)
