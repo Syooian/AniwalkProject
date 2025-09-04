@@ -23,6 +23,7 @@ namespace AniwalkServer.Data
                 ServiceProvider.GetRequiredService<DbContextOptions<AniwalkDBContext>>()))
             {
                 #region 新增動畫建議
+                ShowLog(nameof(AddNewAnime));
                 if (!context.AddNewAnimes.Any())
                 {
                     context.AddNewAnimes.AddRange(
@@ -37,6 +38,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 國家資料
+                ShowLog(nameof(Models.Countries));
                 if (context.Countries.Any())
                 {
                     return;   // DB has been seeded
@@ -62,6 +64,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 動畫資料
+                ShowLog(nameof(Models.Animes));
                 if (context.Animes.Any())
                 {
                     return;   // DB has been seeded
@@ -78,6 +81,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 會員角色資料
+                ShowLog(nameof(Models.MemberRoles));
                 if (!context.MemberRoles.Any())//資料表無資料時才執行
                 {
                     var MemberRoles = new MemberRoles[]
@@ -94,6 +98,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 會員狀態
+                ShowLog(nameof(Models.MemberStatusCode));
                 context.MemberStatusCode.Add(new MemberStatusCode() { StatusCode = 0, StatusName = "一般" });
                 context.MemberStatusCode.Add(new MemberStatusCode() { StatusCode = 1, StatusName = "已封鎖" });
                 context.MemberStatusCode.Add(new MemberStatusCode() { StatusCode = 2, StatusName = "已註銷" });
@@ -102,6 +107,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 會員資料
+                ShowLog(nameof(Models.Members) + " & " + nameof(Models.Login));
                 if (context.Members.Any())
                 {
                     return;   // DB has been seeded
@@ -162,6 +168,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 到訪紀錄資料
+                ShowLog(nameof(Models.Visits));
                 var Visits = new List<Visits>();
                 if (context.Visits.Any())
                 {
@@ -248,6 +255,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 到訪紀錄評論
+                ShowLog(nameof(Models.Comments));
                 //因為SN是自動生成的，所以要先執行上方的資料新增後才能繼續執行
                 if (context.Comments.Any())
                 {
@@ -271,6 +279,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 到訪記錄評論的回覆
+                ShowLog(nameof(Models.Replies));
                 var Replies = new List<Replies>();
                 for (int a = 0; a < 3; a++)
                 {
@@ -317,6 +326,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 到訪照片
+                ShowLog(nameof(Models.VisitsPhotos));
                 if (!context.VisitsPhotos.Any())
                 {
                     #region 刪除現有照片
@@ -385,6 +395,7 @@ namespace AniwalkServer.Data
                 #endregion
 
                 #region 公告
+                ShowLog(nameof(Announcements));
                 if (!context.Announcements.Any())
                 {
                     context.Announcements.Add(new Announcements()
@@ -439,6 +450,15 @@ namespace AniwalkServer.Data
             {
                 Debug.WriteLine($"{FilePath} 路徑或檔案不存在");
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Msg"></param>
+        static void ShowLog(string Msg)
+        {
+            Debug.WriteLine("Set SeedData : " + Msg);
         }
     }
 }
