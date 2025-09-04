@@ -43,3 +43,11 @@ body {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.sortable-placeholder {
+    background: #f0f0f0;
+    border: 2px dashed #aaa;
+    min-height: 200px;
+    width: 18rem;
+    margin: 0.25rem;
+}
