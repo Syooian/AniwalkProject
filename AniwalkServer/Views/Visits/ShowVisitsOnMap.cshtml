@@ -20,7 +20,9 @@
 }  *@
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">新增到訪紀錄</a>
+    @*<a asp-action="Create" class="btn btn-primary" asp-route-LastAction="@ViewData[ViewDataKeys.AJAXAction]" asp-route-MapData="">新增到訪紀錄</a>*@
+    @*GetMapDataJsonURI()是JS function，必須在 client-side 執行，不能直接在 Razor 標籤屬性裡用。*@
+    <a class="btn btn-primary" onclick="GoToCreate()">新增到訪紀錄</a>
 </p>
 <!--篩選條件-->
 @await Html.PartialAsync("~/Views/Visits/Shared/_VisitsFilter.cshtml")
@@ -111,6 +113,11 @@
 
     //在Modal下的按鈕增加監聽，按下後前往到訪紀錄詳細檢視畫面
     document.querySelector('#ToDetails').addEventListener('click',(E)=>{
+        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}&MapDataParam=${GetMapDataJsonURI()}&LastAction=ShowVisitsOnMap`;//JSON 字串包含 {、}、" 等特殊字元，直接放在網址會造成問題，所以要用encodeURIComponent去轉，否則瀏覽器或伺服器可能無法正確解析。
+    });
+
+    //取目前地圖的座標, Zoom並轉成符合URI格式的Json字串
+    function GetMapDataJsonURI(){
         //紀錄目前的座標和Zoom
         const Center=map.getCenter();
         const MapData={
@@ -118,11 +125,14 @@
             MapCenterLongitude: Center.lng(),
             Zoom: map.getZoom()
         }
-        //console.log("OM 1 : "+MapData);
-        //console.log("OM 2 : "+JSON.stringify(MapData));
 
-        window.location.href = `/Visits/Details?VisitSN=${SelectedVisitSN}&MapDataParam=${encodeURIComponent(JSON.stringify(MapData))}&LastAction=ShowVisitsOnMap`;//JSON 字串包含 {、}、" 等特殊字元，直接放在網址會造成問題，所以要用encodeURIComponent去轉，否則瀏覽器或伺服器可能無法正確解析。
-    });
+        return encodeURIComponent(JSON.stringify(MapData));
+    }
+
+    //前往新增到訪紀錄頁面
+    function GoToCreate(){
+        window.location.href=`/Visits/Create?LastAction=@ViewData[ViewDataKeys.AJAXAction]&MapDataParam=${GetMapDataJsonURI()}`;
+    }
 
     //紀錄所有已生成的Marker
     let Markers=[];
