@@ -38,6 +38,7 @@
 <div class="row justify-content-center" id="PhotoContainer">
 </div>
 
+<link rel="stylesheet" href="~/css/VisitPhotoCard.css" />
 <script>
     //下方顯示所有圖片Card的容器
     const PhotoContainer = document.getElementById("PhotoContainer");
@@ -87,7 +88,7 @@
             items: ".card",//只針對Card
             cursor: "move",
             revert: true,
-            placeholder: "sortable-placeholder",
+            placeholder: "sortable-placeholder VisitPhotoCardStyle",
             update: function(Event, UI){
                 // 拖曳結束後可在這裡取得新順序
                 console.log(`被拖曳的Card PhotoID : ${UI.item.attr('id')}, 新順序 : ${UI.item.index()}`);
@@ -229,10 +230,7 @@
     //設置圖片顯示
     function SetPhotoCard(PhotoID, PhotoSrc, Description){
         const Card=document.createElement("div");
-        Card.className="card mt-1 mb-1 ms-1 me-1";
-        Card.style.maxWidth = "18rem";
-        Card.style.padding="0px";
-        Card.style.overflow="hidden";
+        Card.className="card mt-1 mb-1 ms-1 me-1 VisitPhotoCardStyle";
         Card.id = PhotoID;
 
         Card.innerHTML=`
