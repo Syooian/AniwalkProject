@@ -71,7 +71,7 @@
             <tbody>
                 @foreach (var item in Model.Data)
                 {
-                    <tr class="@(item.DeleteDate != null ? "bg-warning" : "")">
+                    <tr class="@(item.DeleteDate != null ? "bg-danger" : "")">
                         <td>
                             @Html.DisplayFor(modelItem => item.CountryName)
                         </td>
