@@ -96,8 +96,28 @@
                 console.log(`被拖曳的Card PhotoID : ${UI.item.attr('id')}, 新順序 : ${UI.item.index()}`);
 
                 RecalculateCardOrder();
+
+                //移動SelectedPhoto內指定的元素到新位置
+                MovePhoto(UI.item.attr('id'), UI.item.index());
+
+                PrintSelectedPhoto();
             }
         });
+    }
+
+    //移動SelectedPhoto內指定的元素到新位置
+    function MovePhoto(PhotoID,ToIndex){
+        //新取得Photo目前的Index
+        const OldIndex=GetPhotoIndex(PhotoID);
+        if(OldIndex!=-1){
+            const Photo=SelectedPhoto[OldIndex];
+
+            //移除舊位置的元素
+            RemovePhotoInSelectedPhotoByIndex(OldIndex);
+
+            //在新位置插入
+            SelectedPhoto.splice(ToIndex, 0, Photo);
+        }
     }
 
     //重新計算卡片的排列順序
@@ -157,9 +177,7 @@
             •	直接修改原陣列，從指定的索引位置移除項目。需要先用 findIndex 找到目標項目的索引。
        */
        let DeleteIndex=GetPhotoIndex(PhotoID);
-       if(DeleteIndex!==-1){
-           SelectedPhoto.splice(DeleteIndex, 1);//移除從索引 DeleteIndex 開始的 1 個項目。
-       }
+       RemovePhotoInSelectedPhotoByIndex(DeleteIndex);
 
        //刪除Card
         const Card = ButtonElement.closest('.card');//往上找到最近的 .card 元素
@@ -167,6 +185,13 @@
             Card.remove();
 
         //PrintSelectedPhoto();
+    }
+
+    //使用指定Index來移除SelectedPhoto內的元素
+    function RemovePhotoInSelectedPhotoByIndex(Index){
+        if(Index!==-1){
+            SelectedPhoto.splice(Index, 1);//移除從索引 DeleteIndex 開始的 1 個項目。
+        }
     }
 
     //透過PhotoID取陣列內指定的圖片
@@ -252,10 +277,9 @@
     }
 
     function PrintSelectedPhoto(){
-        //console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
+        console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
         for(let a=0;a<SelectedPhoto.length;a++){
-            console.log(
-                `${a} PhotoID : ${SelectedPhoto[a].PhotoID}, File : ${SelectedPhoto[a].File ? SelectedPhoto[a].File.name : "null"}`);
+            console.log(`${a} PhotoID : ${SelectedPhoto[a].PhotoID}, File : ${SelectedPhoto[a].File ? SelectedPhoto[a].File.name : "null"}`);
         }
     }
 
