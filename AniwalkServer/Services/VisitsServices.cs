@@ -395,7 +395,7 @@ namespace AniwalkServer.Services
         /// 
         /// </summary>
         /// <param name="Visit"></param>
-        /// <param name="SetDBFirst"></param>
+        /// <param name="SetDBFirst">上傳圖片時一併新增資料進資料庫</param>
         /// <param name="VisitPhotos"></param>
         /// <param name="MemberID"></param>
         /// <returns></returns>
@@ -439,14 +439,19 @@ namespace AniwalkServer.Services
 
                     if (SetDBFirst)
                     {
+                        var OrderID = VisitPhotos.FindIndex(P => P.PhotoID == Photo.PhotoID);
+
                         Context.Add(new VisitsPhotos()
                         {
                             PhotoID = Photo.PhotoID,
                             PhotoType = Photo.PhotoType,
                             Description = Photo.Description,
                             MemberID = MemberID,
-                            SN = Visit.SN
+                            SN = Visit.SN,
+                            SortNumber = OrderID
                         });
+
+                        Debug.WriteLine($"新增圖片 {Photo.PhotoID}, OrderID : " + OrderID);
                     }
                 }
                 catch (Exception ex)

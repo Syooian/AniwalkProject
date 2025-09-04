@@ -38,6 +38,7 @@
 <div class="row justify-content-center" id="PhotoContainer">
 </div>
 
+<link rel="stylesheet" href="~/css/VisitPhotoCard.css" />
 <script>
     //下方顯示所有圖片Card的容器
     const PhotoContainer = document.getElementById("PhotoContainer");
@@ -56,17 +57,20 @@
 
         if(Json!=null)
         {
-            console.log(Json);
+            //console.log(Json);
 
             for(let a=0;a<Json.length;a++)
             {
-                SetPhotoCard(a, Json[a].PhotoSrc, Json[a].Description);
-
-                SetPhotoFormData(a, Json[a].PhotoID, Json[a].PhotoType, Json[a].Description);
+                //資料用Card顯示
+                SetPhotoCard(Json[a].PhotoID, Json[a].PhotoSrc, Json[a].Description);
 
                 //如果模型傳來時已有圖片，也將其加入已選取檔案陣列
-                SetSelectPhoto(a,  Json[a].PhotoID, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
+                SetSelectPhoto(Json[a].PhotoID, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
             }
+
+            //PrintSelectedPhoto();
+
+            SortablePhoto();
         }
         else
         {
@@ -75,6 +79,58 @@
     }
     InitPhotoContainer();
 
+    //啟用拖曳
+    function SortablePhoto(){
+        //console.log("SortablePhoto");
+
+        //PhotoContainer 是 DOM 物件，不能直接呼叫。應該直接用 jQuery 選擇器：
+        $("#PhotoContainer").sortable({
+            items: ".card",//只針對Card
+            cursor: "move",
+            revert: true,
+            placeholder: "sortable-placeholder VisitPhotoCardStyle",
+            update: function(Event, UI){
+                // 拖曳結束後可在這裡取得新順序
+                console.log(`被拖曳的Card PhotoID : ${UI.item.attr('id')}, 新順序 : ${UI.item.index()}`);
+
+                RecalculateCardOrder();
+
+                //移動SelectedPhoto內指定的元素到新位置
+                MovePhoto(UI.item.attr('id'), UI.item.index());
+
+                PrintSelectedPhoto();
+            }
+        });
+    }
+
+    //移動SelectedPhoto內指定的元素到新位置
+    function MovePhoto(PhotoID,ToIndex){
+        //新取得Photo目前的Index
+        const OldIndex=GetPhotoIndex(PhotoID);
+        if(OldIndex!=-1){
+            const Photo=SelectedPhoto[OldIndex];
+
+            //移除舊位置的元素
+            RemovePhotoInSelectedPhotoByIndex(OldIndex);
+
+            //在新位置插入
+            SelectedPhoto.splice(ToIndex, 0, Photo);
+        }
+    }
+
+    //重新計算卡片的排列順序
+    function RecalculateCardOrder(){
+        let NewOrder=[];
+        $("#PhotoContainer .card").each(function(){
+            NewOrder.push(this.id);
+        });
+
+        for(let a=0;a<NewOrder.length;a++){
+            console.log("New Order "+a+" : "+NewOrder[a]);
+        }
+
+        PrintSelectedPhoto();
+    }
 
     //開啟文件選擇器
     function OpenPhotoPicker(){
@@ -87,32 +143,18 @@
         return "."+Extension[Extension.length-1].toLowerCase();
     }
 
-    // 獲取圖片表單資料的 ID
-    function GetPhotoFormDataID(ID){
-        return `PhotoFormData_${ID}`;
-    }
-
-    // 獲取圖片卡片的 ID
-    function GetPhotoCardID(ID){
-        return `PhotoCard_${ID}`;
-    }
-
     //更新圖片說明
-    function UpdateDescription(ID, Value){
-        //document.getElementById(`${GetPhotoFormDataID(ID)}`).querySelector("textarea").value=Value;
-
-        SelectedPhoto[ID].Description=Value;
+    function UpdateDescription(PhotoID, Value){
+        //透過PhotoID找出指定的圖片資料
+        const Index=GetPhotoIndex(PhotoID);
+        if(Index!==-1){
+            SelectedPhoto[Index].Description=Value;
+        }
     }
 
     // 刪除圖片
-    function RemovePhoto(ID, ButtonElement) {
-        //console.log("刪除圖片 ID : "+ID);
-
-        //刪除表單內對應的圖片div
-        let PhotoForm=document.getElementById(GetPhotoFormDataID(ID));
-        if (PhotoForm) {
-            PhotoForm.remove();
-        }
+    function RemovePhoto(PhotoID, ButtonElement) {
+        //console.log("刪除圖片 "+PhotoID);
 
         //刪除照片選擇的圖片
         /*
@@ -132,62 +174,27 @@
                         }
             •	直接修改原陣列，從指定的索引位置移除項目。需要先用 findIndex 找到目標項目的索引。
        */
-       let DeleteIndex=SelectedPhoto.findIndex(P=>P.ID===ID);
-       if(DeleteIndex!==-1){
-           SelectedPhoto.splice(DeleteIndex, 1);//移除從索引 DeleteIndex 開始的 1 個項目。
-       }
+       let DeleteIndex=GetPhotoIndex(PhotoID);
+       RemovePhotoInSelectedPhotoByIndex(DeleteIndex);
 
        //刪除Card
         const Card = ButtonElement.closest('.card');//往上找到最近的 .card 元素
         if(Card)
             Card.remove();
 
-        //console.log(`移除已選取的第 ${DeleteIndex+1} 張圖片`);
-
         //PrintSelectedPhoto();
+    }
 
-        //將刪除ID後面的所有ID都往前移
-        for(let a=DeleteIndex;a<SelectedPhoto.length;a++){
-            //let FormerID=SelectedPhoto[a].ID;//先記下變更前的ID
-
-            //更新表單內對應的圖片資料ID
-            //console.log("找 "+GetPhotoFormDataID(SelectedPhoto[a].ID));
-            const FormData=document.getElementById(GetPhotoFormDataID(SelectedPhoto[a].ID));
-            if(FormData){
-                //console.log("找到 "+GetPhotoFormDataID(SelectedPhoto[a].ID));
-                FormData.id=GetPhotoFormDataID(a);
-                //console.log("更改ID為 "+FormData.id);
-
-                FormData.querySelector(`input[name='VisitsPhotos[${SelectedPhoto[a].ID}].MemberID']`)
-                    .setAttribute("name", `VisitsPhotos[${a}].MemberID`);
-                FormData.querySelector(`input[name='VisitsPhotos[${SelectedPhoto[a].ID}].PhotoID']`)
-                    .setAttribute("name", `VisitsPhotos[${a}].PhotoID`);
-                FormData.querySelector(`input[name='VisitsPhotos[${SelectedPhoto[a].ID}].PhotoType']`)
-                    .setAttribute("name", `VisitsPhotos[${a}].PhotoType`);
-                FormData.querySelector(`textarea[name='VisitsPhotos[${SelectedPhoto[a].ID}].Description']`)
-                    .setAttribute("name", `VisitsPhotos[${a}].Description`);
-            }
-
-            //更新Card
-            //console.log("找 "+GetPhotoCardID(SelectedPhoto[a].ID));
-            const Card=document.getElementById(GetPhotoCardID(SelectedPhoto[a].ID));
-            if(Card){
-                Card.id=GetPhotoCardID(a);
-
-                Card.onclick=function(){RemovePhoto(a,this);}
-
-                const TextArea=Card.querySelector(`textarea[name='VisitsPhotos[${SelectedPhoto[a].ID}].Description']`);
-                if(TextArea){
-                    TextArea.setAttribute("name", `VisitsPhotos[${a}].Description`);
-                    TextArea.onchange=function(){UpdateDescription(a, this.value);}
-                }
-            }
-
-            //變更為新ID
-            SelectedPhoto[a].ID=a;
+    //使用指定Index來移除SelectedPhoto內的元素
+    function RemovePhotoInSelectedPhotoByIndex(Index){
+        if(Index!==-1){
+            SelectedPhoto.splice(Index, 1);//移除從索引 DeleteIndex 開始的 1 個項目。
         }
+    }
 
-        //PrintSelectedPhoto();
+    //透過PhotoID取陣列內指定的圖片
+    function GetPhotoIndex(PhotoID){
+        return SelectedPhoto.findIndex(P=>P.PhotoID===PhotoID);
     }
 
     //處理圖片選擇
@@ -195,56 +202,45 @@
         const Files=InputElement.files;
         console.log("新選取了 "+Files.length+" 張照片");
 
-        //儲存到變數
-        //SelectedPhoto.concat(Files);
-
         for(let a=0;a<Files.length;a++){
-            let SelectedPhotoAmount=SelectedPhoto.length;
-
-            console.log("加入第 "+(SelectedPhotoAmount+1)+" 張照片");
+            //console.log("第 "+(a+1)+" 張新照片 FileName : "+Files[a].name);
 
             //取新的GUID作為PhotoID
             const PhotoID = crypto.randomUUID();
             //副檔名
             const PhotoType = GetFileExtension(Files[a].name);
 
-            //儲存到變數
-            SetSelectPhoto(SelectedPhotoAmount, PhotoID, PhotoType, "", Files[a]);
-
             // 使用 FileReader 讀取圖片
             const Reader=new FileReader();
             Reader.onloadend=function(E){
-                //let PhotoNum=a;
-
-                SetPhotoCard(SelectedPhotoAmount, E.target.result, "");
-
-                SetPhotoFormData(SelectedPhotoAmount, PhotoID, PhotoType, "");
+                //儲存到變數
+                SetSelectPhoto(PhotoID, PhotoType, "", Files[a]);
+                //顯示圖片Card
+                SetPhotoCard(PhotoID, E.target.result, "");
             }
 
-            Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL
+            Reader.readAsDataURL(Files[a]); // 讀取圖片為 Data URL，讀取完成後會觸發onloadend
         }
 
         //PrintSelectedPhoto();
 
-        console.log("加入圖片完成");
+        //console.log("加入圖片完成");
     }
 
     //設置圖片顯示
-    function SetPhotoCard(ID, PhotoSrc, Description){
+    function SetPhotoCard(PhotoID, PhotoSrc, Description){
         const Card=document.createElement("div");
-        Card.className="card mt-1 mb-1 ms-1 me-1";
-        Card.style.maxWidth = "18rem";
-        Card.style.padding="0px";
-        Card.style.overflow="hidden";
-        Card.id = GetPhotoCardID(ID);
+        Card.className="card mt-1 mb-1 ms-1 me-1 VisitPhotoCardStyle";
+        Card.id = PhotoID;
 
         Card.innerHTML=`
+            <img src="/lib/bootstrap/Icon/arrows-move.svg" class="position-absolute top-0 end-0" style="width: 2rem; height: 2rem;"/>
             <img class="card-img-top" src="${PhotoSrc}" alt="Card image cap">
             <div class="card-body">
-                <textarea name="VisitsPhotos[${ID}].Description" class="w-100" rows="10" onchange="UpdateDescription(${ID}, this.value)" placeholder="照片說明">${Description==null?"":Description}</textarea>
+                <textarea class="w-100" rows="10" onchange="UpdateDescription('${PhotoID}', this.value)" placeholder="照片說明">${Description==null?"":Description}</textarea>
             </div>
             <div class="card-footer text-center">
-                <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto(${ID}, this)">刪除</button>
+                <button type="button" class="btn btn-outline-primary" onclick="RemovePhoto('${PhotoID}', this)">刪除</button>
             </div>
         `;
         /*
@@ -258,24 +254,9 @@
         PhotoContainer.appendChild(Card);
     }
 
-    //設置表單內圖片資料
-    function SetPhotoFormData(ID, PhotoID, PhotoType, Description){
-        // const FormData = document.createElement("div");
-        // FormData.id = GetPhotoFormDataID(ID);
-        // FormData.innerHTML = `
-        //     <input name="VisitsPhotos[${ID}].MemberID" class="form-control" value="@ViewBag.MemberID" />
-        //     <input name="VisitsPhotos[${ID}].PhotoID" class="form-control" value="${PhotoID}" />
-        //     <input name="VisitsPhotos[${ID}].PhotoType" class="form-control" value="${PhotoType}" />
-        //     <textarea name="VisitsPhotos[${ID}].Description" class="form-control">${Description}</textarea>
-        // `;
-
-        // PhotoForm.appendChild(FormData);
-    }
-
     //紀錄選取的照片
-    function SetSelectPhoto(ID, PhotoID, PhotoType, Description, File){
+    function SetSelectPhoto(PhotoID, PhotoType, Description, File){
         SelectedPhoto.push({
-            ID: ID,
             PhotoID: PhotoID,
             PhotoType: PhotoType,
             Description: Description,
@@ -289,10 +270,9 @@
     }
 
     function PrintSelectedPhoto(){
-        //console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
+        console.log("已紀錄 "+SelectedPhoto.length+" 張照片");
         for(let a=0;a<SelectedPhoto.length;a++){
-            console.log(
-                `${a} ID : ${SelectedPhoto[a].ID}, File : ${SelectedPhoto[a].File ? SelectedPhoto[a].File.name : "null"}`);
+            console.log(`${a} PhotoID : ${SelectedPhoto[a].PhotoID}, File : ${SelectedPhoto[a].File ? SelectedPhoto[a].File.name : "null"}`);
         }
     }
 
@@ -314,52 +294,18 @@
             FormDataObj.append(Element.name, Element.value);
         });
 
-        //將SelectedPhoto中的每個File加入FormData
+        //將SelectedPhoto中的元素加入表單物件中
         console.log("SelectedPhoto 數量 : "+SelectedPhoto.length);
-        if(SelectedPhoto.length>0){
-            // let VisitPhotosFormData = document.createElement("div");
-            // VisitPhotosFormData.className="form-group";
+        for(let a=0;a<SelectedPhoto.length;a++){
+            FormDataObj.append(`VisitPhotos[${a}].PhotoID`, SelectedPhoto[a].PhotoID);
+            FormDataObj.append(`VisitPhotos[${a}].PhotoType`, SelectedPhoto[a].PhotoType);
+            FormDataObj.append(`VisitPhotos[${a}].Description`, SelectedPhoto[a].Description);
 
-            for(let a=0;a<SelectedPhoto.length;a++){
-                //let PhotoData=document.createElement("div");
-
-                FormDataObj.append(`VisitPhotos[${a}].PhotoID`, SelectedPhoto[a].PhotoID);
-                FormDataObj.append(`VisitPhotos[${a}].PhotoType`, SelectedPhoto[a].PhotoType);
-                FormDataObj.append(`VisitPhotos[${a}].Description`, SelectedPhoto[a].Description);
-                // if(SelectedPhoto[a].File){
-                //     PhotoData.append(`VisitPhotos[${a}].UploadFile`, SelectedPhoto[a].File);
-                // }
-
-                // PhotoData.innerHTML = `
-                //     <input name="VisitPhotos[${a}].PhotoID" class="form-control" value="${SelectedPhoto[a].PhotoID}" />
-                //     <input name="VisitPhotos[${a}].PhotoType" class="form-control" value="${SelectedPhoto[a].PhotoType}" />
-                //     <textarea name="VisitsPhotos[${a}].Description" class="form-control">${SelectedPhoto[a].Description}</textarea>
-                // `;
-                // PhotoData.append(`<input name="VisitPhotos[${a}].PhotoID" class="form-control" value="${SelectedPhoto[a].PhotoID}" />`);
-                // PhotoData.append(`<input name="VisitPhotos[${a}].PhotoType" class="form-control" value="${SelectedPhoto[a].PhotoType}" />`);
-                // PhotoData.append(`<textarea name="VisitsPhotos[${a}].Description" class="form-control">${SelectedPhoto[a].Description}</textarea>`);
-
-                if(SelectedPhoto[a].File){
-                    //如果有實際的檔案，則加入到 PhotoData 內
-                    FormDataObj.append(`VisitPhotos[${a}].UploadFile`, SelectedPhoto[a].File);
-                    //PhotoData.append(`<input name="VisitPhotos[${a}].PhotoType" class="form-control" value="${SelectedPhoto[a].PhotoType}" />`);
-                }
-
-                //VisitPhotosFormData.append(PhotoData);
+            if(SelectedPhoto[a].File){
+                //如果有實際的檔案，則加入到 PhotoData 內
+                FormDataObj.append(`VisitPhotos[${a}].UploadFile`, SelectedPhoto[a].File);
             }
-
-            //FormDataObj.append("VisitPhotos", VisitPhotosFormData);
         }
-
-        //印出FormDataObj
-        // for (let pair of FormDataObj.entries()) {
-        //     // 如果是檔案，顯示檔名；否則顯示值
-        //     if (pair[1] instanceof File) {
-        //         console.log(pair[0], pair[1].name);
-        //     } else {
-        //         console.log(pair[0], pair[1]);
-        //     }
-        // }
 
         //使用Ajax送出表單
         $.ajax({

@@ -35,6 +35,7 @@ namespace AniwalkServer.Models
         public string? Description { get; set; }
         /// <summary>
         /// 排序編號
+        /// <para>OrderID</para>
         /// </summary>
         [HiddenInput]
         [Column(TypeName = "smallint")]
