@@ -559,10 +559,13 @@ namespace AniwalkServer.Controllers
             {
                 //Debug.WriteLine(VP.ToString());
                 var Original = await Context.VisitsPhotos.FirstOrDefaultAsync(V => V.PhotoID == PhotoData.PhotoID);
-                if (Original != null && Original.Description != PhotoData.Description)//有相同資料，用修改的 (也只有圖片說明會更改)
+                var OrderID = VisitPhotos.FindIndex(P => P.PhotoID == PhotoData.PhotoID);
+                if (Original != null && (Original.Description != PhotoData.Description || Original.SortNumber != OrderID))//檢查資料是否有變動
                 {
-                    Debug.WriteLine($"修改圖片資料");
+                    //Debug.WriteLine($"修改圖片資料 {Original.PhotoID}");
                     Original.Description = PhotoData.Description;
+                    Original.SortNumber = OrderID;
+
                     Context.Update(Original);
                 }
             }

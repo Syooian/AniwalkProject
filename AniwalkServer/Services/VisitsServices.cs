@@ -439,14 +439,19 @@ namespace AniwalkServer.Services
 
                     if (SetDBFirst)
                     {
+                        var OrderID = VisitPhotos.FindIndex(P => P.PhotoID == Photo.PhotoID);
+
                         Context.Add(new VisitsPhotos()
                         {
                             PhotoID = Photo.PhotoID,
                             PhotoType = Photo.PhotoType,
                             Description = Photo.Description,
                             MemberID = MemberID,
-                            SN = Visit.SN
+                            SN = Visit.SN,
+                            SortNumber = OrderID
                         });
+
+                        Debug.WriteLine($"新增圖片 {Photo.PhotoID}, OrderID : " + OrderID);
                     }
                 }
                 catch (Exception ex)
