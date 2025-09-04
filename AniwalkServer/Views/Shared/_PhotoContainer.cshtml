@@ -60,10 +60,11 @@
 
             for(let a=0;a<Json.length;a++)
             {
+                //資料用Card顯示
                 SetPhotoCard(Json[a].PhotoID, Json[a].PhotoSrc, Json[a].Description);
 
-                //如果模型傳來時已有圖片，也將其加入已選取檔案陣列
-                SetSelectPhoto(Json[a].PhotoID, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
+                //將資料加入到紀錄陣列中，如果模型傳來時已有圖片，也將其加入已選取檔案陣列
+                SetSelectPhoto(Json[a].PhotoID, a, Json[a].PhotoType, Json[a].Description, null); //這裡的 null 代表沒有實際的 File 物件，因為這是從後端載入的資料
             }
 
             //PrintSelectedPhoto();
@@ -92,10 +93,12 @@
             placeholder: "sortable-placeholder",
             update: function(Event, UI){
                 // 拖曳結束後可在這裡取得新順序
-                console.log("拖曳結束，"+UI);
-                console.log(`被拖曳的Card : ${UI.item.id}, position : ${UI.position}, originalPosition : ${UI.originalPosition}`);
+                console.log(`被拖曳的Card PhotoID : ${UI.item.attr('id')}, 新順序 : ${UI.item.index()}`);
 
-                RecalculateCardOrder();
+                //RecalculateCardOrder();
+
+                //修改圖片順序
+                SelectedPhoto[UI.item.attr('id')].OrderID=UI.item.index();
             }
         });
     }
@@ -180,7 +183,7 @@
             const PhotoType = GetFileExtension(Files[a].name);
 
             //儲存到變數
-            SetSelectPhoto(PhotoID, PhotoType, "", Files[a]);
+            SetSelectPhoto(PhotoID, GetSelectedPhotoCount(), PhotoType, "", Files[a]);
 
             // 使用 FileReader 讀取圖片
             const Reader=new FileReader();
@@ -229,8 +232,9 @@
     }
 
     //紀錄選取的照片
-    function SetSelectPhoto(PhotoID, PhotoType, Description, File){
+    function SetSelectPhoto(PhotoID, OrderID, PhotoType, Description, File){
         SelectedPhoto[PhotoID]={
+            OrderID: OrderID,
             PhotoType: PhotoType,
             Description: Description,
             File:File
@@ -240,6 +244,11 @@
         // for(let a=0;a<SelectedPhoto.length;a++){
         //     console.log("第 "+(a+1)+" 張照片 : "+SelectedPhoto[a].name);
         // }
+    }
+
+    //取得所有以選取圖片的數量
+    function GetSelectedPhotoCount(){
+        return Object.keys(SelectedPhoto).length;
     }
 
     function PrintSelectedPhoto(){
@@ -274,10 +283,13 @@
         //將SelectedPhoto中的元素加入表單物件中
         //console.log("SelectedPhoto 數量 : "+SelectedPhoto.length);
         let ID=0;//順序ID
-        for(const PhotoKey in SelectedPhoto){
-            const Photo = SelectedPhoto[PhotoKey];
+        //取得所有Photo資料並轉成陣列
+        let PhotoArray=Object.entries(SelectedPhoto).map(([PhotoID, Data]) => ({PhotoID, Data}));
+        //依順序排列
+        PhotoArray.sort((a, b)=>a.OrderID-b.OrderID);
 
-            FormDataObj.append(`VisitPhotos[${ID}].PhotoID`, PhotoKey);
+        for(const Photo in PhotoArray){
+            FormDataObj.append(`VisitPhotos[${ID}].PhotoID`, Photo.PhotoID);
             FormDataObj.append(`VisitPhotos[${ID}].PhotoType`, Photo.PhotoType);
             FormDataObj.append(`VisitPhotos[${ID}].Description`, Photo.Description);
 
