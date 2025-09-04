@@ -48,6 +48,15 @@
             <dd class="col-sm-9">
                 @Model.VisitedDate.ToShortDateString()
             </dd>
+            @if (User.IsInRole(Shared.Role_Admin))
+            {
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.DeleteDate)
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.DeleteDate?.ToShortDateString() ?? "")
+                </dd>
+            }
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.Member.Name)
             </dt>
