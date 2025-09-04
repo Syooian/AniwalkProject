@@ -205,7 +205,7 @@ namespace AniwalkServer.Controllers
 
                 //Debug.WriteLine("Visit MemberID : " + Visit.MemberID);
 
-                var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, false, VisitPhotos, GetMemberID);
+                var UploadPhotoResult = await PhotoServices.UploadPhoto(Visit, false, VisitPhotos, GetMemberID);
                 if (UploadPhotoResult.Type == ResultType.Fail)
                 {
                     ViewData["PhotoError"] = UploadPhotoResult.Message;
@@ -357,7 +357,7 @@ namespace AniwalkServer.Controllers
                 //}
                 #endregion
 
-                var UploadPhotoResult = await VisitsServices.UploadPhoto(Visit, true, VisitPhotos, GetMemberID);
+                var UploadPhotoResult = await PhotoServices.UploadPhoto(Visit, true, VisitPhotos, GetMemberID);
                 if (UploadPhotoResult.Type == ResultType.Fail)
                 {
                     Debug.WriteLine("Controller Edit UploadPhotoResult Error : " + UploadPhotoResult.Message);
@@ -384,7 +384,7 @@ namespace AniwalkServer.Controllers
                 //}
                 #endregion
 
-                var UpdatePhotoDataMsg = await UpdatePhotoData(Visit, VisitPhotos);
+                var UpdatePhotoDataMsg = await PhotoServices.UpdatePhotoData(Visit, VisitPhotos);
                 if (UpdatePhotoDataMsg.Type == ResultType.Fail)
                 {
                     Debug.WriteLine("Controller Edit UpdatePhotoDataMsg Error : " + UpdatePhotoDataMsg.Message);
@@ -547,39 +547,6 @@ namespace AniwalkServer.Controllers
         public void SetGoogleMapsApiKey()
         {
             ViewBag.GoogleMapsApiKey = _configuration["GoogleMapAPIKey"];
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Visit"></param>
-        /// <param name="VisitPhotos"></param>
-        /// <returns></returns>
-        async Task<Result> UpdatePhotoData(Visits Visit, List<VisitsPhotosDTO>? VisitPhotos)
-        {
-            if (VisitPhotos == null || VisitPhotos.Count == 0)
-            {
-                return new Result(Message: "沒有圖片資料更新");
-            }
-
-            //Debug.WriteLine($"UpdatePhotoData VisitPhotos Count : {VisitPhotos.Count()}");
-            var UpdatePhotoData = VisitPhotos.FindAll(VP => VP.UploadFile == null);
-            foreach (var PhotoData in UpdatePhotoData)
-            {
-                //Debug.WriteLine(VP.ToString());
-                var Original = await Context.VisitsPhotos.FirstOrDefaultAsync(V => V.PhotoID == PhotoData.PhotoID);
-                var OrderID = VisitPhotos.FindIndex(P => P.PhotoID == PhotoData.PhotoID);
-                if (Original != null && (Original.Description != PhotoData.Description || Original.SortNumber != OrderID))//檢查資料是否有變動
-                {
-                    //Debug.WriteLine($"修改圖片資料 {Original.PhotoID}");
-                    Original.Description = PhotoData.Description;
-                    Original.SortNumber = OrderID;
-
-                    Context.Update(Original);
-                }
-            }
-
-            return new Result();
         }
 
         /// <summary>
