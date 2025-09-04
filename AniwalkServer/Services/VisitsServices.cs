@@ -395,7 +395,7 @@ namespace AniwalkServer.Services
         /// 
         /// </summary>
         /// <param name="Visit"></param>
-        /// <param name="SetDBFirst"></param>
+        /// <param name="SetDBFirst">上傳圖片時一併新增資料進資料庫</param>
         /// <param name="VisitPhotos"></param>
         /// <param name="MemberID"></param>
         /// <returns></returns>

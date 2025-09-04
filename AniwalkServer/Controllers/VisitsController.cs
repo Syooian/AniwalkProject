@@ -223,7 +223,8 @@ namespace AniwalkServer.Controllers
                             PhotoType = VisitPhotos[a].PhotoType,
                             Description = VisitPhotos[a].Description,
                             MemberID = GetMemberID,
-                            SN = Visit.SN
+                            SN = Visit.SN,
+                            SortNumber = a
                         });
                     }
                 }
