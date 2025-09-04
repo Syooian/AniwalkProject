@@ -87,9 +87,12 @@
                         <td>
                             @item.VisitedDate.ToShortDateString()
                         </td>
-                        <td>
-                            @(item.DeleteDate?.ToShortDateString() ?? "")
-                        </td>
+                        @if (User.IsInRole(Shared.Role_Admin))
+                        {
+                            <td>
+                                @(item.DeleteDate?.ToShortDateString() ?? "")
+                            </td>
+                        }
                         <td class="col-2">
                             <form asp-action="Delete">
                                 <input type="hidden" value="@item.SN" name="VisitSN" />
