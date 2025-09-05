@@ -178,24 +178,6 @@ namespace AniwalkServer.Areas.Admin.Controllers
             return View(animes);
         }
 
-        // GET: Admin/Animes/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var animes = await _context.Animes
-                .FirstOrDefaultAsync(m => m.AnimeID == id);
-            if (animes == null)
-            {
-                return NotFound();
-            }
-
-            return View(animes);
-        }
-
         // POST: Admin/Animes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -209,11 +191,6 @@ namespace AniwalkServer.Areas.Admin.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool AnimesExists(string id)
-        {
-            return _context.Animes.Any(e => e.AnimeID == id);
         }
 
         /// <summary>
