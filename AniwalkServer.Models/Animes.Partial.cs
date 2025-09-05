@@ -31,6 +31,7 @@ namespace AniwalkServer.Models
         /// 簡介
         /// </summary>
         [StringLength(1000)]
+        [Display(Name = "簡介")]
         public string Description { get; set; } = null!;
         /// <summary>
         /// 創建日期
