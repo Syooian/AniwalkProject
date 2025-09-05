@@ -1,7 +1,11 @@
 ﻿using AniwalkServer.Data;
+using AniwalkServer.DTOs;
 using AniwalkServer.Models;
+using AniwalkServer.QueryParameters;
+using Dapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace AniwalkServer.Services
 {
@@ -12,6 +16,91 @@ namespace AniwalkServer.Services
         /// </summary>
         /// <param name="Context"></param>
         public AnimesServices(AniwalkDBContext Context) : base(Context) { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimesParam"></param>
+        /// <param name="Page"></param>
+        /// <param name="PageSize"></param>
+        /// <returns></returns>
+        public async Task<PageDTO<Animes, AnimesParam>> GetAnimes(AnimesParam? AnimesParam, int Page = 1, int PageSize = 0)
+        {
+            //總數查詢
+            var SQLCount = "select count(*) ";
+
+            //資料查詢
+            var SQLData = "Select A.AnimeID, A.Title, A.CreatedDate from Animes as A ";
+
+            //查詢條件
+            var SQLSelect = "where 1=1 ";
+            //查詢條件參數
+            var SQLPara = new DynamicParameters();
+
+            #region 篩選條件
+            if (AnimesParam == null)
+                AnimesParam = new AnimesParam();
+
+            if (!string.IsNullOrEmpty(AnimesParam.AnimeTitle))
+            {
+                SQLSelect += $"and A.Title = @AnimeTitle ";
+                SQLPara.Add("@AnimeTitle", AnimesParam.AnimeTitle);
+            }
+            #endregion
+
+            //將資料查詢加入查詢條件和資料排序 (order by 必須在Skip和Take之前)
+            SQLData += SQLSelect + "order by A.Title asc ";
+
+            #region 加入數量查詢和分頁查詢參數
+            SQLCount += "from Animes ";
+
+            if (PageSize == 0)
+            {
+                SQLData += ";";//補一個結束符號
+
+                //查詢資料總數
+                SQLCount += ";";
+            }
+            else
+            {
+                if (Page < 1)//防呆
+                    Page = 1;
+
+                SQLPara.Add("@Skip", Shared.GetSkip(Page, PageSize));
+                SQLPara.Add("@Take", PageSize);
+
+                SQLData += "offset @Skip rows fetch next @Take rows only;";
+
+                //查詢資料總數 (加入查詢條件)
+                SQLCount += "as A " + SQLSelect;
+            }
+            #endregion
+
+            #region 對資料庫下查詢
+            try
+            {
+                var Connection = Context.Database.GetDbConnection();
+
+                var Result = await Connection.QueryMultipleAsync(SQLCount + SQLData, SQLPara, commandType: System.Data.CommandType.Text);
+
+                //接收資料
+                var Data = new PageDTO<Animes, AnimesParam>(
+                    Result,
+                    Page,//當前頁碼
+                    PageSize,//每筆頁數
+                    AnimesParam//篩選參數
+                );
+
+                return Data;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetAnimes Error : {ex.Message}");
+
+                return null;
+            }
+            #endregion
+        }
 
         /// <summary>
         /// 
