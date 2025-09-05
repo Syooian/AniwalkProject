@@ -134,5 +134,15 @@ namespace AniwalkServer.Services
 
             return new SelectList(Result, nameof(Animes.AnimeID), nameof(Animes.Title), AnimeID);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <returns></returns>
+        public async Task<bool> IsAnimeExists(string AnimeID)
+        {
+            return await Context.Animes.AnyAsync(e => e.AnimeID == AnimeID);
+        }
     }
 }

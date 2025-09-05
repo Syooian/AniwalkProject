@@ -162,7 +162,9 @@ namespace AniwalkServer.Areas.Admin.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AnimesExists(animes.AnimeID))
+                    var Result = await AnimesServices.IsAnimeExists(animes.AnimeID);
+
+                    if (!Result)
                     {
                         return NotFound();
                     }
