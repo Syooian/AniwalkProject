@@ -1,5 +1,6 @@
 ﻿using AniwalkServer.Data;
 using AniwalkServer.Models;
+using AniwalkServer.QueryParameters;
 using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +39,23 @@ namespace AniwalkServer.Areas.Admin.Controllers
         }
 
         // GET: Admin/Animes
-        public async Task<IActionResult> Index()
+        /// <summary>
+        /// 動畫清單
+        /// </summary>
+        /// <param name="AnimesParam"></param>
+        /// <param name="Page"></param>
+        /// <param name="PageSize"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Index(AnimesParam? AnimesParam, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
-            return View(await _context.Animes.ToListAsync());
+            var Result=await AnimesServices.GetAnimes(AnimesParam,Page,PageSize);
+
+            if (Result == null)
+                return NotFound();
+
+            ViewData[ViewDataKeys.LastPage] = Page;
+
+            return View(Result);
         }
 
         // GET: Admin/Animes/Details/5

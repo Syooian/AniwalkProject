@@ -1,53 +1,51 @@
-﻿@model IEnumerable<AniwalkServer.Models.Animes>
+﻿@using AniwalkServer.DTOs
+@using AniwalkServer.Data
+@using AniwalkServer.QueryParameters
+@model PageDTO<Animes, AnimesParam>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData[ViewDataKeys.Title] = "動畫檢視";
 }
 
-<h1>Index</h1>
+<h1>@ViewData[ViewDataKeys.Title] </h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-outline-primary">建立新動畫</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().AnimeID)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HeaderPhoto)
+                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
+                @Html.DisplayNameFor(model => model.Data.FirstOrDefault().CreatedDate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HeaderPhoto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AnimeID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AnimeID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AnimeID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Data)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AnimeID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.AnimeID" class="btn btn-primary">編輯</a>
+                    <a asp-action="Details" asp-route-id="@item.AnimeID" class="btn btn-primary">檢視</a>
+                    <a asp-action="Delete" asp-route-id="@item.AnimeID" class="btn btn-danger">刪除</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

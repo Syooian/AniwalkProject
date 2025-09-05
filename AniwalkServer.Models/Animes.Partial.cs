@@ -14,6 +14,7 @@ namespace AniwalkServer.Models
         [Key]
         [HiddenInput]
         [StringLength(4, MinimumLength = 4)]
+        [Display(Name = "動畫ID")]
         public string AnimeID { get; set; } = null!;
         /// <summary>
         /// 動畫名稱
@@ -35,6 +36,7 @@ namespace AniwalkServer.Models
         /// 創建日期
         /// </summary>
         [HiddenInput]
+        [Display(Name = "創建日期")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         #region 外鍵關聯
