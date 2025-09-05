@@ -48,7 +48,7 @@ namespace AniwalkServer.Areas.Admin.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(AnimesParam? AnimesParam, int Page = 1, int PageSize = (int)DefaultPageSize.PageSize_20)
         {
-            var Result=await AnimesServices.GetAnimes(AnimesParam,Page,PageSize);
+            var Result = await AnimesServices.GetAnimes(AnimesParam, Page, PageSize);
 
             if (Result == null)
                 return NotFound();
@@ -77,8 +77,16 @@ namespace AniwalkServer.Areas.Admin.Controllers
         }
 
         // GET: Admin/Animes/Create
-        public IActionResult Create()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="LastPage"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult Create(int? LastPage)
         {
+            SetViewData((int)LastPage);
+
             return View();
         }
 
@@ -194,6 +202,15 @@ namespace AniwalkServer.Areas.Admin.Controllers
         private bool AnimesExists(string id)
         {
             return _context.Animes.Any(e => e.AnimeID == id);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Page"></param>
+        void SetViewData(int Page)
+        {
+            ViewData[ViewDataKeys.LastPage] = Page;
         }
     }
 }

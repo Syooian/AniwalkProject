@@ -39,7 +39,7 @@
             </div>*@
             <div class="form-group">
                 <input type="submit" value="送出" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-outline-primary">返回列表</a>
+                <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回列表</a>
             </div>
         </form>
     </div>
