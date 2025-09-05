@@ -38,6 +38,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.AnimeID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.AnimeID" class="btn btn-primary">編輯</a>
+    <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回清單</a>
 </div>
