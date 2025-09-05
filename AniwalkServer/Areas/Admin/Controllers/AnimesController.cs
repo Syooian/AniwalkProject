@@ -53,27 +53,31 @@ namespace AniwalkServer.Areas.Admin.Controllers
             if (Result == null)
                 return NotFound();
 
-            ViewData[ViewDataKeys.LastPage] = Page;
+            SetViewData(Page);
 
             return View(Result);
         }
 
         // GET: Admin/Animes/Details/5
-        public async Task<IActionResult> Details(string id)
+        /// <summary>
+        /// 動畫檢視
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="LastPage"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Details(string id, int LastPage)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var animes = await _context.Animes
-                .FirstOrDefaultAsync(m => m.AnimeID == id);
-            if (animes == null)
-            {
+            var Result = await AnimesServices.GetAnime(id);
+            if (Result == null)
                 return NotFound();
-            }
 
-            return View(animes);
+            SetViewData(LastPage);
+
+            return View(Result);
         }
 
         // GET: Admin/Animes/Create
@@ -116,19 +120,25 @@ namespace AniwalkServer.Areas.Admin.Controllers
         }
 
         // GET: Admin/Animes/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        /// <summary>
+        /// 編輯動畫
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="LastPage"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id, int LastPage)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var animes = await _context.Animes.FindAsync(id);
-            if (animes == null)
-            {
+            var Result = await AnimesServices.GetAnime(id);
+            if (Result == null)
                 return NotFound();
-            }
-            return View(animes);
+
+            SetViewData(LastPage);
+
+            return View(Result);
         }
 
         // POST: Admin/Animes/Edit/5

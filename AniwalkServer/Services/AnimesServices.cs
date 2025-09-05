@@ -103,6 +103,16 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <returns></returns>
+        public async Task<Animes> GetAnime(string AnimeID)
+        {
+            return await Context.Animes.FindAsync(AnimeID);
+        }
+
+        /// <summary>
         /// 產生一個新的動畫ID
         /// </summary>
         /// <returns></returns>

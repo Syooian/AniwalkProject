@@ -49,8 +49,8 @@
                             @Html.DisplayFor(modelItem => item.CreatedDate)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.AnimeID" class="btn btn-primary">編輯</a>
-                            <a asp-action="Details" asp-route-id="@item.AnimeID" class="btn btn-primary">檢視</a>
+                            <a asp-action="Edit" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+                            <a asp-action="Details" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">檢視</a>
                             <Button class="btn btn-danger">停用</Button>
                         </td>
                     </tr>
