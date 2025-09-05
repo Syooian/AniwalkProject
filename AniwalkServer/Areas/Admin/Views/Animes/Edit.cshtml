@@ -1,0 +1,48 @@
+﻿@using AniwalkServer.Data
+@model AniwalkServer.Models.Animes
+
+@{
+    ViewData[ViewDataKeys.Title] = "編輯動畫";
+}
+
+<h1>@ViewData[ViewDataKeys.Title]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AnimeID" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="HeaderPhoto" class="control-label"></label>*@
+                <input asp-for="HeaderPhoto" class="form-control" hidden/>
+                @*<span asp-validation-for="HeaderPhoto" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="CreatedDate" class="control-label"></label>*@
+                <input asp-for="CreatedDate" class="form-control" hidden />
+                @*<span asp-validation-for="CreatedDate" class="text-danger"></span>*@
+            </div>
+            <div class="form-group">
+                <input type="submit" value="保存" class="btn btn-primary" />
+                <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回列表</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
