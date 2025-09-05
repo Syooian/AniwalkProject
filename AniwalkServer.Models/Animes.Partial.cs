@@ -26,13 +26,13 @@ namespace AniwalkServer.Models
         /// 圖片(檔名)
         /// </summary>
         [StringLength(8, MinimumLength = 8)]
-        public string HeaderPhoto { get; set; } = null!;
+        public string? HeaderPhoto { get; set; } = null!;
         /// <summary>
         /// 簡介
         /// </summary>
         [StringLength(1000)]
         [Display(Name = "簡介")]
-        public string Description { get; set; } = null!;
+        public string? Description { get; set; } = null!;
         /// <summary>
         /// 創建日期
         /// </summary>
