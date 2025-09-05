@@ -87,15 +87,24 @@ namespace AniwalkServer.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AnimeID,Title,HeaderPhoto,Description,CreatedDate")] Animes animes)
+        public async Task<IActionResult> Create([Bind("Title,HeaderPhoto,Description")] Animes Anime)
         {
+            //移除AnimeID的模型驗證，由後端手動增加
+            ModelState.Remove(nameof(Animes.AnimeID));
+
+            Anime.CreatedDate = DateTime.Now;
+            Anime.AnimeID = await AnimesServices.GetNewAnimeID();
+
             if (ModelState.IsValid)
             {
-                _context.Add(animes);
+                _context.Add(Anime);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(animes);
+
+            //Shared.ShowModelState(ModelState);
+
+            return View(Anime);
         }
 
         // GET: Admin/Animes/Edit/5

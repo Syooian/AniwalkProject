@@ -103,6 +103,17 @@ namespace AniwalkServer.Services
         }
 
         /// <summary>
+        /// 產生一個新的動畫ID
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetNewAnimeID()
+        {
+            var Result = await Context.Animes.CountAsync();
+
+            return (Result + 1).ToString("0000");
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="AnimeID"></param>
