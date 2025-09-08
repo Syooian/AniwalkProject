@@ -1,0 +1,38 @@
+﻿@*共用的頁數選擇物件*@
+
+@{
+    #region 條件篩選
+    var FilterRouteValues = Model.GetFilterRouteValues();
+    #endregion
+}
+
+<div class="d-flex justify-content-center">
+    <!--分頁選擇-->
+    @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+    {
+        <nav aria-label="...">
+            <ul class="pagination">
+                <!--上一頁-->
+                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" asp-action="@Model.IndexAction" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                @{
+                    for (int a = 1; a <= Model.PageCount; a++)
+                    {
+                        <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
+                            <a class="page-link" asp-action="Model.IndexAction" asp-all-route-data="FilterRouteValues" asp-route-Page="@a">@a</a><!--asp-all-route-data似乎會覆蓋掉asp-route-Page，所以將asp-all-route-data放在最前-->
+                        </li>
+                    }
+                }
+                <!--下一頁-->
+                <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
+                    <a class="page-link" asp-action="Model.IndexAction" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
