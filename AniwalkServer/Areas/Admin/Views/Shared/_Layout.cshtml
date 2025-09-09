@@ -40,7 +40,7 @@
                             <a class="nav-link text-dark" asp-area="@Shared.Role_Admin" asp-controller="@nameof(Animes)" asp-action="Index">動畫檢視</a>
                         </li>
                     </ul>
-                    <ul class="navbar-nav text-end">
+                    <ul class="navbar-nav text-end BackgroundBG">
                         <li class="nav-item">
                             <p>歡迎管理員，@User.Identity.Name</p>
                         </li>
@@ -65,7 +65,7 @@
         </div>
     }
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted BackgroundBG">
         <div class="container">
             &copy; 2025 - AniwalkServer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
