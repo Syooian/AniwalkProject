@@ -32,6 +32,9 @@
                     <th>
                         @Html.DisplayNameFor(model => model.Data.FirstOrDefault().CreatedDate)
                     </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().DisabledDate)
+                    </th>
                     <th></th>
                 </tr>
             </thead>
@@ -49,9 +52,18 @@
                             @Html.DisplayFor(modelItem => item.CreatedDate)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
-                            <a asp-action="Details" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">檢視</a>
-                            <Button class="btn btn-danger">停用</Button>
+                            @Html.DisplayFor(modelItem => item.DisabledDate)
+                        </td>
+                        <td>
+                            <form asp-action="Disable">
+                                <a asp-action="Edit" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+                                <a asp-action="Details" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">檢視</a>
+                                @if (item.DisabledDate == null)
+                                {
+                                    <input type="hidden" value="@item.AnimeID" name="AnimeID" />
+                                    <Button type="submit" class="btn btn-danger" onclick="return confirm('確定停用?')">停用</Button>
+                                }
+                            </form>
                         </td>
                     </tr>
                 }

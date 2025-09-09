@@ -178,16 +178,23 @@ namespace AniwalkServer.Areas.Admin.Controllers
             return View(animes);
         }
 
-        // POST: Admin/Animes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Admin/Animes/Disable/5
+        /// <summary>
+        /// 停用動畫
+        /// </summary>
+        /// <param name="AnimeID">動畫ID</param>
+        /// <returns></returns>
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Disable(string AnimeID)
         {
-            var animes = await _context.Animes.FindAsync(id);
-            if (animes != null)
-            {
-                _context.Animes.Remove(animes);
-            }
+            var Anime = await AnimesServices.GetAnime(AnimeID);
+            if (Anime == null)
+                return NotFound();
+
+            Anime.DisabledDate = DateTime.Now;
+
+            _context.Animes.Update(Anime);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

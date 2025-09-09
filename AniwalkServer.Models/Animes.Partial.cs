@@ -39,6 +39,12 @@ namespace AniwalkServer.Models
         [HiddenInput]
         [Display(Name = "創建日期")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        /// <summary>
+        /// 停用日期
+        /// </summary>
+        [HiddenInput]
+        [Display(Name = "停用日期")]
+        public DateTime? DisabledDate { get; set; }
 
         #region 外鍵關聯
         /// <summary>
