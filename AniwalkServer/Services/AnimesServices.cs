@@ -127,10 +127,17 @@ namespace AniwalkServer.Services
         /// 
         /// </summary>
         /// <param name="AnimeID"></param>
+        /// <param name="IncludeDisabled">是否包含已停用的動畫</param>
         /// <returns></returns>
-        public async Task<SelectList> GetAnimesSelect(string? AnimeID = null)
+        public async Task<SelectList> GetAnimesSelect(string? AnimeID = null, bool IncludeDisabled = false)
         {
-            var Result = await Context.Animes.OrderBy(A => A.Title).ToListAsync();
+            var Query = Context.Animes.AsQueryable();
+
+            //是否包含已停用的動畫
+            if (!IncludeDisabled)
+                Query = Query.Where(A => A.DisabledDate == null);
+
+            var Result = await Query.OrderBy(A => A.Title).ToListAsync();
 
             return new SelectList(Result, nameof(Animes.AnimeID), nameof(Animes.Title), AnimeID);
         }
