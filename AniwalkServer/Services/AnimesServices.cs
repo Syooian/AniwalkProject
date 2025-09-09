@@ -30,7 +30,7 @@ namespace AniwalkServer.Services
             var SQLCount = "select count(*) ";
 
             //資料查詢
-            var SQLData = "Select A.AnimeID, A.Title, A.CreatedDate from Animes as A ";
+            var SQLData = "Select A.AnimeID, A.Title, A.CreatedDate, A.DisabledDate from Animes as A ";
 
             //查詢條件
             var SQLSelect = "where 1=1 ";
