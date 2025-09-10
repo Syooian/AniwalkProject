@@ -49,6 +49,9 @@
     function ResetFilter(){
         Ipt_AnimeID.value="";
         Ipt_AnimeTitle.value="";
+
+        //讓 select2 UI 也同步清空
+        $('.js-example-basic-single').val('').trigger('change');
     }
 
     ResetFilter()
