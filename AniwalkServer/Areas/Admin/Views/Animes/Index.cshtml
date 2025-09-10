@@ -17,6 +17,9 @@
     <a asp-action="Create" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">建立新動畫</a>
 </p>
 
+<!--篩選條件-->
+@await Html.PartialAsync("_AnimesFilter")
+
 @if (Model.Data.Any())
 {
     <div class="ListVerticalScrollBar BackgroundBG">
