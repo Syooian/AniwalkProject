@@ -41,6 +41,12 @@ namespace AniwalkServer.Services
             if (AnimesParam == null)
                 AnimesParam = new AnimesParam();
 
+            if (!string.IsNullOrEmpty(AnimesParam.AnimeID))
+            {
+                SQLSelect += $"and A.AnimeID = @AnimeID ";
+                SQLPara.Add("@AnimeID", AnimesParam.AnimeID);
+            }
+
             if (!string.IsNullOrEmpty(AnimesParam.AnimeTitle))
             {
                 SQLSelect += $"and A.Title = @AnimeTitle ";
