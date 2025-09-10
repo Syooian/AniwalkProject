@@ -50,8 +50,8 @@ namespace AniwalkServer.Areas.Admin.Controllers
         {
             var Result = await AnimesServices.GetAnimes(AnimesParam, Page, PageSize);
 
-            ViewData["AnimeID"] = await AnimesServices.GetAnimesSelect();
-            ViewData["AnimeTitle"] = await AnimesServices.GetAnimesSelect();
+            ViewData["AnimeID"] = await AnimesServices.GetAnimeIDsSelect(IncludeDisabled: true);
+            ViewData["AnimeTitle"] = await AnimesServices.GetAnimeTitlesSelect(IncludeDisabled: true);
 
             if (Result == null)
                 return NotFound();
