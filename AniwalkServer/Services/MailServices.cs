@@ -60,17 +60,6 @@ namespace AniwalkServer.Services
 
             //Debug.WriteLine($"Host : {Host}, Port : {Port}, User : {User}, PW : {PW}, EnableSsl : {Ssl}");
 
-            //return new SmtpClient(_configuration["Host"])
-            //{
-            //    UseDefaultCredentials = false,//需在Credentials = new NetworkCredential之前做，因為UseDefaultCredentials = false會把Credentials設為null
-            //    Port = int.Parse(_configuration["Port"]),
-            //    Credentials = new NetworkCredential(_configuration["Username"], _configuration["Password"]),
-            //    EnableSsl = bool.Parse(_configuration["EnableSsl"]),
-            //    DeliveryMethod = SmtpDeliveryMethod.Network
-            //};
-
-
-
             var SC = new SmtpClient()
             {
                 UseDefaultCredentials = false,//需在Credentials = new NetworkCredential之前做，因為UseDefaultCredentials = false會把Credentials設為null
@@ -85,11 +74,11 @@ namespace AniwalkServer.Services
             {
                 if (e.Error != null)
                 {
-                    Debug.WriteLine("SendCompleted : " + e.Error.Message);
+                    Debug.WriteLine("SendCompleted Error : " + e.Error.Message);
                 }
                 else
                 {
-                    Debug.WriteLine("SendCompleted : Email sent successfully.");
+                    Debug.WriteLine("SendCompleted");
                 }
             };
 
