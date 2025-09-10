@@ -151,5 +151,14 @@ namespace AniwalkServer.Services
         {
             return await Context.Animes.AnyAsync(e => e.AnimeID == AnimeID);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Title"></param>
+        /// <returns></returns>
+        public async Task<bool> IsAnimeExistsByTitle(string Title)
+        {
+            return await Context.Animes.AnyAsync(A => A.Title.Contains(Title));
+        }
     }
 }

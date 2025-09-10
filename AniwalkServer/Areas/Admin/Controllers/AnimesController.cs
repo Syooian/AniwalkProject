@@ -104,6 +104,13 @@ namespace AniwalkServer.Areas.Admin.Controllers
             //移除AnimeID的模型驗證，由後端手動增加
             ModelState.Remove(nameof(Animes.AnimeID));
 
+            var CheckExists = await AnimesServices.IsAnimeExists(Anime.Title);
+            if (CheckExists)
+            {
+                ViewData["Err"] = "該動畫已存在";
+                return View(Anime);
+            }
+
             Anime.CreatedDate = DateTime.Now;
             Anime.AnimeID = await AnimesServices.GetNewAnimeID();
 
