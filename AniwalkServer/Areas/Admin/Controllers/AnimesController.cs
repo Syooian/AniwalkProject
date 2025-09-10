@@ -62,7 +62,7 @@ namespace AniwalkServer.Areas.Admin.Controllers
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 // 回傳部分視圖（只渲染清單）
-                return PartialView("Animes.List", Result); //需只渲染清單
+                return PartialView("Index.List", Result); //需只渲染清單
             }
             else//一般頁面載入
             {

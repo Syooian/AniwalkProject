@@ -1,0 +1,103 @@
+﻿@using AniwalkServer.DTOs
+@using AniwalkServer.Data
+@using AniwalkServer.QueryParameters
+@model PageDTO<Animes, AnimesParam>
+@inject Microsoft.AspNetCore.Mvc.ModelBinding.IModelMetadataProvider MetadataProvider
+
+@{
+    ViewData[ViewDataKeys.Title] = "動畫清單";
+
+    #region 條件篩選
+    var FilterRouteValues = Model.GetFilterRouteValues();
+    #endregion
+}
+
+@if (Model.Data.Any())
+{
+    <div class="ListVerticalScrollBar BackgroundBG" id="ListContainer">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().AnimeID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().CreatedDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data.FirstOrDefault().DisabledDate)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Data)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AnimeID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DisabledDate)
+                        </td>
+                        <td>
+                            <form asp-action="Disable">
+                                <a asp-action="Edit" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+                                <a asp-action="Details" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">檢視</a>
+                                @if (item.DisabledDate == null)
+                                {
+                                    <input type="hidden" value="@item.AnimeID" name="AnimeID" />
+                                    <Button type="submit" class="btn btn-danger" onclick="return confirm('確定停用?')">停用</Button>
+                                }
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div class="d-flex justify-content-center">
+        <!--分頁選擇-->
+        @if (Shared.CheckShowPage(Model.PageCount, Model.TotalDataCount, Model.PageSize))
+        {
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <!--上一頁-->
+                    <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage - 1)" aria-label="Previous" tabindex="-1">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    @{
+                        for (int a = 1; a <= Model.PageCount; a++)
+                        {
+                            <li class="page-item @(Model.CurrentPage == a ? "active" : "")" @(Model.CurrentPage == a ? "aria-current=\"page\"" : "")>
+                                <a class="page-link" asp-action="Index" asp-all-route-data="FilterRouteValues" asp-route-Page="@a">@a</a><!--asp-all-route-data似乎會覆蓋掉asp-route-Page，所以將asp-all-route-data放在最前-->
+                            </li>
+                        }
+                    }
+                    <!--下一頁-->
+                    <li class="page-item @(Model.CurrentPage == Model.PageCount ? "disabled" : "")">
+                        <a class="page-link" asp-action="Index" asp-all-route-data="FilterRouteValues" asp-route-Page="@(Model.CurrentPage + 1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+}
+else
+{
+    <h3 class="text-center">無資料</h3>
+}
