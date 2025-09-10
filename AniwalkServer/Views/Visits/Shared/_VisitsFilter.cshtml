@@ -69,11 +69,14 @@ ShowVisitsOnMap.cshtml
 
     //清空篩選條件
     function ResetFilter(){
-        Ipt_CountryCode.value="";
+        Ipt_CountryCode.value="";//確保在 select2 初始化前，先將 select 的 value 設為空字串，不然畫面載入完成後選單上會有預設值
         Ipt_AnimeID.value="";
         Ipt_MemberName.value="";
         Ipt_VisitedDate_From.value="";
         Ipt_VisitedDate_To.value="";
+
+        //讓 select2 UI 也同步清空
+        $('.js-example-basic-single').val('').trigger('change');
     }
 
     ResetFilter()
