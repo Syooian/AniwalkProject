@@ -222,7 +222,7 @@ namespace AniwalkServer.Services
                         Directory.CreateDirectory(TargetPath);
 
                     //上傳
-                    using (FileStream FS = new FileStream(Path.Combine(TargetPath, "Header" + Path.GetExtension(HeaderPhoto.FileName)), FileMode.Create))
+                    using (FileStream FS = new FileStream(Path.Combine(TargetPath, Shared.AnimeHeaderPhotoName + Path.GetExtension(HeaderPhoto.FileName)), FileMode.Create))
                     {
                         await HeaderPhoto.CopyToAsync(FS);
                     }

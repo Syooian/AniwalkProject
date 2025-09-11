@@ -7,6 +7,10 @@ namespace AniwalkServer
         /// <summary>
         /// 
         /// </summary>
+        public const string AnimeHeaderPhotoName = "Header";
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="AnimeID"></param>
         /// <returns></returns>
         public static string GetAnimeHeaderPhotoPath(string AnimeID)
@@ -17,7 +21,7 @@ namespace AniwalkServer
             {
                 var PhotosPath = Directory.GetFiles(PhotosDir);
 
-                var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains("Header"));
+                var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains(AnimeHeaderPhotoName));
                 if (HeaderIndex != -1)
                 {
                     HeaderPhotoPath = GetAnimesPhotosPath(AnimeID, Path.GetFileName(PhotosPath[HeaderIndex]));
