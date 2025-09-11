@@ -3,6 +3,19 @@
 
 @{
     ViewData[ViewDataKeys.Title] = "動畫檢視";
+
+    var PhotosDir = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.AnimesPhotosRootPath, Model.AnimeID);
+    string HeaderPhotoPath = null;
+    if (Directory.Exists(PhotosDir))
+    {
+        var PhotosPath = Directory.GetFiles(PhotosDir);
+
+        var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains("Header"));
+        if (HeaderIndex != -1)
+        {
+            HeaderPhotoPath = Shared.GetAnimesPhotosPath(Model.AnimeID, System.IO.Path.GetFileName(PhotosPath[HeaderIndex]));
+        }
+    }
 }
 
 <h1>Details</h1>
@@ -36,6 +49,12 @@
             @Html.DisplayFor(model => model.DisabledDate)
         </dd>
     </dl>
+    <div>
+        @if (!string.IsNullOrEmpty(HeaderPhotoPath))
+        {
+            <img src="@($"/{HeaderPhotoPath}")" class="d-block mx-auto" style="max-height: 500px" />
+        }
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
