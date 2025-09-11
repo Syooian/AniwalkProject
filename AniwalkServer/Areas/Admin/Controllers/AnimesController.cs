@@ -185,9 +185,9 @@ namespace AniwalkServer.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("AnimeID,Title,HeaderPhoto,Description,CreatedDate")] Animes animes)
+        public async Task<IActionResult> Edit(string id, [Bind("AnimeID,Title,HeaderPhoto,Description,CreatedDate")] Animes Anime, IFormFile? HeaderPhoto)
         {
-            if (id != animes.AnimeID)
+            if (id != Anime.AnimeID)
             {
                 return NotFound();
             }
@@ -196,12 +196,12 @@ namespace AniwalkServer.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(animes);
+                    _context.Update(Anime);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    var Result = await AnimesServices.IsAnimeExists(animes.AnimeID);
+                    var Result = await AnimesServices.IsAnimeExists(Anime.AnimeID);
 
                     if (!Result)
                     {
@@ -214,7 +214,7 @@ namespace AniwalkServer.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(animes);
+            return View(Anime);
         }
 
         // POST: Admin/Animes/Disable/5
