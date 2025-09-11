@@ -1,4 +1,9 @@
-﻿<div class="col-md-8">
+﻿@model AniwalkServer.Models.Animes
+@{
+    string HeaderPhotoPath = Shared.GetAnimeHeaderPhotoPath(Model != null ? Model.AnimeID : null);
+}
+
+<div class="col-md-8">
     <div class="form-group">
         <input type="file" name="HeaderPhoto" id="HeaderPhoto" class="form-control" onchange="LoadHeaderPhoto(this)" style="max-height: 500px" />
         <img id="HeaderPhotoPreview" style="max-height: 500px" />
@@ -6,6 +11,16 @@
 </div>
 
 <script>
+    //初始讀取圖片
+    function InitHeaderPhoto(){
+        let HeaderPhotoPath='@HeaderPhotoPath';
+        if (HeaderPhotoPath && HeaderPhotoPath !== 'null' && HeaderPhotoPath.trim() !== '')
+        {
+            SetHeaderPhoto('/'+HeaderPhotoPath);
+        }
+    }
+    InitHeaderPhoto();
+
     function LoadHeaderPhoto(E){
         const NewHeader=E.files[0];
 
@@ -14,7 +29,7 @@
 
             Reader.onload=function (E){
                 //圖片讀取完成，顯示出來
-                $('#HeaderPhotoPreview').attr('src', E.target.result);
+                SetHeaderPhoto(E.target.result);
 
                 console.log("HeaderPhoto Loaded");
             };
@@ -24,9 +39,15 @@
         }
         else{
             //清空顯示圖片
-            $('#HeaderPhotoPreview').attr('src', '');
+            SetHeaderPhoto('');
 
             console.log("Clean HeaderPhoto");
         }
+    }
+
+    //顯示HeaderPhoto
+    function SetHeaderPhoto(Photo){
+        console.log("SetHeaderPhoto "+Photo);
+        $('#HeaderPhotoPreview').attr('src', Photo);
     }
 </script>
