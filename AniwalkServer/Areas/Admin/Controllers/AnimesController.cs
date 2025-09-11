@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -111,7 +112,7 @@ namespace AniwalkServer.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,HeaderPhoto,Description")] Animes Anime)
+        public async Task<IActionResult> Create([Bind("Title,HeaderPhoto,Description")] Animes Anime, IFormFile? HeaderPhoto)
         {
             //移除AnimeID的模型驗證，由後端手動增加
             ModelState.Remove(nameof(Animes.AnimeID));
@@ -128,9 +129,28 @@ namespace AniwalkServer.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(Anime);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using var Transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    _context.Add(Anime);
+                    await _context.SaveChangesAsync();
+
+                    //圖片上傳
+                    var UploadHeaderPhotoResult = await AnimesServices.UploadHeaderPhoto(Anime.AnimeID, HeaderPhoto);
+                    if (UploadHeaderPhotoResult.Type == ResultType.Success)
+                    {
+                        await Transaction.CommitAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("新增動畫失敗 EX : " + ex.Message);
+                }
+
+                ViewData["Err"] = "動畫新增失敗";
+                await Transaction.RollbackAsync();
+                return View(Anime);
             }
 
             //Shared.ShowModelState(ModelState);
