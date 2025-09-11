@@ -13,7 +13,7 @@
         var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains("Header"));
         if (HeaderIndex != -1)
         {
-            HeaderPhotoPath = PhotosPath[HeaderIndex];
+            HeaderPhotoPath = Shared.GetAnimesPhotosPath(Model.AnimeID, System.IO.Path.GetFileName(PhotosPath[HeaderIndex]));
         }
     }
 }
@@ -52,7 +52,7 @@
     <div>
         @if (!string.IsNullOrEmpty(HeaderPhotoPath))
         {
-            <img src="@HeaderPhotoPath" />
+            <img src="@($"/{HeaderPhotoPath}")" />
         }
     </div>
 </div>
