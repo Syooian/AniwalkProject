@@ -15,16 +15,20 @@ namespace AniwalkServer
         /// <returns></returns>
         public static string GetAnimeHeaderPhotoPath(string AnimeID)
         {
-            var PhotosDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", AnimesPhotosRootPath, AnimeID);
             string HeaderPhotoPath = null;
-            if (Directory.Exists(PhotosDir))
+            if (AnimeID != null)
             {
-                var PhotosPath = Directory.GetFiles(PhotosDir);
+                var PhotosDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", AnimesPhotosRootPath, AnimeID);
 
-                var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains(AnimeHeaderPhotoName));
-                if (HeaderIndex != -1)
+                if (Directory.Exists(PhotosDir))
                 {
-                    HeaderPhotoPath = GetAnimesPhotosPath(AnimeID, Path.GetFileName(PhotosPath[HeaderIndex]));
+                    var PhotosPath = Directory.GetFiles(PhotosDir);
+
+                    var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains(AnimeHeaderPhotoName));
+                    if (HeaderIndex != -1)
+                    {
+                        HeaderPhotoPath = GetAnimesPhotosPath(AnimeID, Path.GetFileName(PhotosPath[HeaderIndex]));
+                    }
                 }
             }
 
