@@ -329,25 +329,25 @@ namespace AniwalkServer.Data
                 ShowLog(nameof(Models.VisitsPhotos));
                 if (!context.VisitsPhotos.Any())
                 {
-                    #region 刪除現有照片
                     string[] Files;
-                    if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath)))
-                    {
-                        Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath),
-                           "*",//所有檔案
-                           SearchOption.AllDirectories);//所有子資料夾
-                        for (int a = 0; a < Files.Length; a++)
-                        {
-                            try
-                            {
-                                File.Delete(Files[a]);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine($"Error deleting file {Files[a]}: {ex.Message}");
-                            }
-                        }
-                    }
+                    #region 刪除現有照片
+                    //if (Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath)))
+                    //{
+                    //    Files = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath),
+                    //       "*",//所有檔案
+                    //       SearchOption.AllDirectories);//所有子資料夾
+                    //    for (int a = 0; a < Files.Length; a++)
+                    //    {
+                    //        try
+                    //        {
+                    //            File.Delete(Files[a]);
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            Console.WriteLine($"Error deleting file {Files[a]}: {ex.Message}");
+                    //        }
+                    //    }
+                    //}
                     #endregion
 
                     string VisitsPhotosRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.VisitsPhotosRootPath);//複製檔案的目的路徑
