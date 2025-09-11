@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using AniwalkServer.Data;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 
@@ -24,7 +25,7 @@ namespace AniwalkServer.Services
         /// <param name="toEmail">收件人郵箱</param>
         /// <param name="subject">郵件主題</param>
         /// <param name="body">郵件內容</param>
-        public async Task SendEmailAsync(string toEmail, string subject, string body)
+        public async Task<Result> SendEmailAsync(string toEmail, string subject, string body)
         {
             try
             {
@@ -39,10 +40,14 @@ namespace AniwalkServer.Services
                 };
                 mailMessage.To.Add(toEmail);
                 await Client.SendMailAsync(mailMessage);
+
+                return new Result();
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("SendEmailAsync : " + ex.Message);
+
+                return new Result(ResultType.Fail);
             }
         }
 
@@ -60,17 +65,6 @@ namespace AniwalkServer.Services
 
             //Debug.WriteLine($"Host : {Host}, Port : {Port}, User : {User}, PW : {PW}, EnableSsl : {Ssl}");
 
-            //return new SmtpClient(_configuration["Host"])
-            //{
-            //    UseDefaultCredentials = false,//需在Credentials = new NetworkCredential之前做，因為UseDefaultCredentials = false會把Credentials設為null
-            //    Port = int.Parse(_configuration["Port"]),
-            //    Credentials = new NetworkCredential(_configuration["Username"], _configuration["Password"]),
-            //    EnableSsl = bool.Parse(_configuration["EnableSsl"]),
-            //    DeliveryMethod = SmtpDeliveryMethod.Network
-            //};
-
-
-
             var SC = new SmtpClient()
             {
                 UseDefaultCredentials = false,//需在Credentials = new NetworkCredential之前做，因為UseDefaultCredentials = false會把Credentials設為null
@@ -85,11 +79,11 @@ namespace AniwalkServer.Services
             {
                 if (e.Error != null)
                 {
-                    Debug.WriteLine("SendCompleted : " + e.Error.Message);
+                    Debug.WriteLine("SendCompleted Error : " + e.Error.Message);
                 }
                 else
                 {
-                    Debug.WriteLine("SendCompleted : Email sent successfully.");
+                    Debug.WriteLine("SendCompleted");
                 }
             };
 

@@ -122,7 +122,7 @@ namespace AniwalkServer.Controllers
 
                             //發送驗證碼到會員的信箱
                             //_ = ForgotPasswordServices.SendVerifyCodeToMember(Member.Email);
-                            var MailResult = MailServices.SendEmailAsync(
+                            var MailResult = await MailServices.SendEmailAsync(
                                      Member.Email,
                                      "Aniwalk 忘記密碼驗證碼",
                                      $"您的驗證碼為：{NewFP.Message}，請在5分鐘內使用。"
@@ -132,6 +132,9 @@ namespace AniwalkServer.Controllers
                                 直接呼叫但不加 await，會收到警告（CS4014），但程式仍會執行。
                                 若想消除警告，可用 _ =：
                              */
+
+                            if (MailResult.Type == ResultType.Fail)
+                                SetErrorMessage("發送錯誤，請稍後再試。");
 
                             FP_DTO.Phase = ForgotPasswordDTOPhase.VerifyCode; //設定為第二階段：輸入驗證碼
 
