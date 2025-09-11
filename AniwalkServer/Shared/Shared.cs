@@ -39,6 +39,21 @@ namespace AniwalkServer
         /// <summary>
         /// 
         /// </summary>
+        public const string AnimesPhotosRootPath = "AnimesPhotos";
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <param name="PhotoName"></param>
+        /// <returns></returns>
+        public static string GetAnimesPhotosPath(string AnimeID, string PhotoName)
+        {
+            return $"{AnimesPhotosRootPath}/{PhotoName}";
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="ModelState"></param>
         public static void ShowModelState(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary ModelState)
         {
