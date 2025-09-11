@@ -50,12 +50,24 @@ namespace AniwalkServer.Areas.Admin.Controllers
         {
             var Result = await AnimesServices.GetAnimes(AnimesParam, Page, PageSize);
 
+            ViewData["AnimeID"] = await AnimesServices.GetAnimeIDsSelect(IncludeDisabled: true);
+            ViewData["AnimeTitle"] = await AnimesServices.GetAnimeTitlesSelect(IncludeDisabled: true);
+
             if (Result == null)
                 return NotFound();
 
             SetViewData(Page);
 
-            return View(Result);
+            // 判斷是否為 AJAX 請求
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // 回傳部分視圖（只渲染清單）
+                return PartialView("Index.List", Result); //需只渲染清單
+            }
+            else//一般頁面載入
+            {
+                return View(Result);
+            }
         }
 
         // GET: Admin/Animes/Details/5

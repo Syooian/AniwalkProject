@@ -41,6 +41,12 @@ namespace AniwalkServer.Services
             if (AnimesParam == null)
                 AnimesParam = new AnimesParam();
 
+            if (!string.IsNullOrEmpty(AnimesParam.AnimeID))
+            {
+                SQLSelect += $"and A.AnimeID = @AnimeID ";
+                SQLPara.Add("@AnimeID", AnimesParam.AnimeID);
+            }
+
             if (!string.IsNullOrEmpty(AnimesParam.AnimeTitle))
             {
                 SQLSelect += $"and A.Title = @AnimeTitle ";
@@ -129,7 +135,7 @@ namespace AniwalkServer.Services
         /// <param name="AnimeID"></param>
         /// <param name="IncludeDisabled">是否包含已停用的動畫</param>
         /// <returns></returns>
-        public async Task<SelectList> GetAnimesSelect(string? AnimeID = null, bool IncludeDisabled = false)
+        public async Task<SelectList>GetAnimesSelect(string? AnimeID = null, bool IncludeDisabled = false)
         {
             var Query = Context.Animes.AsQueryable();
 
@@ -140,6 +146,42 @@ namespace AniwalkServer.Services
             var Result = await Query.OrderBy(A => A.Title).ToListAsync();
 
             return new SelectList(Result, nameof(Animes.AnimeID), nameof(Animes.Title), AnimeID);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <param name="IncludeDisabled">是否包含已停用的動畫</param>
+        /// <returns></returns>
+        public async Task<SelectList> GetAnimeTitlesSelect(string? AnimeID = null, bool IncludeDisabled = false)
+        {
+            var Query = Context.Animes.AsQueryable();
+
+            //是否包含已停用的動畫
+            if (!IncludeDisabled)
+                Query = Query.Where(A => A.DisabledDate == null);
+
+            var Result = await Query.OrderBy(A => A.Title).ToListAsync();
+
+            return new SelectList(Result, nameof(Animes.Title), nameof(Animes.Title), AnimeID);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <param name="IncludeDisabled"></param>
+        /// <returns></returns>
+        public async Task<SelectList> GetAnimeIDsSelect(string? AnimeID = null, bool IncludeDisabled = false)
+        {
+            var Query = Context.Animes.AsQueryable();
+
+            //是否包含已停用的動畫
+            if (!IncludeDisabled)
+                Query = Query.Where(A => A.DisabledDate == null);
+
+            var Result = await Query.OrderBy(A => A.AnimeID).ToListAsync();
+
+            return new SelectList(Result, nameof(Animes.AnimeID), nameof(Animes.AnimeID), AnimeID);
         }
 
         /// <summary>

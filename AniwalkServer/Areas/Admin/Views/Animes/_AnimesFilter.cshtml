@@ -1,0 +1,88 @@
+﻿@using AniwalkServer.Data;
+@*@using AniwalkServer.DTOs
+@using System.Diagnostics;
+@model PageDTO<VisitsDTO>*@
+
+<div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                搜尋篩選條件
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body row">
+                <div>
+                    動畫ID：<select id="Ipt_AnimeID" placeholder="請輸入動畫ID" class="js-example-basic-single VisitsFilter">
+                        @foreach (var Item in ViewBag.AnimeID)
+                        {
+                            <option value="@Item.Value">@Item.Text</option>
+                        }
+                    </select>
+                    動畫標題：<select id="Ipt_AnimeTitle" placeholder="請輸入動畫標題" class="js-example-basic-single VisitsFilter">
+                        @foreach (var Item in ViewBag.AnimeTitle)
+                        {
+                            <option value="@Item.Value">@Item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="FiltedSearch()">搜尋</button>
+                    <button type="button" class="btn btn-outline-primary" id="Btn_Reset">清空</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //設置清空按鈕的行為
+    document.getElementById("Btn_Reset").addEventListener("click", function(){
+        ResetFilter();
+        FiltedSearch();
+    });
+
+    const Ipt_AnimeID = document.getElementById("Ipt_AnimeID");
+    const Ipt_AnimeTitle = document.getElementById("Ipt_AnimeTitle");
+
+    //清空篩選條件
+    function ResetFilter(){
+        Ipt_AnimeID.value="";
+        Ipt_AnimeTitle.value="";
+
+        //讓 select2 UI 也同步清空
+        $('.js-example-basic-single').val('').trigger('change');
+    }
+
+    ResetFilter()
+
+    function FiltedSearch(){
+        let Filters={
+            AnimeID: Ipt_AnimeID.value.trim(),//trim()：去除前後空白
+            AnimeTitle: Ipt_AnimeTitle.value.trim(),//trim()：去除前後空白
+        };
+
+        //console.log(`Filting CountryCode : ${Filters.CountryCode}, AnimeID : ${Filters.AnimeID}, MemberName : ${Filters.MemberName}, VisitedDate : ${Filters.VisitedDate}`);
+
+        //用 URLSearchParams 轉換 (不然直接Filters.toString()會印出[object Object]而不是CountryName=xxx&AnimeTitle=yyy&MemberName=zzz&VisitedDate=2025-08-11)
+        Filters=new URLSearchParams(Filters);
+
+        var FetchURL=`/Admin/Animes?${Filters}`;
+        //console.log("FetchURL : "+FetchURL);
+        fetch(FetchURL, {
+            method: 'get',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(Response=>Response.text())
+        .then(Html=>{
+            //console.log(Html);
+
+            try{
+                document.getElementById("ListContainer").innerHTML = Html;
+            }
+            catch(Error){
+                console.error("AnimesFilter Error 1 : "+Error);
+            }
+        });
+    }
+</script>
