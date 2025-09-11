@@ -15,6 +15,24 @@ namespace AniwalkServer.Services
         public ForgotPasswordServices(AniwalkDBContext Context) : base(Context) { }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<ForgotPassword>> GetForgotPasswords()
+        {
+            try
+            {
+                return await Context.ForgotPassword.OrderByDescending(D => D.CreatedDate).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetForgotPassword Error : {ex.Message}");
+
+                return null;
+            }
+        }
+
+        /// <summary>
         /// 查找忘記密碼表單是否已過期
         /// </summary>
         /// <param name="FP"></param>
@@ -31,7 +49,7 @@ namespace AniwalkServer.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"GetForgotPassword Error : {ex.Message}");
+                Debug.WriteLine($"IsForgotPasswordExpired Error : {ex.Message}");
             }
 
             return true;
