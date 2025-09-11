@@ -77,6 +77,32 @@ namespace AniwalkServer.Data
                     LoadFile(FilePath, ref Animes);
                 }
 
+                #region 動畫圖片
+                var SeedDataRootPath = Path.Combine(Directory.GetCurrentDirectory(), "SeedPhotos", "Animes");
+                for (int a = 0; a < Animes.Length; a++)
+                {
+                    var AnimeSeedDataPath = Path.Combine(SeedDataRootPath, Animes[a].AnimeID);
+                    if (!Directory.Exists(AnimeSeedDataPath))
+                        continue;
+
+                    var Files = Directory.GetFiles(AnimeSeedDataPath);
+
+                    var ToDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.AnimesPhotosRootPath, Animes[a].AnimeID);
+
+                    //建立目的地路徑
+                    if (Files.Length > 0)
+                    {
+                        Directory.CreateDirectory(ToDir);
+
+                        for (int b = 0; b < Files.Length; b++)
+                        {
+                            string ToFile = Path.Combine(ToDir, Path.GetFileName(Files[b]));
+                            File.Copy(Files[b], ToFile, true);
+                        }
+                    }
+                }
+                #endregion
+
                 context.Animes.AddRange(Animes);
                 #endregion
 

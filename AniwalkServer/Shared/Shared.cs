@@ -48,7 +48,7 @@ namespace AniwalkServer
         /// <returns></returns>
         public static string GetAnimesPhotosPath(string AnimeID, string PhotoName)
         {
-            return $"{AnimesPhotosRootPath}/{PhotoName}";
+            return $"{AnimesPhotosRootPath}/{AnimeID}/{PhotoName}";
         }
 
         /// <summary>
