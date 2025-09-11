@@ -1,0 +1,32 @@
+﻿<div class="col-md-8">
+    <div class="form-group">
+        <input type="file" name="HeaderPhoto" id="HeaderPhoto" class="form-control" onchange="LoadHeaderPhoto(this)" style="max-height: 500px" />
+        <img id="HeaderPhotoPreview" style="max-height: 500px" />
+    </div>
+</div>
+
+<script>
+    function LoadHeaderPhoto(E){
+        const NewHeader=E.files[0];
+
+        if(NewHeader){
+            let Reader=new FileReader();
+
+            Reader.onload=function (E){
+                //圖片讀取完成，顯示出來
+                $('#HeaderPhotoPreview').attr('src', E.target.result);
+
+                console.log("HeaderPhoto Loaded");
+            };
+            Reader.readAsDataURL(NewHeader);
+
+            console.log("Read NewHeaderPhoto");
+        }
+        else{
+            //清空顯示圖片
+            $('#HeaderPhotoPreview').attr('src', '');
+
+            console.log("Clean HeaderPhoto");
+        }
+    }
+</script>

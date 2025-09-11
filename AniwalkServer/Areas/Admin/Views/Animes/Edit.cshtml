@@ -8,11 +8,11 @@
 <h1>@ViewData[ViewDataKeys.Title]</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="AnimeID" />
+<form asp-action="Edit" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="AnimeID" />
+    <div class="row">
+        <div class="col-md-4">
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -37,9 +37,10 @@
                 <input type="submit" value="保存" class="btn btn-primary" />
                 <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回列表</a>
             </div>
-        </form>
+        </div>
+        @await Html.PartialAsync("_HeaderPhotoContainer")
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{

@@ -8,10 +8,10 @@
 <h1>@ViewData[ViewDataKeys.Title]</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form asp-action="Create" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-4">
             @*<div class="form-group">
                 <label asp-for="AnimeID" class="control-label"></label>
                 <input asp-for="AnimeID" class="form-control" />
@@ -29,7 +29,7 @@
             </div>*@
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="10" ></textarea>
+                <textarea asp-for="Description" class="form-control" rows="10"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             @*<div class="form-group">
@@ -42,9 +42,10 @@
                 <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回列表</a>
             </div>
             <span class="text-danger">@ViewData["Err"]</span>
-        </form>
+        </div>
+        @await Html.PartialAsync("_HeaderPhotoContainer")
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{
