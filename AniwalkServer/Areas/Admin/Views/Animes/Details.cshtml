@@ -4,18 +4,7 @@
 @{
     ViewData[ViewDataKeys.Title] = "動畫檢視";
 
-    var PhotosDir = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.AnimesPhotosRootPath, Model.AnimeID);
-    string HeaderPhotoPath = null;
-    if (Directory.Exists(PhotosDir))
-    {
-        var PhotosPath = Directory.GetFiles(PhotosDir);
-
-        var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains("Header"));
-        if (HeaderIndex != -1)
-        {
-            HeaderPhotoPath = Shared.GetAnimesPhotosPath(Model.AnimeID, System.IO.Path.GetFileName(PhotosPath[HeaderIndex]));
-        }
-    }
+    string HeaderPhotoPath = Shared.GetAnimeHeaderPhotoPath(Model.AnimeID);
 }
 
 <h1>Details</h1>
