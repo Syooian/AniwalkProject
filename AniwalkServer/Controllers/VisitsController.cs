@@ -530,7 +530,7 @@ namespace AniwalkServer.Controllers
         public async Task SetViewData()
         {
             ViewData[ViewDataKeys.CountryCode] = await CountriesServices.GetCountriesSelect();
-            ViewData[ViewDataKeys.AnimeID] = await AnimesServices.GetAnimeTitlesSelect();
+            ViewData[ViewDataKeys.AnimeID] = await AnimesServices.GetAnimesSelect();
             //ViewData["MemberID"] = new SelectList(Context.Members, "MemberID", "MemberID",
             //    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             ViewData["MemberID"] = GetMemberID;
