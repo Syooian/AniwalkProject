@@ -219,6 +219,16 @@ namespace AniwalkServer.Areas.Admin.Controllers
                     }
                     else
                     {
+                        //刪除舊的Header圖 (因為可能會有同檔名但是不同副檔名的情況)
+                        var DeleteHeaderPhotoResult = AnimesServices.DeleteHeaderPhoto(Anime.AnimeID);
+                        if (DeleteHeaderPhotoResult.Type == ResultType.Fail)
+                        {
+                            SetError();
+                            await Transaction.RollbackAsync();
+                            Debug.WriteLine("DeleteHeaderPhotoOnUpload EX : " + DeleteHeaderPhotoResult.Message);
+                            return View(Anime);
+                        }
+
                         //圖片上傳
                         var UploadHeaderPhotoResult = await AnimesServices.UploadHeaderPhoto(Anime.AnimeID, HeaderPhoto);
                         if (UploadHeaderPhotoResult.Type == ResultType.Fail)
