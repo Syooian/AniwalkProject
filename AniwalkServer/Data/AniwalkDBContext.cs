@@ -46,6 +46,10 @@ namespace AniwalkServer.Data
         /// </summary>
         public virtual DbSet<VisitsDTO> VisitsDTO { get; set; }
         /// <summary>
+        /// 到訪紀錄標籤
+        /// </summary>
+        public virtual DbSet<VisitsTags> VisitsTags { get; set; }
+        /// <summary>
         /// 到訪紀錄明細
         /// </summary>
         public virtual DbSet<VisitsDetails> VisitsDetails { get; set; }

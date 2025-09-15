@@ -304,6 +304,25 @@ namespace AniwalkServer.Data
                 context.AddRange(Comments);
                 #endregion
 
+                #region 到訪紀錄標籤
+                context.VisitsTags.Add(new VisitsTags()
+                {
+                    Tag = "鞦韆"
+                });
+
+                context.SaveChanges();
+                #endregion
+
+                #region 到訪紀錄明細
+                context.VisitsDetails.Add(new VisitsDetails()
+                {
+                    TagSN = 1,
+                    VisitSN = 1
+                });
+
+                context.SaveChanges();
+                #endregion
+
                 #region 到訪記錄評論的回覆
                 ShowLog(nameof(Models.Replies));
                 var Replies = new List<Replies>();
