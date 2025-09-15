@@ -46,6 +46,9 @@
     </div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+    @if (Model.DisabledDate == null)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
+    }
     <a asp-action="Index" asp-route-Page="@ViewData[ViewDataKeys.LastPage]" class="btn btn-outline-primary">返回清單</a>
 </div>
