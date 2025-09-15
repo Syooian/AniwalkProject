@@ -24,7 +24,7 @@ namespace AniwalkServer
                 {
                     var PhotosPath = Directory.GetFiles(PhotosDir);
 
-                    var HeaderIndex = Array.FindIndex(PhotosPath, N => N.Contains(AnimeHeaderPhotoName));
+                    var HeaderIndex = Array.FindIndex(PhotosPath, N => Path.GetFileNameWithoutExtension(N) == AnimeHeaderPhotoName);
                     if (HeaderIndex != -1)
                     {
                         HeaderPhotoPath = GetAnimesPhotosPath(AnimeID, Path.GetFileName(PhotosPath[HeaderIndex]));
