@@ -135,7 +135,7 @@ namespace AniwalkServer.Services
         /// <param name="AnimeID"></param>
         /// <param name="IncludeDisabled">是否包含已停用的動畫</param>
         /// <returns></returns>
-        public async Task<SelectList>GetAnimesSelect(string? AnimeID = null, bool IncludeDisabled = false)
+        public async Task<SelectList> GetAnimesSelect(string? AnimeID = null, bool IncludeDisabled = false)
         {
             var Query = Context.Animes.AsQueryable();
 
@@ -201,6 +201,66 @@ namespace AniwalkServer.Services
         public async Task<bool> IsAnimeExistsByTitle(string Title)
         {
             return await Context.Animes.AnyAsync(A => A.Title.Contains(Title));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <param name="HeaderPhoto"></param>
+        /// <returns></returns>
+        public async Task<Result> UploadHeaderPhoto(string AnimeID, IFormFile HeaderPhoto)
+        {
+            if (HeaderPhoto != null)
+            {
+                try
+                {
+                    //上傳目標路徑
+                    var TargetPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.AnimesPhotosRootPath, AnimeID);
+                    //檢查路徑是否存在
+                    if (!Directory.Exists(TargetPath))
+                        Directory.CreateDirectory(TargetPath);
+
+                    //上傳
+                    using (FileStream FS = new FileStream(Path.Combine(TargetPath, Shared.AnimeHeaderPhotoName + Path.GetExtension(HeaderPhoto.FileName)), FileMode.Create))
+                    {
+                        await HeaderPhoto.CopyToAsync(FS);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new Result(ResultType.Fail, ex.Message);
+                }
+            }
+
+            return new Result(ResultType.Success);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <returns></returns>
+        public Result DeleteHeaderPhoto(string AnimeID)
+        {
+            try
+            {
+                //檢查目標檔案是否存在
+                var HeaderPhotoPath = Shared.GetAnimeHeaderPhotoPath(AnimeID);
+
+                //Header圖存在，將Header圖改名
+                if (!string.IsNullOrEmpty(HeaderPhotoPath))
+                {
+                    var NewFileName = $"_Deleted_{Path.GetFileNameWithoutExtension(HeaderPhotoPath)}_{DateTime.Now.ToString("yyyyMMdd-HHmmss")}{Path.GetExtension(HeaderPhotoPath)}";
+                    var NewPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.AnimesPhotosRootPath, AnimeID, NewFileName);
+                    File.Move(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", HeaderPhotoPath), NewPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Result(ResultType.Fail, ex.Message);
+            }
+
+            return new Result(ResultType.Success);
         }
     }
 }

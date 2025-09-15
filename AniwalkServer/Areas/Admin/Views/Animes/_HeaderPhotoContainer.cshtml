@@ -1,0 +1,77 @@
+﻿@model AniwalkServer.Models.Animes
+@{
+    string HeaderPhotoPath = Shared.GetAnimeHeaderPhotoPath(Model != null ? Model.AnimeID : null);
+}
+
+<div class="col-md-8">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-5">
+                <input type="file" name="HeaderPhoto" id="HeaderPhoto" class="form-control" onchange="LoadHeaderPhoto(this)" style="max-height: 500px" />
+            </div>
+            <div class="col-3">
+                <button type="button" id="Btn_DeleteHeaderPhoto" class="btn btn-danger" value="false">刪除圖片</button>
+            </div>
+        </div>
+        <img id="HeaderPhotoPreview" style="max-height: 500px" />
+    </div>
+</div>
+
+<script>
+    const HeaderPhotoPreview = document.getElementById('HeaderPhotoPreview');
+    const HeaderPhoto=document.getElementById('HeaderPhoto');
+    const DeleteHeaderPhoto=document.getElementById('DeleteHeaderPhoto');
+    document.getElementById('Btn_DeleteHeaderPhoto').addEventListener("click", function(){
+        //清除圖片上傳物件的內容
+        HeaderPhoto.value="";
+        //清除圖片預覽
+        HeaderPhotoPreview.src="";
+        //標記刪除圖片
+        if(DeleteHeaderPhoto){
+            DeleteHeaderPhoto.value="1";
+        }
+    });
+
+    //初始讀取圖片
+    function InitHeaderPhoto(){
+        let HeaderPhotoPath='@HeaderPhotoPath';
+        if (HeaderPhotoPath && HeaderPhotoPath !== 'null' && HeaderPhotoPath.trim() !== '')
+        {
+            SetHeaderPhoto('/'+HeaderPhotoPath);
+        }
+    }
+    InitHeaderPhoto();
+
+    function LoadHeaderPhoto(E){
+        const NewHeader=E.files[0];
+
+        if(NewHeader){
+            let Reader=new FileReader();
+
+            Reader.onload=function (E){
+                //圖片讀取完成，顯示出來
+                SetHeaderPhoto(E.target.result);
+
+                //console.log("HeaderPhoto Loaded");
+
+                //將刪除圖片標記改為0
+                DeleteHeaderPhoto.value="0";
+            };
+            Reader.readAsDataURL(NewHeader);
+
+            //console.log("Read NewHeaderPhoto");
+        }
+        else{
+            //清空顯示圖片
+            SetHeaderPhoto('');
+
+            //console.log("Clean HeaderPhoto");
+        }
+    }
+
+    //顯示HeaderPhoto
+    function SetHeaderPhoto(Photo){
+        //console.log("SetHeaderPhoto "+Photo);
+        HeaderPhotoPreview.src = Photo;
+    }
+</script>

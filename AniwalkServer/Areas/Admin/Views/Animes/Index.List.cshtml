@@ -51,11 +51,11 @@
                         </td>
                         <td>
                             <form asp-action="Disable">
-                                <a asp-action="Edit" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
                                 <a asp-action="Details" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">檢視</a>
                                 @if (item.DisabledDate == null)
                                 {
                                     <input type="hidden" value="@item.AnimeID" name="AnimeID" />
+                                    <a asp-action="Edit" asp-route-id="@item.AnimeID" asp-route-LastPage="@ViewData[ViewDataKeys.LastPage]" class="btn btn-primary">編輯</a>
                                     <Button type="submit" class="btn btn-danger" onclick="return confirm('確定停用?')">停用</Button>
                                 }
                             </form>
