@@ -11,6 +11,8 @@
 </div>
 
 <script>
+    const HeaderPhotoPreview = document.getElementById('HeaderPhotoPreview');
+
     //初始讀取圖片
     function InitHeaderPhoto(){
         let HeaderPhotoPath='@HeaderPhotoPath';
@@ -31,23 +33,23 @@
                 //圖片讀取完成，顯示出來
                 SetHeaderPhoto(E.target.result);
 
-                console.log("HeaderPhoto Loaded");
+                //console.log("HeaderPhoto Loaded");
             };
             Reader.readAsDataURL(NewHeader);
 
-            console.log("Read NewHeaderPhoto");
+            //console.log("Read NewHeaderPhoto");
         }
         else{
             //清空顯示圖片
             SetHeaderPhoto('');
 
-            console.log("Clean HeaderPhoto");
+            //console.log("Clean HeaderPhoto");
         }
     }
 
     //顯示HeaderPhoto
     function SetHeaderPhoto(Photo){
-        console.log("SetHeaderPhoto "+Photo);
-        $('#HeaderPhotoPreview').attr('src', Photo);
+        //console.log("SetHeaderPhoto "+Photo);
+        HeaderPhotoPreview.src = Photo;
     }
 </script>
