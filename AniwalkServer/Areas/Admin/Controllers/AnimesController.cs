@@ -194,10 +194,19 @@ namespace AniwalkServer.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                using var Transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
                     _context.Update(Anime);
                     await _context.SaveChangesAsync();
+
+                    //圖片上傳
+                    var UploadHeaderPhotoResult = await AnimesServices.UploadHeaderPhoto(Anime.AnimeID, HeaderPhoto);
+                    if (UploadHeaderPhotoResult.Type == ResultType.Success)
+                    {
+                        await Transaction.CommitAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -212,8 +221,11 @@ namespace AniwalkServer.Areas.Admin.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                ViewData["Err"] = "動畫編輯失敗";
+                await Transaction.RollbackAsync();
             }
+
             return View(Anime);
         }
 
