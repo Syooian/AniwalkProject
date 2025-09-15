@@ -235,5 +235,32 @@ namespace AniwalkServer.Services
 
             return new Result(ResultType.Success);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="AnimeID"></param>
+        /// <returns></returns>
+        public Result DeleteHeaderPhoto(string AnimeID)
+        {
+            try
+            {
+                //檢查目標檔案是否存在
+                var HeaderPhotoPath = Shared.GetAnimeHeaderPhotoPath(AnimeID);
+
+                //Header圖存在，將Header圖改名
+                if (!string.IsNullOrEmpty(HeaderPhotoPath))
+                {
+                    var NewFileName = $"_Deleted_{Path.GetFileNameWithoutExtension(HeaderPhotoPath)}_{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.{Path.GetExtension(HeaderPhotoPath)}";
+                    var NewPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", Shared.AnimesPhotosRootPath, AnimeID, NewFileName);
+                    File.Move(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", HeaderPhotoPath), NewPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Result(ResultType.Fail, ex.Message);
+            }
+
+            return new Result(ResultType.Success);
+        }
     }
 }

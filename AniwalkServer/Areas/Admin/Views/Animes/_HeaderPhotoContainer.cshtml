@@ -5,13 +5,32 @@
 
 <div class="col-md-8">
     <div class="form-group">
-        <input type="file" name="HeaderPhoto" id="HeaderPhoto" class="form-control" onchange="LoadHeaderPhoto(this)" style="max-height: 500px" />
+        <div class="row">
+            <div class="col-5">
+                <input type="file" name="HeaderPhoto" id="HeaderPhoto" class="form-control" onchange="LoadHeaderPhoto(this)" style="max-height: 500px" />
+            </div>
+            <div class="col-3">
+                <button type="button" id="Btn_DeleteHeaderPhoto" class="btn btn-danger" value="false">刪除圖片</button>
+            </div>
+        </div>
         <img id="HeaderPhotoPreview" style="max-height: 500px" />
     </div>
 </div>
 
 <script>
     const HeaderPhotoPreview = document.getElementById('HeaderPhotoPreview');
+    const HeaderPhoto=document.getElementById('HeaderPhoto');
+    const DeleteHeaderPhoto=document.getElementById('DeleteHeaderPhoto');
+    document.getElementById('Btn_DeleteHeaderPhoto').addEventListener("click", function(){
+        //清除圖片上傳物件的內容
+        HeaderPhoto.value="";
+        //清除圖片預覽
+        HeaderPhotoPreview.src="";
+        //標記刪除圖片
+        if(DeleteHeaderPhoto){
+            DeleteHeaderPhoto.value="1";
+        }
+    });
 
     //初始讀取圖片
     function InitHeaderPhoto(){
@@ -34,6 +53,9 @@
                 SetHeaderPhoto(E.target.result);
 
                 //console.log("HeaderPhoto Loaded");
+
+                //將刪除圖片標記改為0
+                DeleteHeaderPhoto.value="0";
             };
             Reader.readAsDataURL(NewHeader);
 

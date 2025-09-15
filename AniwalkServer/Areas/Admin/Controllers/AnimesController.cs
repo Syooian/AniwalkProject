@@ -185,11 +185,16 @@ namespace AniwalkServer.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("AnimeID,Title,HeaderPhoto,Description,CreatedDate")] Animes Anime, IFormFile? HeaderPhoto)
+        public async Task<IActionResult> Edit(string id, [Bind("AnimeID,Title,HeaderPhoto,Description,CreatedDate")] Animes Anime, IFormFile? HeaderPhoto, string? DeleteHeaderPhoto)
         {
             if (id != Anime.AnimeID)
             {
                 return NotFound();
+            }
+
+            void SetError()
+            {
+                ViewData["Err"] = "動畫編輯失敗";
             }
 
             if (ModelState.IsValid)
@@ -200,30 +205,41 @@ namespace AniwalkServer.Areas.Admin.Controllers
                     _context.Update(Anime);
                     await _context.SaveChangesAsync();
 
-                    //圖片上傳
-                    var UploadHeaderPhotoResult = await AnimesServices.UploadHeaderPhoto(Anime.AnimeID, HeaderPhoto);
-                    if (UploadHeaderPhotoResult.Type == ResultType.Success)
+                    //刪除圖片
+                    if (!string.IsNullOrEmpty(DeleteHeaderPhoto) && DeleteHeaderPhoto == "1")
                     {
-                        await Transaction.CommitAsync();
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    var Result = await AnimesServices.IsAnimeExists(Anime.AnimeID);
-
-                    if (!Result)
-                    {
-                        return NotFound();
+                        var DeleteHeaderPhotoResult = AnimesServices.DeleteHeaderPhoto(Anime.AnimeID);
+                        if (DeleteHeaderPhotoResult.Type == ResultType.Fail)
+                        {
+                            SetError();
+                            await Transaction.RollbackAsync();
+                            Debug.WriteLine("DeleteHeaderPhoto EX : " + DeleteHeaderPhotoResult.Message);
+                            return View(Anime);
+                        }
                     }
                     else
                     {
-                        throw;
+                        //圖片上傳
+                        var UploadHeaderPhotoResult = await AnimesServices.UploadHeaderPhoto(Anime.AnimeID, HeaderPhoto);
+                        if (UploadHeaderPhotoResult.Type == ResultType.Fail)
+                        {
+                            SetError();
+                            await Transaction.RollbackAsync();
+                            Debug.WriteLine("UploadHeaderPhoto EX : " + UploadHeaderPhotoResult.Message);
+                            return View(Anime);
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    SetError();
+                    await Transaction.RollbackAsync();
+                    Debug.WriteLine("Edit EX : " + ex.Message);
+                    return View(Anime);
+                }
 
-                ViewData["Err"] = "動畫編輯失敗";
-                await Transaction.RollbackAsync();
+                await Transaction.CommitAsync();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(Anime);
