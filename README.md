@@ -1,5 +1,4 @@
-# AniwalkProject
-
+# Aniwalk - 聖地巡禮資訊分享平台
 ![img1](README/img1.jpg)
 
 ## 發想與製作動機
