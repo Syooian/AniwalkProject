@@ -25,6 +25,10 @@ RUN apt-get update && \
 RUN mkdir -p /app/wwwroot \
     && gsutil -m cp -r gs://aniwalk_wwwroot/* /app/wwwroot/
 
+# 檢查wwwroot下路徑，沒有的話就編譯失敗
+RUN ls -l /app/wwwroot/VisitsPhotos/
+RUN ls -l /app/wwwroot/AnimesPhotos/
+
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app .
