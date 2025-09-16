@@ -39,11 +39,6 @@ namespace AniwalkServer.Controllers
         }
 
         /// <summary>
-        /// 身份驗證方案名稱
-        /// </summary>
-        public const string AuthenticationScheme = "UserLogin"; // 定義一個常數用於身份驗證方案名稱
-
-        /// <summary>
         /// 登入
         /// </summary>
         /// <returns></returns>
@@ -108,10 +103,10 @@ namespace AniwalkServer.Controllers
                     new Claim(ClaimTypes.NameIdentifier, Member.MemberID)
                 };
 
-            var ClaimsIdentity = new ClaimsIdentity(Claims, AuthenticationScheme);
+            var ClaimsIdentity = new ClaimsIdentity(Claims, Shared.AuthenticationScheme);
             var ClaimsPrincipal = new ClaimsPrincipal(ClaimsIdentity);
 
-            await HttpContext.SignInAsync(AuthenticationScheme, ClaimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
+            await HttpContext.SignInAsync(Shared.AuthenticationScheme, ClaimsPrincipal); //把資料寫入 Cookie 進行登入狀態管理
 
             return RedirectToAction("Index", "Home"); // 登入成功後導向到 BooksManage 的 Index 頁面
 
@@ -124,7 +119,7 @@ namespace AniwalkServer.Controllers
         [Authorize] //標註需要登入才能使用
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(AuthenticationScheme); //登出時清除 Cookie
+            await HttpContext.SignOutAsync(Shared.AuthenticationScheme); //登出時清除 Cookie
             return RedirectToAction("Index", "Home"); // 登出後導向到 Home 的 Index 頁面
         }
     }

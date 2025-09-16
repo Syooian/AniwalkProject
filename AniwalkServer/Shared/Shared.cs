@@ -21,6 +21,11 @@ namespace AniwalkServer
         public const string Role_Admin = "Admin";
 
         /// <summary>
+        /// 身份驗證方案名稱
+        /// </summary>
+        public const string AuthenticationScheme = "UserLogin"; // 定義一個常數用於身份驗證方案名稱
+
+        /// <summary>
         /// 到訪照片根路徑
         /// </summary>
         public const string VisitsPhotosRootPath = "VisitsPhotos";

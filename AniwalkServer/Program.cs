@@ -40,7 +40,7 @@ builder.Services.AddScoped<VisitsServices>();
 #endregion
 
 //註冊 Cookie Authentication
-builder.Services.AddAuthentication(LoginController.AuthenticationScheme).AddCookie(LoginController.AuthenticationScheme, Options =>
+builder.Services.AddAuthentication(Shared.AuthenticationScheme).AddCookie(Shared.AuthenticationScheme, Options =>
 {
     Options.LoginPath = "/Login/Login"; // 設定登入頁面路徑(若需登入而未登入時則強制導到此路徑)
     Options.LogoutPath = "/Login/Logout"; // 設定登出頁面路徑
