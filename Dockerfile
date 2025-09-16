@@ -17,8 +17,10 @@ RUN dotnet publish -c Release -o /app
 
 # 安裝 gsutil (Google Cloud Storage CLI)
 RUN apt-get update && \
-    apt-get install -y curl python3 python3-pip gsutil && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y curl python3 python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip install --upgrade pip && \
+    pip install gsutil
 
 # 從 GCS bucket 把檔案下載到 wwwroot
 # 這裡會需要 Cloud Build 或 Cloud Run 在 build/deploy 階段有存取 bucket 的權限
