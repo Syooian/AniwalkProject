@@ -22,7 +22,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CountryCode" class="control-label"></label>
-                <select asp-for="CountryCode" class="form-control js-example-basic-single" id="Ipt_CountryCode" @*asp-items="ViewBag.CountryCode"*@>
+                <select asp-for="CountryCode" class="form-control js-example-basic-single" id="Ipt_CountryCode">
                     @foreach (var Item in ViewBag.CountryCode)
                     {
                         <option value="@Item.Value">@Item.Text</option>
