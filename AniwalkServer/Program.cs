@@ -4,6 +4,7 @@ using AniwalkServer.Data;
 using AniwalkServer.Filters;
 using AniwalkServer.Services;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -23,6 +24,22 @@ builder.Services.AddControllersWithViews(Options =>
 
 builder.Services.AddDbContext<AniwalkDBContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnectionStrings")));
+
+#region 允許的最大請求限制
+const int MaxRequest = 104857600; // 100MB
+
+// 增加 Kestrel 允許的最大請求大小（針對 Kestrel 伺服器本身的請求大小限制）
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = MaxRequest;
+});
+
+// 增加表單上傳的限制
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = MaxRequest;
+});
+#endregion
 
 #region 自訂Services
 builder.Services.AddScoped<AddNewAnimesServices>();
