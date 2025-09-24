@@ -48,7 +48,7 @@
 [[day2]-創造自己的地圖服務應用，Google Maps API的概念篇](https://ithelp.ithome.com.tw/articles/10190718)
 
 ## 專案Demo
-[Aniwalk](https://aniwalk-33239113606.asia-east1.run.app)
+[Aniwalk - 聖地巡禮資訊分享平台](https://aniwalk-33239113606.asia-east1.run.app)
 
 ### 測試帳號 (帳密皆相同)
 #### 管理員  
@@ -57,3 +57,6 @@
 * 02345678
 * 12345678
 * 22345678
+
+## 專題成果報告書
+[專題成果報告書](https://docs.google.com/document/d/1x3M-Snb1yoSW2kdWbmdjsjykNKq1MYS2/edit?usp=sharing&ouid=104929444184616000032&rtpof=true&sd=true)
